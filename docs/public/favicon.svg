@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="currentColor" fill-rule="evenodd" aria-label="Tokori">
+  <title>Tokori</title>
+  <!-- Crest: 5 swept-back feathers, leftmost shortest, sweeping up-right.
+       Hand-authored stylization of a cockatoo silhouette. -->
+  <path d="M22 22 L18 4 L26 18 Z"/>
+  <path d="M27 19 L28 2 L34 18 Z"/>
+  <path d="M33 18 L46 6 L40 22 Z"/>
+  <path d="M40 22 L56 14 L46 28 Z"/>
+  <path d="M44 28 L60 26 L48 34 Z"/>
+  <!-- Head + body silhouette with eye cut as a transparent hole
+       (evenodd fill rule). currentColor lets the mark adapt to the
+       active theme — appears black on light backgrounds and white on
+       dark backgrounds without any extra CSS. -->
+  <path d="M16 32 C 16 23 23 18 32 18 C 42 18 49 25 49 33 C 49 37 47 40 45 42 C 48 48 53 53 58 56 L 58 60 L 28 60 C 19 60 13 53 13 44 C 13 38 14 34 16 32 Z M 26 28 a 2.5 2.5 0 1 0 5 0 a 2.5 2.5 0 1 0 -5 0 Z"/>
+  <!-- Beak: hooked, pointing forward-down from the lower-front of the head -->
+  <path d="M16 33 L 5 35 Q 3 37 5 39 Q 7 41 11 41 L 18 39 Z"/>
+</svg>

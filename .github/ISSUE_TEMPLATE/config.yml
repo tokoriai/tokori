@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://tokori.ai/docs/
+    about: Quickstart, install, architecture, API reference.
+  - name: Discussions
+    url: https://github.com/tokoriai/tokori/discussions
+    about: Questions, ideas, "how do I…" — start here if you're not sure.
+  - name: Security issue
+    url: https://github.com/tokoriai/tokori/blob/main/SECURITY.md
+    about: Do not file public issues for vulnerabilities — see the policy.

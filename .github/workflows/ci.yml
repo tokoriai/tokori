@@ -1,0 +1,71 @@
+name: ci
+
+# Runs on every push to main and every PR. Doesn't build installers
+# (the release workflow does that on tag) — just type-checks the
+# frontend and `cargo check`s the Rust shell so a broken commit gets
+# caught before it lands.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      # Same npm generation that wrote package-lock.json — npm minors
+      # disagree about which entries a lock needs, so a floating npm
+      # turns every runner-image bump into a red X. Bump the pin and
+      # regenerate the lock together (all workflows use this version).
+      - name: Pin npm to the lockfile's generation
+        run: npm i -g npm@11.18.0
+      - run: npm ci
+      - name: Vitest unit tests
+        run: npm test
+      - name: Type-check + Vite build
+        run: npm run build
+
+  rust:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: ./src-tauri -> target
+
+      - name: Install Linux build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            libssl-dev
+
+      - name: cargo fmt
+        working-directory: src-tauri
+        run: cargo fmt --all -- --check
+
+      - name: cargo clippy
+        working-directory: src-tauri
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: cargo check
+        working-directory: src-tauri
+        run: cargo check --all-targets

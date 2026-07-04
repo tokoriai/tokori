@@ -1,0 +1,4751 @@
+{
+  "schema": "tokori-pack/v1",
+  "id": "free:japanese-n5",
+  "name": "JLPT N5 vocabulary — Free",
+  "language": "ja",
+  "description": "718 JLPT N5 vocabulary items in one drillable collection, plus thematic sub-decks (greetings, numbers, family, verbs, food) and a 15-lesson starter textbook with short readings, focus notes, and per-chapter vocab. Vocab list courtesy of jamsinclair/open-anki-jlpt-decks (MIT) — Anki deck data originally sourced from tanos.co.uk; lesson texts written for Tokori.",
+  "version": "1.0.0",
+  "license": "Vocabulary data: MIT (Jamie Sinclair, github.com/jamsinclair/open-anki-jlpt-decks). Sub-collection grouping and lesson texts by Tokori. Free for everyone.",
+  "collections": [
+    {
+      "id": "n5-day-one",
+      "name": "Japanese · Day-one greetings",
+      "description": "Pre-N5 hellos, thank-yous, and please/sorry — what you actually want to learn first.",
+      "words": [
+        {
+          "word": "おはようございます",
+          "reading": "おはようございます",
+          "gloss": "good morning (polite)"
+        },
+        {
+          "word": "こんにちは",
+          "reading": "こんにちは",
+          "gloss": "hello, good afternoon"
+        },
+        {
+          "word": "こんばんは",
+          "reading": "こんばんは",
+          "gloss": "good evening"
+        },
+        {
+          "word": "おやすみなさい",
+          "reading": "おやすみなさい",
+          "gloss": "good night"
+        },
+        {
+          "word": "さようなら",
+          "reading": "さようなら",
+          "gloss": "goodbye (formal)"
+        },
+        {
+          "word": "ありがとうございます",
+          "reading": "ありがとうございます",
+          "gloss": "thank you (polite)"
+        },
+        {
+          "word": "すみません",
+          "reading": "すみません",
+          "gloss": "excuse me, sorry"
+        },
+        {
+          "word": "ごめんなさい",
+          "reading": "ごめんなさい",
+          "gloss": "I'm sorry"
+        },
+        {
+          "word": "お願いします",
+          "reading": "おねがいします",
+          "gloss": "please, I beg you"
+        },
+        {
+          "word": "どういたしまして",
+          "reading": "どういたしまして",
+          "gloss": "you're welcome"
+        },
+        {
+          "word": "はじめまして",
+          "reading": "はじめまして",
+          "gloss": "nice to meet you"
+        },
+        {
+          "word": "よろしくお願いします",
+          "reading": "よろしくおねがいします",
+          "gloss": "pleased to make your acquaintance"
+        }
+      ]
+    },
+    {
+      "id": "n5-all",
+      "name": "JLPT N5 · all 718 words",
+      "description": "Every vocabulary item at JLPT Level 5 (the most basic level).",
+      "words": [
+        {
+          "word": "十",
+          "reading": "(〜を) とお",
+          "gloss": "ten (~)"
+        },
+        {
+          "word": "～円",
+          "reading": "～えん",
+          "gloss": "Yen"
+        },
+        {
+          "word": "～回",
+          "reading": "～かい",
+          "gloss": "counter for occurrences (~ times)"
+        },
+        {
+          "word": "～階",
+          "reading": "～かい",
+          "gloss": "counter for stories (floors) of a building"
+        },
+        {
+          "word": "～か月",
+          "reading": "～かげつ",
+          "gloss": "(number of) months"
+        },
+        {
+          "word": "～月",
+          "reading": "～がつ",
+          "gloss": "month of year"
+        },
+        {
+          "word": "～がる",
+          "reading": "～がる",
+          "gloss": "feel"
+        },
+        {
+          "word": "～側",
+          "reading": "～がわ",
+          "gloss": "~ side"
+        },
+        {
+          "word": "～くらい",
+          "reading": "～くらい; ぐらい",
+          "gloss": "approximate (quantity)"
+        },
+        {
+          "word": "～個",
+          "reading": "～こ",
+          "gloss": "counter for small items (e.g., fruits, cups)"
+        },
+        {
+          "word": "～語",
+          "reading": "～ご",
+          "gloss": "word, language"
+        },
+        {
+          "word": "～ころ",
+          "reading": "～ころ; ～ごろ",
+          "gloss": "about, toward, approximately (time)"
+        },
+        {
+          "word": "～歳",
+          "reading": "～さい",
+          "gloss": "~ years old"
+        },
+        {
+          "word": "～冊",
+          "reading": "～さつ",
+          "gloss": "counter for books"
+        },
+        {
+          "word": "～さん",
+          "reading": "～さん",
+          "gloss": "Mr. ~, Ms. ~"
+        },
+        {
+          "word": "～時",
+          "reading": "～じ",
+          "gloss": "~ o'clock (time)"
+        },
+        {
+          "word": "～時間",
+          "reading": "～じかん",
+          "gloss": "~ hours"
+        },
+        {
+          "word": "～中",
+          "reading": "～じゅう",
+          "gloss": "during, while"
+        },
+        {
+          "word": "～週間",
+          "reading": "～しゅうかん",
+          "gloss": "~ weeks"
+        },
+        {
+          "word": "～人",
+          "reading": "～じん",
+          "gloss": "counter for people"
+        },
+        {
+          "word": "～すぎ",
+          "reading": "～すぎ",
+          "gloss": "past; to exceed, ~ too much"
+        },
+        {
+          "word": "～ずつ",
+          "reading": "～ずつ",
+          "gloss": "at a time"
+        },
+        {
+          "word": "～台",
+          "reading": "～だい",
+          "gloss": "counter for vehicles; machines"
+        },
+        {
+          "word": "～だけ",
+          "reading": "～だけ",
+          "gloss": "only ~, just ~, as ~"
+        },
+        {
+          "word": "～たち",
+          "reading": "～たち",
+          "gloss": "plural suffix"
+        },
+        {
+          "word": "～中",
+          "reading": "～ちゅう",
+          "gloss": "during, while ~ing"
+        },
+        {
+          "word": "～度",
+          "reading": "～ど",
+          "gloss": "counter for occurrences; ~ degree; ~ point"
+        },
+        {
+          "word": "～時",
+          "reading": "～とき",
+          "gloss": "at the time of ~"
+        },
+        {
+          "word": "～など",
+          "reading": "～など",
+          "gloss": "et cetera"
+        },
+        {
+          "word": "～日",
+          "reading": "～にち",
+          "gloss": "~ day of the month, for ~ days"
+        },
+        {
+          "word": "～人",
+          "reading": "～にん",
+          "gloss": "counter for people"
+        },
+        {
+          "word": "～年",
+          "reading": "～ねん",
+          "gloss": "~ years"
+        },
+        {
+          "word": "～杯",
+          "reading": "～はい",
+          "gloss": "counter for cupfuls"
+        },
+        {
+          "word": "～番",
+          "reading": "～ばん",
+          "gloss": "~st; ~th best"
+        },
+        {
+          "word": "～匹",
+          "reading": "～ひき",
+          "gloss": "counter for small animals"
+        },
+        {
+          "word": "～分",
+          "reading": "～ふん",
+          "gloss": "~ minutes"
+        },
+        {
+          "word": "～本",
+          "reading": "～ほん",
+          "gloss": "counter for long cylindrical things"
+        },
+        {
+          "word": "～枚",
+          "reading": "～まい",
+          "gloss": "counter for flat things"
+        },
+        {
+          "word": "～前",
+          "reading": "～まえ",
+          "gloss": "in front of ~"
+        },
+        {
+          "word": "～屋",
+          "reading": "～や",
+          "gloss": "~ shop"
+        },
+        {
+          "word": "ああ",
+          "reading": "ああ",
+          "gloss": "Ah!, Oh!"
+        },
+        {
+          "word": "会う",
+          "reading": "あう",
+          "gloss": "to meet, to see"
+        },
+        {
+          "word": "青",
+          "reading": "あお",
+          "gloss": "blue"
+        },
+        {
+          "word": "青い",
+          "reading": "あおい",
+          "gloss": "blue"
+        },
+        {
+          "word": "赤",
+          "reading": "あか",
+          "gloss": "red"
+        },
+        {
+          "word": "赤い",
+          "reading": "あかい",
+          "gloss": "red"
+        },
+        {
+          "word": "明るい",
+          "reading": "あかるい",
+          "gloss": "bright (in reference to personality or weather); cheerful"
+        },
+        {
+          "word": "秋",
+          "reading": "あき",
+          "gloss": "fall (season)"
+        },
+        {
+          "word": "開く",
+          "reading": "あく",
+          "gloss": "to open, to become open"
+        },
+        {
+          "word": "開ける",
+          "reading": "あける",
+          "gloss": "to open (v.t.)"
+        },
+        {
+          "word": "上げる",
+          "reading": "あげる",
+          "gloss": "to raise, to lift"
+        },
+        {
+          "word": "朝",
+          "reading": "あさ",
+          "gloss": "morning"
+        },
+        {
+          "word": "朝御飯",
+          "reading": "あさごはん",
+          "gloss": "breakfast"
+        },
+        {
+          "word": "明後日",
+          "reading": "あさって",
+          "gloss": "day after tomorrow"
+        },
+        {
+          "word": "足",
+          "reading": "あし",
+          "gloss": "foot; leg"
+        },
+        {
+          "word": "明日",
+          "reading": "あした",
+          "gloss": "tomorrow"
+        },
+        {
+          "word": "あそこ",
+          "reading": "あそこ",
+          "gloss": "there, over there, that place"
+        },
+        {
+          "word": "遊ぶ",
+          "reading": "あそぶ",
+          "gloss": "to play; to spend time pleasantly; to hang out"
+        },
+        {
+          "word": "暖かい",
+          "reading": "あたたかい",
+          "gloss": "warm"
+        },
+        {
+          "word": "頭",
+          "reading": "あたま",
+          "gloss": "head"
+        },
+        {
+          "word": "新しい",
+          "reading": "あたらしい",
+          "gloss": "new"
+        },
+        {
+          "word": "あちら",
+          "reading": "あちら",
+          "gloss": "this way (polite)"
+        },
+        {
+          "word": "厚い",
+          "reading": "あつい",
+          "gloss": "kind, warm(hearted), thick, deep"
+        },
+        {
+          "word": "暑い",
+          "reading": "あつい",
+          "gloss": "hot (in reference to weather), warm"
+        },
+        {
+          "word": "熱い",
+          "reading": "あつい",
+          "gloss": "hot (objects)"
+        },
+        {
+          "word": "あっち",
+          "reading": "あっち",
+          "gloss": "over there"
+        },
+        {
+          "word": "後",
+          "reading": "あと",
+          "gloss": "afterwards (later); in the future; the rest; since then"
+        },
+        {
+          "word": "あなた",
+          "reading": "あなた",
+          "gloss": "you"
+        },
+        {
+          "word": "兄",
+          "reading": "あに",
+          "gloss": "(my) older brother (humble)"
+        },
+        {
+          "word": "姉",
+          "reading": "あね",
+          "gloss": "(my) older sister (humble)"
+        },
+        {
+          "word": "あの",
+          "reading": "あの",
+          "gloss": "that over there; like that, that way; um..."
+        },
+        {
+          "word": "アパート",
+          "reading": "アパート",
+          "gloss": "apartment (abbr.)"
+        },
+        {
+          "word": "浴びる",
+          "reading": "あびる",
+          "gloss": "to bathe, to shower"
+        },
+        {
+          "word": "危ない",
+          "reading": "あぶない",
+          "gloss": "dangerous, critical"
+        },
+        {
+          "word": "甘い",
+          "reading": "あまい",
+          "gloss": "generous, sweet"
+        },
+        {
+          "word": "余り",
+          "reading": "あまり",
+          "gloss": "not very; surplus"
+        },
+        {
+          "word": "飴",
+          "reading": "あめ",
+          "gloss": "(hard) candy"
+        },
+        {
+          "word": "雨",
+          "reading": "あめ",
+          "gloss": "rain"
+        },
+        {
+          "word": "洗う",
+          "reading": "あらう",
+          "gloss": "to wash"
+        },
+        {
+          "word": "在る",
+          "reading": "ある",
+          "gloss": "to be, to have"
+        },
+        {
+          "word": "有る",
+          "reading": "ある",
+          "gloss": "to be, to have"
+        },
+        {
+          "word": "歩く",
+          "reading": "あるく",
+          "gloss": "to walk"
+        },
+        {
+          "word": "あれ",
+          "reading": "あれ",
+          "gloss": "that one (over there)"
+        },
+        {
+          "word": "いい",
+          "reading": "いい; よい",
+          "gloss": "good"
+        },
+        {
+          "word": "いいえ",
+          "reading": "いいえ",
+          "gloss": "no, not at all"
+        },
+        {
+          "word": "言う",
+          "reading": "いう",
+          "gloss": "to say"
+        },
+        {
+          "word": "家",
+          "reading": "いえ",
+          "gloss": "house, home"
+        },
+        {
+          "word": "いかが",
+          "reading": "いかが",
+          "gloss": "how, in what way"
+        },
+        {
+          "word": "行く",
+          "reading": "いく; ゆく",
+          "gloss": "to go"
+        },
+        {
+          "word": "いくつ",
+          "reading": "いくつ",
+          "gloss": "how many, how old"
+        },
+        {
+          "word": "いくら",
+          "reading": "いくら",
+          "gloss": "how much, how many"
+        },
+        {
+          "word": "池",
+          "reading": "いけ",
+          "gloss": "pond"
+        },
+        {
+          "word": "医者",
+          "reading": "いしゃ",
+          "gloss": "doctor; physician"
+        },
+        {
+          "word": "椅子",
+          "reading": "いす",
+          "gloss": "chair"
+        },
+        {
+          "word": "忙しい",
+          "reading": "いそがしい",
+          "gloss": "busy (people, days)"
+        },
+        {
+          "word": "痛い",
+          "reading": "いたい",
+          "gloss": "hurt; painful; sore"
+        },
+        {
+          "word": "一",
+          "reading": "いち",
+          "gloss": "one"
+        },
+        {
+          "word": "一日",
+          "reading": "いちにち",
+          "gloss": "one day (duration)"
+        },
+        {
+          "word": "一番",
+          "reading": "いちばん",
+          "gloss": "best (most), first, number one"
+        },
+        {
+          "word": "いつ",
+          "reading": "いつ",
+          "gloss": "when"
+        },
+        {
+          "word": "五日",
+          "reading": "いつか",
+          "gloss": "five days; fifth day of the month"
+        },
+        {
+          "word": "一緒",
+          "reading": "いっしょ",
+          "gloss": "together"
+        },
+        {
+          "word": "五つ",
+          "reading": "いつつ",
+          "gloss": "five things"
+        },
+        {
+          "word": "いつも",
+          "reading": "いつも",
+          "gloss": "always, usually, every time, never (with neg. verb)"
+        },
+        {
+          "word": "犬",
+          "reading": "いぬ",
+          "gloss": "dog"
+        },
+        {
+          "word": "今",
+          "reading": "いま",
+          "gloss": "now"
+        },
+        {
+          "word": "意味",
+          "reading": "いみ",
+          "gloss": "meaning, significance"
+        },
+        {
+          "word": "妹",
+          "reading": "いもうと",
+          "gloss": "younger sister (humble)"
+        },
+        {
+          "word": "嫌",
+          "reading": "いや",
+          "gloss": "disagreeable, detestable, unpleasant"
+        },
+        {
+          "word": "入口",
+          "reading": "いりぐち",
+          "gloss": "entrance"
+        },
+        {
+          "word": "居る",
+          "reading": "いる",
+          "gloss": "(humble) to be (animate), to exist"
+        },
+        {
+          "word": "要る",
+          "reading": "いる",
+          "gloss": "to need"
+        },
+        {
+          "word": "入れる",
+          "reading": "いれる",
+          "gloss": "to put in"
+        },
+        {
+          "word": "色",
+          "reading": "いろ",
+          "gloss": "color"
+        },
+        {
+          "word": "色々",
+          "reading": "いろいろ",
+          "gloss": "various"
+        },
+        {
+          "word": "上",
+          "reading": "うえ",
+          "gloss": "above (up, top, etc.), over, on top of"
+        },
+        {
+          "word": "後ろ",
+          "reading": "うしろ",
+          "gloss": "back, behind, rear"
+        },
+        {
+          "word": "薄い",
+          "reading": "うすい",
+          "gloss": "thin, weak"
+        },
+        {
+          "word": "歌",
+          "reading": "うた",
+          "gloss": "a song"
+        },
+        {
+          "word": "歌う",
+          "reading": "うたう",
+          "gloss": "to sing"
+        },
+        {
+          "word": "うち",
+          "reading": "うち",
+          "gloss": "home; house; my place"
+        },
+        {
+          "word": "生まれる",
+          "reading": "うまれる",
+          "gloss": "to be born"
+        },
+        {
+          "word": "海",
+          "reading": "うみ",
+          "gloss": "sea, beach"
+        },
+        {
+          "word": "売る",
+          "reading": "うる",
+          "gloss": "to sell (v.t.)"
+        },
+        {
+          "word": "うるさい",
+          "reading": "うるさい",
+          "gloss": "noisy; annoying"
+        },
+        {
+          "word": "上着",
+          "reading": "うわぎ",
+          "gloss": "coat, jacket"
+        },
+        {
+          "word": "絵",
+          "reading": "え",
+          "gloss": "a painting; a picture; a drawing"
+        },
+        {
+          "word": "映画",
+          "reading": "えいが",
+          "gloss": "movie, film"
+        },
+        {
+          "word": "映画館",
+          "reading": "えいがかん",
+          "gloss": "movie theater, cinema"
+        },
+        {
+          "word": "英語",
+          "reading": "えいご",
+          "gloss": "English (language)"
+        },
+        {
+          "word": "ええ",
+          "reading": "ええ",
+          "gloss": "yes"
+        },
+        {
+          "word": "駅",
+          "reading": "えき",
+          "gloss": "station"
+        },
+        {
+          "word": "エレベーター",
+          "reading": "エレベーター",
+          "gloss": "elevator"
+        },
+        {
+          "word": "鉛筆",
+          "reading": "えんぴつ",
+          "gloss": "pencil"
+        },
+        {
+          "word": "お～",
+          "reading": "お～",
+          "gloss": "honorable ~ (honorific)"
+        },
+        {
+          "word": "美味しい",
+          "reading": "おいしい",
+          "gloss": "delicious, tasty"
+        },
+        {
+          "word": "多い",
+          "reading": "おおい",
+          "gloss": "many; there are a lot"
+        },
+        {
+          "word": "大きい",
+          "reading": "おおきい",
+          "gloss": "big, large"
+        },
+        {
+          "word": "大きな",
+          "reading": "おおきな",
+          "gloss": "big"
+        },
+        {
+          "word": "大勢",
+          "reading": "おおぜい",
+          "gloss": "great number of people"
+        },
+        {
+          "word": "お母さん",
+          "reading": "おかあさん",
+          "gloss": "mother (formal)"
+        },
+        {
+          "word": "お菓子",
+          "reading": "おかし",
+          "gloss": "confections, sweets, snack"
+        },
+        {
+          "word": "お金",
+          "reading": "おかね",
+          "gloss": "money"
+        },
+        {
+          "word": "起きる",
+          "reading": "おきる",
+          "gloss": "to get up (e.g., from sleeping); to happen"
+        },
+        {
+          "word": "置く",
+          "reading": "おく",
+          "gloss": "to put; to lay; to place"
+        },
+        {
+          "word": "奥さん",
+          "reading": "おくさん",
+          "gloss": "(someone else's) wife (hon.)"
+        },
+        {
+          "word": "お酒",
+          "reading": "おさけ",
+          "gloss": "sake; alcohol"
+        },
+        {
+          "word": "お皿",
+          "reading": "おさら",
+          "gloss": "plate, dish"
+        },
+        {
+          "word": "おじいさん",
+          "reading": "おじいさん",
+          "gloss": "grandfather, male senior citizen"
+        },
+        {
+          "word": "教える",
+          "reading": "おしえる",
+          "gloss": "to teach, to inform, to instruct"
+        },
+        {
+          "word": "伯父",
+          "reading": "おじさん",
+          "gloss": "uncle, middle-aged man"
+        },
+        {
+          "word": "押す",
+          "reading": "おす",
+          "gloss": "to push, to press, to stamp (e.g., a passport)"
+        },
+        {
+          "word": "遅い",
+          "reading": "おそい",
+          "gloss": "slow; (to be) late"
+        },
+        {
+          "word": "お茶",
+          "reading": "おちゃ",
+          "gloss": "(green) tea"
+        },
+        {
+          "word": "お手洗い",
+          "reading": "おてあらい",
+          "gloss": "toilet, restroom, bathroom (lit., a place to wash one's hands)"
+        },
+        {
+          "word": "お父さん",
+          "reading": "おとうさん",
+          "gloss": "father (formal)"
+        },
+        {
+          "word": "弟",
+          "reading": "おとうと",
+          "gloss": "younger brother"
+        },
+        {
+          "word": "男",
+          "reading": "おとこ",
+          "gloss": "man, male"
+        },
+        {
+          "word": "男の子",
+          "reading": "おとこのこ",
+          "gloss": "boy"
+        },
+        {
+          "word": "一昨日",
+          "reading": "おととい",
+          "gloss": "the day before yesterday"
+        },
+        {
+          "word": "おととし",
+          "reading": "おととし",
+          "gloss": "year before last"
+        },
+        {
+          "word": "大人",
+          "reading": "おとな",
+          "gloss": "adult"
+        },
+        {
+          "word": "お腹",
+          "reading": "おなか",
+          "gloss": "stomach"
+        },
+        {
+          "word": "同じ",
+          "reading": "おなじ",
+          "gloss": "same, identical"
+        },
+        {
+          "word": "お兄さん",
+          "reading": "おにいさん",
+          "gloss": "(someone else's) older brother (formal)"
+        },
+        {
+          "word": "お姉さん",
+          "reading": "おねえさん",
+          "gloss": "older sister (formal)"
+        },
+        {
+          "word": "おばあさん",
+          "reading": "おばあさん",
+          "gloss": "grandmother, female senior-citizen"
+        },
+        {
+          "word": "伯母さん",
+          "reading": "おばさん",
+          "gloss": "aunt"
+        },
+        {
+          "word": "お風呂",
+          "reading": "おふろ",
+          "gloss": "a bath"
+        },
+        {
+          "word": "お弁当",
+          "reading": "おべんとう",
+          "gloss": "a boxed lunch"
+        },
+        {
+          "word": "覚える",
+          "reading": "おぼえる",
+          "gloss": "to learn, to commit to memory, to remember, to memorize"
+        },
+        {
+          "word": "おまわりさん",
+          "reading": "おまわりさん",
+          "gloss": "policeman (friendly term)"
+        },
+        {
+          "word": "重い",
+          "reading": "おもい",
+          "gloss": "heavy; serious"
+        },
+        {
+          "word": "面白い",
+          "reading": "おもしろい",
+          "gloss": "interesting, amusing"
+        },
+        {
+          "word": "泳ぐ",
+          "reading": "およぐ",
+          "gloss": "to swim"
+        },
+        {
+          "word": "降りる",
+          "reading": "おりる",
+          "gloss": "to get off"
+        },
+        {
+          "word": "終る",
+          "reading": "おわる",
+          "gloss": "to finish, to close"
+        },
+        {
+          "word": "音楽",
+          "reading": "おんがく",
+          "gloss": "Music"
+        },
+        {
+          "word": "女",
+          "reading": "おんな",
+          "gloss": "woman, female"
+        },
+        {
+          "word": "女の子",
+          "reading": "おんなのこ",
+          "gloss": "girl"
+        },
+        {
+          "word": "外国",
+          "reading": "がいこく",
+          "gloss": "foreign country; abroad"
+        },
+        {
+          "word": "外国人",
+          "reading": "がいこくじん",
+          "gloss": "foreigner"
+        },
+        {
+          "word": "会社",
+          "reading": "かいしゃ",
+          "gloss": "company, corporation"
+        },
+        {
+          "word": "階段",
+          "reading": "かいだん",
+          "gloss": "stairs"
+        },
+        {
+          "word": "買い物",
+          "reading": "かいもの",
+          "gloss": "shopping"
+        },
+        {
+          "word": "買う",
+          "reading": "かう",
+          "gloss": "to buy"
+        },
+        {
+          "word": "返す",
+          "reading": "かえす",
+          "gloss": "to return something"
+        },
+        {
+          "word": "帰る",
+          "reading": "かえる",
+          "gloss": "to go back, to go home, to return"
+        },
+        {
+          "word": "顔",
+          "reading": "かお",
+          "gloss": "face (body part)"
+        },
+        {
+          "word": "かかる",
+          "reading": "かかる",
+          "gloss": "it takes (amount of time, money) (v.i.)"
+        },
+        {
+          "word": "鍵",
+          "reading": "かぎ",
+          "gloss": "a lock; a key"
+        },
+        {
+          "word": "書く",
+          "reading": "かく",
+          "gloss": "to write"
+        },
+        {
+          "word": "学生",
+          "reading": "がくせい",
+          "gloss": "student"
+        },
+        {
+          "word": "かける",
+          "reading": "かける",
+          "gloss": "to dial/call (e.g., phone); to sit down"
+        },
+        {
+          "word": "掛ける",
+          "reading": "かける",
+          "gloss": "to put on (e.g., glasses); to hang (e.g., on a wall)"
+        },
+        {
+          "word": "傘",
+          "reading": "かさ",
+          "gloss": "umbrella, parasol"
+        },
+        {
+          "word": "貸す",
+          "reading": "かす",
+          "gloss": "to lend"
+        },
+        {
+          "word": "風",
+          "reading": "かぜ",
+          "gloss": "wind, breeze"
+        },
+        {
+          "word": "風邪",
+          "reading": "かぜ",
+          "gloss": "cold, flu"
+        },
+        {
+          "word": "家族",
+          "reading": "かぞく",
+          "gloss": "family, members of a family"
+        },
+        {
+          "word": "方",
+          "reading": "かた",
+          "gloss": "-- honorific form for 人 (ひと) --; way of doing"
+        },
+        {
+          "word": "片仮名",
+          "reading": "かたかな",
+          "gloss": "katakana"
+        },
+        {
+          "word": "学校",
+          "reading": "がっこう",
+          "gloss": "a school"
+        },
+        {
+          "word": "カップ",
+          "reading": "カップ",
+          "gloss": "cup"
+        },
+        {
+          "word": "家庭",
+          "reading": "かてい",
+          "gloss": "home; family"
+        },
+        {
+          "word": "角",
+          "reading": "かど",
+          "gloss": "corner (e.g., desk, pavement)"
+        },
+        {
+          "word": "かばん",
+          "reading": "かばん",
+          "gloss": "bag, basket"
+        },
+        {
+          "word": "花瓶",
+          "reading": "かびん",
+          "gloss": "(flower) vase"
+        },
+        {
+          "word": "かぶる",
+          "reading": "かぶる",
+          "gloss": "to wear, to put on (e.g., a hat on the head)"
+        },
+        {
+          "word": "紙",
+          "reading": "かみ",
+          "gloss": "paper"
+        },
+        {
+          "word": "カメラ",
+          "reading": "カメラ",
+          "gloss": "camera"
+        },
+        {
+          "word": "火曜日",
+          "reading": "かようび",
+          "gloss": "Tuesday"
+        },
+        {
+          "word": "辛い",
+          "reading": "からい",
+          "gloss": "hot and spicy; salty"
+        },
+        {
+          "word": "体",
+          "reading": "からだ",
+          "gloss": "body; health"
+        },
+        {
+          "word": "借りる",
+          "reading": "かりる",
+          "gloss": "to borrow, to owe"
+        },
+        {
+          "word": "軽い",
+          "reading": "かるい",
+          "gloss": "light, non-serious, minor"
+        },
+        {
+          "word": "カレー",
+          "reading": "カレー",
+          "gloss": "curry (abbr. for curry and rice)"
+        },
+        {
+          "word": "カレンダー",
+          "reading": "カレンダー",
+          "gloss": "calendar"
+        },
+        {
+          "word": "川",
+          "reading": "かわ",
+          "gloss": "river"
+        },
+        {
+          "word": "可愛い",
+          "reading": "かわいい",
+          "gloss": "cute, adorable"
+        },
+        {
+          "word": "漢字",
+          "reading": "かんじ",
+          "gloss": "kanji; Chinese character"
+        },
+        {
+          "word": "木",
+          "reading": "き",
+          "gloss": "tree, wood, timber"
+        },
+        {
+          "word": "黄色",
+          "reading": "きいろ",
+          "gloss": "yellow"
+        },
+        {
+          "word": "黄色い",
+          "reading": "きいろい",
+          "gloss": "yellow"
+        },
+        {
+          "word": "消える",
+          "reading": "きえる",
+          "gloss": "to vanish, to disappear"
+        },
+        {
+          "word": "聞く",
+          "reading": "きく",
+          "gloss": "to hear, to listen, to ask"
+        },
+        {
+          "word": "北",
+          "reading": "きた",
+          "gloss": "north"
+        },
+        {
+          "word": "ギター",
+          "reading": "ギター",
+          "gloss": "guitar"
+        },
+        {
+          "word": "汚い",
+          "reading": "きたない",
+          "gloss": "dirty, unclean, filthy"
+        },
+        {
+          "word": "喫茶店",
+          "reading": "きっさてん",
+          "gloss": "café"
+        },
+        {
+          "word": "切手",
+          "reading": "きって",
+          "gloss": "postal (postage) stamps"
+        },
+        {
+          "word": "切符",
+          "reading": "きっぷ",
+          "gloss": "a ticket"
+        },
+        {
+          "word": "昨日",
+          "reading": "きのう",
+          "gloss": "yesterday"
+        },
+        {
+          "word": "九",
+          "reading": "きゅう",
+          "gloss": "nine"
+        },
+        {
+          "word": "牛肉",
+          "reading": "ぎゅうにく",
+          "gloss": "beef"
+        },
+        {
+          "word": "牛乳",
+          "reading": "ぎゅうにゅう",
+          "gloss": "milk"
+        },
+        {
+          "word": "今日",
+          "reading": "きょう",
+          "gloss": "today, this day"
+        },
+        {
+          "word": "教室",
+          "reading": "きょうしつ",
+          "gloss": "classroom"
+        },
+        {
+          "word": "兄弟",
+          "reading": "きょうだい",
+          "gloss": "siblings (humble), brothers and sisters"
+        },
+        {
+          "word": "去年",
+          "reading": "きょねん",
+          "gloss": "last year"
+        },
+        {
+          "word": "嫌い",
+          "reading": "きらい",
+          "gloss": "dislike"
+        },
+        {
+          "word": "切る",
+          "reading": "きる",
+          "gloss": "to cut; to hang up (a phone)"
+        },
+        {
+          "word": "着る",
+          "reading": "きる",
+          "gloss": "to put on (clothes above your waist); to wear"
+        },
+        {
+          "word": "綺麗",
+          "reading": "きれい",
+          "gloss": "pretty, clean, tidy"
+        },
+        {
+          "word": "キロ",
+          "reading": "キロ; キログラム",
+          "gloss": "(abbr.) kilo (kilogram)"
+        },
+        {
+          "word": "キロ",
+          "reading": "キロ; キロメートル",
+          "gloss": "(abbr.) kilo (kilometer)"
+        },
+        {
+          "word": "銀行",
+          "reading": "ぎんこう",
+          "gloss": "bank"
+        },
+        {
+          "word": "金曜日",
+          "reading": "きんようび",
+          "gloss": "Friday"
+        },
+        {
+          "word": "九",
+          "reading": "く",
+          "gloss": "nine"
+        },
+        {
+          "word": "薬",
+          "reading": "くすり",
+          "gloss": "medicine"
+        },
+        {
+          "word": "下さい",
+          "reading": "ください",
+          "gloss": "(with te-form verb) please do for me"
+        },
+        {
+          "word": "果物",
+          "reading": "くだもの",
+          "gloss": "fruit"
+        },
+        {
+          "word": "口",
+          "reading": "くち",
+          "gloss": "job opening; mouth"
+        },
+        {
+          "word": "靴",
+          "reading": "くつ",
+          "gloss": "shoes, footwear"
+        },
+        {
+          "word": "靴下",
+          "reading": "くつした",
+          "gloss": "socks"
+        },
+        {
+          "word": "国",
+          "reading": "くに",
+          "gloss": "country; place of origin"
+        },
+        {
+          "word": "曇り",
+          "reading": "くもり",
+          "gloss": "cloudiness, cloudy weather"
+        },
+        {
+          "word": "曇る",
+          "reading": "くもる",
+          "gloss": "to become cloudy, to become dim"
+        },
+        {
+          "word": "暗い",
+          "reading": "くらい",
+          "gloss": "dark, gloomy"
+        },
+        {
+          "word": "クラス",
+          "reading": "クラス",
+          "gloss": "a class"
+        },
+        {
+          "word": "グラム",
+          "reading": "グラム",
+          "gloss": "gram"
+        },
+        {
+          "word": "来る",
+          "reading": "くる",
+          "gloss": "to come"
+        },
+        {
+          "word": "車",
+          "reading": "くるま",
+          "gloss": "car, vehicle"
+        },
+        {
+          "word": "黒",
+          "reading": "くろ",
+          "gloss": "black"
+        },
+        {
+          "word": "黒い",
+          "reading": "くろい",
+          "gloss": "black; dark"
+        },
+        {
+          "word": "警官",
+          "reading": "けいかん",
+          "gloss": "police officer"
+        },
+        {
+          "word": "今朝",
+          "reading": "けさ",
+          "gloss": "this morning"
+        },
+        {
+          "word": "消す",
+          "reading": "けす",
+          "gloss": "to erase, to delete, to turn off power"
+        },
+        {
+          "word": "結構",
+          "reading": "けっこう",
+          "gloss": "splendid; enough, tolerably"
+        },
+        {
+          "word": "結婚",
+          "reading": "けっこん (する)",
+          "gloss": "marriage (get married)"
+        },
+        {
+          "word": "月曜日",
+          "reading": "げつようび",
+          "gloss": "Monday"
+        },
+        {
+          "word": "玄関",
+          "reading": "げんかん",
+          "gloss": "entrance (to a house or a building)"
+        },
+        {
+          "word": "元気",
+          "reading": "げんき",
+          "gloss": "health(y), energetic"
+        },
+        {
+          "word": "五",
+          "reading": "ご",
+          "gloss": "five"
+        },
+        {
+          "word": "公園",
+          "reading": "こうえん",
+          "gloss": "a park"
+        },
+        {
+          "word": "交差点",
+          "reading": "こうさてん",
+          "gloss": "intersection"
+        },
+        {
+          "word": "紅茶",
+          "reading": "こうちゃ",
+          "gloss": "black tea"
+        },
+        {
+          "word": "交番",
+          "reading": "こうばん",
+          "gloss": "police box"
+        },
+        {
+          "word": "声",
+          "reading": "こえ",
+          "gloss": "voice"
+        },
+        {
+          "word": "コート",
+          "reading": "コート",
+          "gloss": "coat; court (e.g., tennis)"
+        },
+        {
+          "word": "コーヒー",
+          "reading": "コーヒー",
+          "gloss": "coffee"
+        },
+        {
+          "word": "ここ",
+          "reading": "ここ",
+          "gloss": "here, this place"
+        },
+        {
+          "word": "午後",
+          "reading": "ごご",
+          "gloss": "afternoon, P.M."
+        },
+        {
+          "word": "九日",
+          "reading": "ここのか",
+          "gloss": "nine days; ninth day of the month"
+        },
+        {
+          "word": "九つ",
+          "reading": "ここのつ",
+          "gloss": "nine things"
+        },
+        {
+          "word": "午前",
+          "reading": "ごぜん",
+          "gloss": "morning, A.M."
+        },
+        {
+          "word": "答える",
+          "reading": "こたえる",
+          "gloss": "to answer, to reply"
+        },
+        {
+          "word": "こちら",
+          "reading": "こちら",
+          "gloss": "this person (polite); this way (polite)"
+        },
+        {
+          "word": "こっち",
+          "reading": "こっち",
+          "gloss": "this person; this direction; this side"
+        },
+        {
+          "word": "コップ",
+          "reading": "コップ",
+          "gloss": "a tumbler; a glass"
+        },
+        {
+          "word": "今年",
+          "reading": "ことし",
+          "gloss": "this year"
+        },
+        {
+          "word": "言葉",
+          "reading": "ことば",
+          "gloss": "language; word(s); expression(s)"
+        },
+        {
+          "word": "子供",
+          "reading": "こども",
+          "gloss": "child(ren)"
+        },
+        {
+          "word": "この",
+          "reading": "この",
+          "gloss": "this"
+        },
+        {
+          "word": "御飯",
+          "reading": "ごはん",
+          "gloss": "rice (cooked); meal"
+        },
+        {
+          "word": "コピーする",
+          "reading": "コピーする",
+          "gloss": "to copy"
+        },
+        {
+          "word": "困る",
+          "reading": "こまる",
+          "gloss": "to be bothered, to have difficulty"
+        },
+        {
+          "word": "これ",
+          "reading": "これ",
+          "gloss": "this one"
+        },
+        {
+          "word": "今月",
+          "reading": "こんげつ",
+          "gloss": "this month"
+        },
+        {
+          "word": "今週",
+          "reading": "こんしゅう",
+          "gloss": "this week"
+        },
+        {
+          "word": "こんな",
+          "reading": "こんな",
+          "gloss": "such, like this"
+        },
+        {
+          "word": "今晩",
+          "reading": "こんばん",
+          "gloss": "tonight, this evening"
+        },
+        {
+          "word": "さあ",
+          "reading": "さあ",
+          "gloss": "come now, well"
+        },
+        {
+          "word": "財布",
+          "reading": "さいふ",
+          "gloss": "wallet"
+        },
+        {
+          "word": "魚",
+          "reading": "さかな",
+          "gloss": "fish"
+        },
+        {
+          "word": "先",
+          "reading": "さき",
+          "gloss": "future; recent, previous"
+        },
+        {
+          "word": "咲く",
+          "reading": "さく",
+          "gloss": "to bloom"
+        },
+        {
+          "word": "作文",
+          "reading": "さくぶん",
+          "gloss": "essay; composition"
+        },
+        {
+          "word": "差す",
+          "reading": "さす",
+          "gloss": "to raise (stretch out) hands, to raise (e.g., umbrella)"
+        },
+        {
+          "word": "雑誌",
+          "reading": "ざっし",
+          "gloss": "magazine, journal"
+        },
+        {
+          "word": "砂糖",
+          "reading": "さとう",
+          "gloss": "sugar"
+        },
+        {
+          "word": "寒い",
+          "reading": "さむい",
+          "gloss": "cold (in reference to weather)"
+        },
+        {
+          "word": "さ来年",
+          "reading": "さらいねん",
+          "gloss": "year after next"
+        },
+        {
+          "word": "三",
+          "reading": "さん",
+          "gloss": "three"
+        },
+        {
+          "word": "散歩",
+          "reading": "さんぽ (する)",
+          "gloss": "walk, stroll"
+        },
+        {
+          "word": "四",
+          "reading": "し",
+          "gloss": "four"
+        },
+        {
+          "word": "塩",
+          "reading": "しお",
+          "gloss": "salt"
+        },
+        {
+          "word": "しかし",
+          "reading": "しかし",
+          "gloss": "however; but"
+        },
+        {
+          "word": "時間",
+          "reading": "じかん",
+          "gloss": "time"
+        },
+        {
+          "word": "仕事",
+          "reading": "しごと",
+          "gloss": "work, job, occupation, employment"
+        },
+        {
+          "word": "辞書",
+          "reading": "じしょ",
+          "gloss": "dictionary"
+        },
+        {
+          "word": "静か",
+          "reading": "しずか",
+          "gloss": "quiet, calm"
+        },
+        {
+          "word": "下",
+          "reading": "した",
+          "gloss": "under, below, beneath"
+        },
+        {
+          "word": "七",
+          "reading": "しち",
+          "gloss": "seven"
+        },
+        {
+          "word": "質問",
+          "reading": "しつもん",
+          "gloss": "question, inquiry"
+        },
+        {
+          "word": "自転車",
+          "reading": "じてんしゃ",
+          "gloss": "bicycle"
+        },
+        {
+          "word": "自動車",
+          "reading": "じどうしゃ",
+          "gloss": "automobile"
+        },
+        {
+          "word": "死ぬ",
+          "reading": "しぬ",
+          "gloss": "to die"
+        },
+        {
+          "word": "字引",
+          "reading": "じびき",
+          "gloss": "dictionary"
+        },
+        {
+          "word": "自分",
+          "reading": "じぶん",
+          "gloss": "myself, oneself"
+        },
+        {
+          "word": "閉まる",
+          "reading": "しまる",
+          "gloss": "to close, to be closed"
+        },
+        {
+          "word": "締める",
+          "reading": "しめる",
+          "gloss": "to tie, to fasten, to tighten"
+        },
+        {
+          "word": "閉める",
+          "reading": "しめる",
+          "gloss": "to close, to shut"
+        },
+        {
+          "word": "じゃ",
+          "reading": "じゃ; じゃあ",
+          "gloss": "well, well then"
+        },
+        {
+          "word": "写真",
+          "reading": "しゃしん",
+          "gloss": "a picture; a photograph"
+        },
+        {
+          "word": "シャツ",
+          "reading": "シャツ",
+          "gloss": "shirt"
+        },
+        {
+          "word": "シャワー",
+          "reading": "シャワー",
+          "gloss": "shower"
+        },
+        {
+          "word": "十",
+          "reading": "じゅう",
+          "gloss": "ten"
+        },
+        {
+          "word": "授業",
+          "reading": "じゅぎょう",
+          "gloss": "a class (of school)"
+        },
+        {
+          "word": "宿題",
+          "reading": "しゅくだい",
+          "gloss": "homework"
+        },
+        {
+          "word": "上手",
+          "reading": "じょうず",
+          "gloss": "be good at, skillful"
+        },
+        {
+          "word": "丈夫",
+          "reading": "じょうぶ",
+          "gloss": "strong, solid, durable"
+        },
+        {
+          "word": "醤油",
+          "reading": "しょうゆ",
+          "gloss": "soy sauce"
+        },
+        {
+          "word": "食堂",
+          "reading": "しょくどう",
+          "gloss": "cafeteria, dining hall"
+        },
+        {
+          "word": "知る",
+          "reading": "しる",
+          "gloss": "to know, to understand"
+        },
+        {
+          "word": "白",
+          "reading": "しろ",
+          "gloss": "white"
+        },
+        {
+          "word": "白い",
+          "reading": "しろい",
+          "gloss": "white"
+        },
+        {
+          "word": "新聞",
+          "reading": "しんぶん",
+          "gloss": "newspaper"
+        },
+        {
+          "word": "水曜日",
+          "reading": "すいようび",
+          "gloss": "Wednesday"
+        },
+        {
+          "word": "吸う",
+          "reading": "すう",
+          "gloss": "to breathe in, to suck"
+        },
+        {
+          "word": "スカート",
+          "reading": "スカート",
+          "gloss": "skirt"
+        },
+        {
+          "word": "好き",
+          "reading": "すき",
+          "gloss": "liking, fondness, love"
+        },
+        {
+          "word": "少ない",
+          "reading": "すくない",
+          "gloss": "a little; a few"
+        },
+        {
+          "word": "すぐに",
+          "reading": "すぐに",
+          "gloss": "immediately, soon"
+        },
+        {
+          "word": "少し",
+          "reading": "すこし",
+          "gloss": "little, few"
+        },
+        {
+          "word": "涼しい",
+          "reading": "すずしい",
+          "gloss": "cool, refreshing (in reference to weather)"
+        },
+        {
+          "word": "ストーブ",
+          "reading": "ストーブ",
+          "gloss": "heater (lit: stove)"
+        },
+        {
+          "word": "スプーン",
+          "reading": "スプーン",
+          "gloss": "spoon"
+        },
+        {
+          "word": "スポーツ",
+          "reading": "スポーツ",
+          "gloss": "sport(s)"
+        },
+        {
+          "word": "ズボン",
+          "reading": "ズボン",
+          "gloss": "trousers"
+        },
+        {
+          "word": "住む",
+          "reading": "すむ",
+          "gloss": "to reside, to live in"
+        },
+        {
+          "word": "する",
+          "reading": "する",
+          "gloss": "to do, to try; to wear small items (e.g., necktie, watch, etc.)"
+        },
+        {
+          "word": "座る",
+          "reading": "すわる",
+          "gloss": "to sit"
+        },
+        {
+          "word": "背",
+          "reading": "せい",
+          "gloss": "(one's) height, stature"
+        },
+        {
+          "word": "生徒",
+          "reading": "せいと",
+          "gloss": "student; pupil"
+        },
+        {
+          "word": "セーター",
+          "reading": "セーター",
+          "gloss": "sweater"
+        },
+        {
+          "word": "石鹸",
+          "reading": "せっけん",
+          "gloss": "soap"
+        },
+        {
+          "word": "背広",
+          "reading": "せびろ",
+          "gloss": "men's suit"
+        },
+        {
+          "word": "狭い",
+          "reading": "せまい",
+          "gloss": "narrow; not spacious"
+        },
+        {
+          "word": "ゼロ",
+          "reading": "ゼロ",
+          "gloss": "zero"
+        },
+        {
+          "word": "千",
+          "reading": "せん",
+          "gloss": "thousand"
+        },
+        {
+          "word": "先月",
+          "reading": "せんげつ",
+          "gloss": "last month"
+        },
+        {
+          "word": "先週",
+          "reading": "せんしゅう",
+          "gloss": "last week"
+        },
+        {
+          "word": "先生",
+          "reading": "せんせい",
+          "gloss": "teacher, professor; master; doctor"
+        },
+        {
+          "word": "洗濯",
+          "reading": "せんたく",
+          "gloss": "washing, laundry"
+        },
+        {
+          "word": "全部",
+          "reading": "ぜんぶ",
+          "gloss": "all, entire, whole"
+        },
+        {
+          "word": "そう",
+          "reading": "そう; そうです",
+          "gloss": "yes; appears, to be the case"
+        },
+        {
+          "word": "掃除",
+          "reading": "そうじ (する)",
+          "gloss": "cleaning, sweeping"
+        },
+        {
+          "word": "そうして",
+          "reading": "そうして; そして",
+          "gloss": "and, like that"
+        },
+        {
+          "word": "そこ",
+          "reading": "そこ",
+          "gloss": "that place, there; bottom, sole"
+        },
+        {
+          "word": "そちら",
+          "reading": "そちら",
+          "gloss": "over there"
+        },
+        {
+          "word": "そっち",
+          "reading": "そっち",
+          "gloss": "over there"
+        },
+        {
+          "word": "外",
+          "reading": "そと",
+          "gloss": "outside, exterior"
+        },
+        {
+          "word": "その",
+          "reading": "その",
+          "gloss": "that"
+        },
+        {
+          "word": "そば",
+          "reading": "そば",
+          "gloss": "near, close, beside; Japanese traditional buckwheat noodle"
+        },
+        {
+          "word": "空",
+          "reading": "そら",
+          "gloss": "sky"
+        },
+        {
+          "word": "それ",
+          "reading": "それ",
+          "gloss": "that one"
+        },
+        {
+          "word": "それから",
+          "reading": "それから",
+          "gloss": "and then, after that"
+        },
+        {
+          "word": "それでは",
+          "reading": "それでは",
+          "gloss": "in that situation, well then..."
+        },
+        {
+          "word": "大学",
+          "reading": "だいがく",
+          "gloss": "college; university"
+        },
+        {
+          "word": "大使館",
+          "reading": "たいしかん",
+          "gloss": "embassy"
+        },
+        {
+          "word": "大丈夫",
+          "reading": "だいじょうぶ",
+          "gloss": "It's ok (all right); No need to worry; Everything is under control"
+        },
+        {
+          "word": "大好き",
+          "reading": "だいすき",
+          "gloss": "very like-able, like very much"
+        },
+        {
+          "word": "大切",
+          "reading": "たいせつ",
+          "gloss": "important"
+        },
+        {
+          "word": "台所",
+          "reading": "だいどころ",
+          "gloss": "kitchen"
+        },
+        {
+          "word": "大変",
+          "reading": "たいへん",
+          "gloss": "very; difficult, hard"
+        },
+        {
+          "word": "高い",
+          "reading": "たかい",
+          "gloss": "tall, high; expensive"
+        },
+        {
+          "word": "沢山",
+          "reading": "たくさん",
+          "gloss": "many, much"
+        },
+        {
+          "word": "タクシー",
+          "reading": "タクシー",
+          "gloss": "taxi"
+        },
+        {
+          "word": "出す",
+          "reading": "だす",
+          "gloss": "to take (something) out; to hand in (something)"
+        },
+        {
+          "word": "立つ",
+          "reading": "たつ",
+          "gloss": "to stand up"
+        },
+        {
+          "word": "たて",
+          "reading": "たて",
+          "gloss": "length, height"
+        },
+        {
+          "word": "建物",
+          "reading": "たてもの",
+          "gloss": "building"
+        },
+        {
+          "word": "楽しい",
+          "reading": "たのしい",
+          "gloss": "enjoyable, fun"
+        },
+        {
+          "word": "頼む",
+          "reading": "たのむ",
+          "gloss": "to request, to ask (a favor)"
+        },
+        {
+          "word": "たばこ",
+          "reading": "たばこ",
+          "gloss": "tobacco, cigarettes"
+        },
+        {
+          "word": "多分",
+          "reading": "たぶん",
+          "gloss": "perhaps, probably, maybe"
+        },
+        {
+          "word": "食べ物",
+          "reading": "たべもの",
+          "gloss": "food"
+        },
+        {
+          "word": "食べる",
+          "reading": "たべる",
+          "gloss": "to eat"
+        },
+        {
+          "word": "卵",
+          "reading": "たまご",
+          "gloss": "egg"
+        },
+        {
+          "word": "誰",
+          "reading": "だれ",
+          "gloss": "who"
+        },
+        {
+          "word": "誰か",
+          "reading": "だれか",
+          "gloss": "someone"
+        },
+        {
+          "word": "誕生日",
+          "reading": "たんじょうび",
+          "gloss": "birthday"
+        },
+        {
+          "word": "段々",
+          "reading": "だんだん",
+          "gloss": "gradually, by degrees"
+        },
+        {
+          "word": "小さい",
+          "reading": "ちいさい",
+          "gloss": "small, little"
+        },
+        {
+          "word": "小さな",
+          "reading": "ちいさな",
+          "gloss": "small, little"
+        },
+        {
+          "word": "近い",
+          "reading": "ちかい",
+          "gloss": "near, close by, short"
+        },
+        {
+          "word": "違う",
+          "reading": "ちがう",
+          "gloss": "to be different; to differ; wrong"
+        },
+        {
+          "word": "近く",
+          "reading": "ちかく",
+          "gloss": "nearby; in the neighborhood"
+        },
+        {
+          "word": "地下鉄",
+          "reading": "ちかてつ",
+          "gloss": "underground train, subway"
+        },
+        {
+          "word": "地図",
+          "reading": "ちず",
+          "gloss": "a map"
+        },
+        {
+          "word": "父",
+          "reading": "ちち",
+          "gloss": "(my) father"
+        },
+        {
+          "word": "茶色",
+          "reading": "ちゃいろ",
+          "gloss": "brown"
+        },
+        {
+          "word": "茶碗",
+          "reading": "ちゃわん",
+          "gloss": "rice bowl"
+        },
+        {
+          "word": "丁度",
+          "reading": "ちょうど",
+          "gloss": "just, right, exactly"
+        },
+        {
+          "word": "ちょっと",
+          "reading": "ちょっと",
+          "gloss": "a little, somewhat; just a little, somewhat"
+        },
+        {
+          "word": "一日",
+          "reading": "ついたち",
+          "gloss": "one day; first day of the month"
+        },
+        {
+          "word": "使う",
+          "reading": "つかう",
+          "gloss": "to use"
+        },
+        {
+          "word": "疲れる",
+          "reading": "つかれる",
+          "gloss": "to get (become) tired; to become fatigued"
+        },
+        {
+          "word": "次",
+          "reading": "つぎ",
+          "gloss": "next"
+        },
+        {
+          "word": "着く",
+          "reading": "つく",
+          "gloss": "to arrive at, to reach"
+        },
+        {
+          "word": "机",
+          "reading": "つくえ",
+          "gloss": "desk"
+        },
+        {
+          "word": "作る",
+          "reading": "つくる",
+          "gloss": "to make, to create"
+        },
+        {
+          "word": "つける",
+          "reading": "つける",
+          "gloss": "to turn on (e.g., a light); to take"
+        },
+        {
+          "word": "勤める",
+          "reading": "つとめる",
+          "gloss": "to work (for)"
+        },
+        {
+          "word": "つまらない",
+          "reading": "つまらない",
+          "gloss": "boring, dull; insignificant"
+        },
+        {
+          "word": "冷たい",
+          "reading": "つめたい",
+          "gloss": "cold (things, people)"
+        },
+        {
+          "word": "強い",
+          "reading": "つよい",
+          "gloss": "strong, powerful"
+        },
+        {
+          "word": "手",
+          "reading": "て",
+          "gloss": "hand"
+        },
+        {
+          "word": "テープ",
+          "reading": "テープ",
+          "gloss": "tape"
+        },
+        {
+          "word": "テーブル",
+          "reading": "テーブル",
+          "gloss": "table"
+        },
+        {
+          "word": "テープレコーダー",
+          "reading": "テープレコーダー",
+          "gloss": "tape recorder"
+        },
+        {
+          "word": "出かける",
+          "reading": "でかける",
+          "gloss": "to go out; to depart"
+        },
+        {
+          "word": "手紙",
+          "reading": "てがみ",
+          "gloss": "letter"
+        },
+        {
+          "word": "できる",
+          "reading": "できる",
+          "gloss": "to be able to (to accomplish)"
+        },
+        {
+          "word": "出口",
+          "reading": "でぐち",
+          "gloss": "an exit"
+        },
+        {
+          "word": "テスト",
+          "reading": "テスト",
+          "gloss": "test"
+        },
+        {
+          "word": "では",
+          "reading": "では",
+          "gloss": "then, well, so"
+        },
+        {
+          "word": "デパート",
+          "reading": "デパート",
+          "gloss": "(abbr.) department store"
+        },
+        {
+          "word": "でも",
+          "reading": "でも",
+          "gloss": "but, however"
+        },
+        {
+          "word": "出る",
+          "reading": "でる",
+          "gloss": "to appear, to leave"
+        },
+        {
+          "word": "テレビ",
+          "reading": "テレビ",
+          "gloss": "television, TV"
+        },
+        {
+          "word": "天気",
+          "reading": "てんき",
+          "gloss": "weather"
+        },
+        {
+          "word": "電気",
+          "reading": "でんき",
+          "gloss": "electricity, (electric) light"
+        },
+        {
+          "word": "電車",
+          "reading": "でんしゃ",
+          "gloss": "electric train"
+        },
+        {
+          "word": "電話",
+          "reading": "でんわ",
+          "gloss": "a telephone"
+        },
+        {
+          "word": "戸",
+          "reading": "と",
+          "gloss": "door (Japanese style)"
+        },
+        {
+          "word": "ドア",
+          "reading": "ドア",
+          "gloss": "door (Western style)"
+        },
+        {
+          "word": "トイレ",
+          "reading": "トイレ",
+          "gloss": "bathroom; toilet"
+        },
+        {
+          "word": "どう",
+          "reading": "どう",
+          "gloss": "how, in what way"
+        },
+        {
+          "word": "どうして",
+          "reading": "どうして",
+          "gloss": "why, for what reason"
+        },
+        {
+          "word": "どうぞ",
+          "reading": "どうぞ",
+          "gloss": "please, kindly, by all means"
+        },
+        {
+          "word": "動物",
+          "reading": "どうぶつ",
+          "gloss": "animal"
+        },
+        {
+          "word": "どうも",
+          "reading": "どうも",
+          "gloss": "Thank you; somehow; no matter how hard one may try"
+        },
+        {
+          "word": "遠い",
+          "reading": "とおい",
+          "gloss": "far (away), distant"
+        },
+        {
+          "word": "十日",
+          "reading": "とおか",
+          "gloss": "ten days; tenth day of the month"
+        },
+        {
+          "word": "時々",
+          "reading": "ときどき",
+          "gloss": "sometimes"
+        },
+        {
+          "word": "時計",
+          "reading": "とけい",
+          "gloss": "a watch; a clock"
+        },
+        {
+          "word": "どこ",
+          "reading": "どこ",
+          "gloss": "where, what place"
+        },
+        {
+          "word": "所",
+          "reading": "ところ",
+          "gloss": "place"
+        },
+        {
+          "word": "年",
+          "reading": "とし",
+          "gloss": "year, age"
+        },
+        {
+          "word": "図書館",
+          "reading": "としょかん",
+          "gloss": "library"
+        },
+        {
+          "word": "どちら",
+          "reading": "どちら",
+          "gloss": "which (one) (way); where (polite)"
+        },
+        {
+          "word": "どっち",
+          "reading": "どっち",
+          "gloss": "which one, which way"
+        },
+        {
+          "word": "とても",
+          "reading": "とても",
+          "gloss": "very (much), greatly, exceedingly"
+        },
+        {
+          "word": "どなた",
+          "reading": "どなた",
+          "gloss": "who"
+        },
+        {
+          "word": "隣",
+          "reading": "となり",
+          "gloss": "next to, next door to"
+        },
+        {
+          "word": "どの",
+          "reading": "どの",
+          "gloss": "which"
+        },
+        {
+          "word": "飛ぶ",
+          "reading": "とぶ",
+          "gloss": "to fly, to hop"
+        },
+        {
+          "word": "止まる",
+          "reading": "とまる",
+          "gloss": "to come to a halt"
+        },
+        {
+          "word": "友達",
+          "reading": "ともだち",
+          "gloss": "friend"
+        },
+        {
+          "word": "土曜日",
+          "reading": "どようび",
+          "gloss": "Saturday"
+        },
+        {
+          "word": "鳥",
+          "reading": "とり",
+          "gloss": "chicken (lit., bird)"
+        },
+        {
+          "word": "鶏肉",
+          "reading": "とりにく",
+          "gloss": "chicken meat"
+        },
+        {
+          "word": "撮る",
+          "reading": "とる",
+          "gloss": "to take (a photo), to make (a film)"
+        },
+        {
+          "word": "取る",
+          "reading": "とる",
+          "gloss": "to take (a class); to get (a grade)"
+        },
+        {
+          "word": "どれ",
+          "reading": "どれ",
+          "gloss": "which one"
+        },
+        {
+          "word": "どんな",
+          "reading": "どんな",
+          "gloss": "what, what kind of"
+        },
+        {
+          "word": "ない",
+          "reading": "ない",
+          "gloss": "there isn't, doesn't have"
+        },
+        {
+          "word": "ナイフ",
+          "reading": "ナイフ",
+          "gloss": "knife"
+        },
+        {
+          "word": "中",
+          "reading": "なか",
+          "gloss": "inside, middle, among"
+        },
+        {
+          "word": "長い",
+          "reading": "ながい",
+          "gloss": "long, lengthy"
+        },
+        {
+          "word": "鳴く",
+          "reading": "なく",
+          "gloss": "to make sound (animal)"
+        },
+        {
+          "word": "無くす",
+          "reading": "なくす",
+          "gloss": "to lose something"
+        },
+        {
+          "word": "なぜ",
+          "reading": "なぜ",
+          "gloss": "why (same as どうして)"
+        },
+        {
+          "word": "夏",
+          "reading": "なつ",
+          "gloss": "summer"
+        },
+        {
+          "word": "夏休み",
+          "reading": "なつやすみ",
+          "gloss": "summer vacation"
+        },
+        {
+          "word": "七つ",
+          "reading": "ななつ",
+          "gloss": "seven things"
+        },
+        {
+          "word": "七日",
+          "reading": "なのか",
+          "gloss": "seven days; seventh day (of the month)"
+        },
+        {
+          "word": "名前",
+          "reading": "なまえ",
+          "gloss": "name"
+        },
+        {
+          "word": "習う",
+          "reading": "ならう",
+          "gloss": "to learn"
+        },
+        {
+          "word": "並ぶ",
+          "reading": "ならぶ",
+          "gloss": "to line up, to stand in a line (v.i.)"
+        },
+        {
+          "word": "並べる",
+          "reading": "ならべる",
+          "gloss": "to put (things) side by side; to line up"
+        },
+        {
+          "word": "なる",
+          "reading": "なる",
+          "gloss": "to become"
+        },
+        {
+          "word": "何",
+          "reading": "なん; なに",
+          "gloss": "what"
+        },
+        {
+          "word": "何～",
+          "reading": "なん～",
+          "gloss": "what sort of ~"
+        },
+        {
+          "word": "二",
+          "reading": "に",
+          "gloss": "two"
+        },
+        {
+          "word": "にぎやか",
+          "reading": "にぎやか",
+          "gloss": "bustling, busy"
+        },
+        {
+          "word": "肉",
+          "reading": "にく",
+          "gloss": "meat"
+        },
+        {
+          "word": "西",
+          "reading": "にし",
+          "gloss": "west"
+        },
+        {
+          "word": "日曜日",
+          "reading": "にちようび",
+          "gloss": "Sunday"
+        },
+        {
+          "word": "荷物",
+          "reading": "にもつ",
+          "gloss": "luggage; baggage"
+        },
+        {
+          "word": "ニュース",
+          "reading": "ニュース",
+          "gloss": "news"
+        },
+        {
+          "word": "庭",
+          "reading": "にわ",
+          "gloss": "garden"
+        },
+        {
+          "word": "脱ぐ",
+          "reading": "ぬぐ",
+          "gloss": "to take off (clothes)"
+        },
+        {
+          "word": "温い",
+          "reading": "ぬるい",
+          "gloss": "lukewarm"
+        },
+        {
+          "word": "ネクタイ",
+          "reading": "ネクタイ",
+          "gloss": "tie, necktie"
+        },
+        {
+          "word": "猫",
+          "reading": "ねこ",
+          "gloss": "cat"
+        },
+        {
+          "word": "寝る",
+          "reading": "ねる",
+          "gloss": "to sleep; to go to sleep; to go to bed"
+        },
+        {
+          "word": "ノート",
+          "reading": "ノート",
+          "gloss": "notebook"
+        },
+        {
+          "word": "登る",
+          "reading": "のぼる",
+          "gloss": "to climb"
+        },
+        {
+          "word": "飲み物",
+          "reading": "のみもの",
+          "gloss": "drink, beverage"
+        },
+        {
+          "word": "飲む",
+          "reading": "のむ",
+          "gloss": "to drink"
+        },
+        {
+          "word": "乗る",
+          "reading": "のる",
+          "gloss": "to get on, to ride in, to board"
+        },
+        {
+          "word": "歯",
+          "reading": "は",
+          "gloss": "tooth"
+        },
+        {
+          "word": "パーティー",
+          "reading": "パーティー",
+          "gloss": "a party"
+        },
+        {
+          "word": "はい",
+          "reading": "はい",
+          "gloss": "yes"
+        },
+        {
+          "word": "灰皿",
+          "reading": "はいざら",
+          "gloss": "ashtray"
+        },
+        {
+          "word": "入る",
+          "reading": "はいる",
+          "gloss": "to enter, to contain, to hold"
+        },
+        {
+          "word": "葉書",
+          "reading": "はがき",
+          "gloss": "postcard"
+        },
+        {
+          "word": "はく",
+          "reading": "はく",
+          "gloss": "to put on (items below your waist)"
+        },
+        {
+          "word": "箱",
+          "reading": "はこ",
+          "gloss": "box"
+        },
+        {
+          "word": "橋",
+          "reading": "はし",
+          "gloss": "bridge"
+        },
+        {
+          "word": "箸",
+          "reading": "はし",
+          "gloss": "chopsticks"
+        },
+        {
+          "word": "始まる",
+          "reading": "はじまる",
+          "gloss": "(something) begins"
+        },
+        {
+          "word": "初め",
+          "reading": "はじめ",
+          "gloss": "beginning, start"
+        },
+        {
+          "word": "初めて",
+          "reading": "はじめて",
+          "gloss": "for the first time"
+        },
+        {
+          "word": "走る",
+          "reading": "はしる",
+          "gloss": "to run"
+        },
+        {
+          "word": "バス",
+          "reading": "バス",
+          "gloss": "bus; bath; bass"
+        },
+        {
+          "word": "バター",
+          "reading": "バター",
+          "gloss": "butter"
+        },
+        {
+          "word": "二十歳",
+          "reading": "はたち",
+          "gloss": "20 years old"
+        },
+        {
+          "word": "働く",
+          "reading": "はたらく",
+          "gloss": "to work"
+        },
+        {
+          "word": "八",
+          "reading": "はち",
+          "gloss": "eight"
+        },
+        {
+          "word": "二十日",
+          "reading": "はつか",
+          "gloss": "twenty days, twentieth (day of the month)"
+        },
+        {
+          "word": "花",
+          "reading": "はな",
+          "gloss": "flower"
+        },
+        {
+          "word": "鼻",
+          "reading": "はな",
+          "gloss": "nose"
+        },
+        {
+          "word": "話",
+          "reading": "はなし",
+          "gloss": "talk (chat), story"
+        },
+        {
+          "word": "話す",
+          "reading": "はなす",
+          "gloss": "to speak"
+        },
+        {
+          "word": "母",
+          "reading": "はは",
+          "gloss": "(my) mother"
+        },
+        {
+          "word": "早い",
+          "reading": "はやい",
+          "gloss": "early"
+        },
+        {
+          "word": "速い",
+          "reading": "はやい",
+          "gloss": "fast, quick"
+        },
+        {
+          "word": "春",
+          "reading": "はる",
+          "gloss": "spring"
+        },
+        {
+          "word": "貼る",
+          "reading": "はる",
+          "gloss": "to post; to paste; to attach"
+        },
+        {
+          "word": "晴れ",
+          "reading": "はれ",
+          "gloss": "clear (sunny) weather"
+        },
+        {
+          "word": "晴れる",
+          "reading": "はれる",
+          "gloss": "to be sunny"
+        },
+        {
+          "word": "半",
+          "reading": "はん",
+          "gloss": "half (e.g., にじはん | half-past two)"
+        },
+        {
+          "word": "晩",
+          "reading": "ばん",
+          "gloss": "evening"
+        },
+        {
+          "word": "パン",
+          "reading": "パン",
+          "gloss": "bread"
+        },
+        {
+          "word": "ハンカチ",
+          "reading": "ハンカチ",
+          "gloss": "handkerchief"
+        },
+        {
+          "word": "番号",
+          "reading": "ばんごう",
+          "gloss": "number, series of digits"
+        },
+        {
+          "word": "晩御飯",
+          "reading": "ばんごはん",
+          "gloss": "dinner, evening meal"
+        },
+        {
+          "word": "半分",
+          "reading": "はんぶん",
+          "gloss": "half"
+        },
+        {
+          "word": "東",
+          "reading": "ひがし",
+          "gloss": "east"
+        },
+        {
+          "word": "引く",
+          "reading": "ひく",
+          "gloss": "to pull, to draw; subtract"
+        },
+        {
+          "word": "弾く",
+          "reading": "ひく",
+          "gloss": "to play (a string instrument or piano)"
+        },
+        {
+          "word": "低い",
+          "reading": "ひくい",
+          "gloss": "short, low"
+        },
+        {
+          "word": "飛行機",
+          "reading": "ひこうき",
+          "gloss": "airplane"
+        },
+        {
+          "word": "左",
+          "reading": "ひだり",
+          "gloss": "left hand side"
+        },
+        {
+          "word": "人",
+          "reading": "ひと",
+          "gloss": "man, person"
+        },
+        {
+          "word": "一つ",
+          "reading": "ひとつ",
+          "gloss": "one thing"
+        },
+        {
+          "word": "一月",
+          "reading": "ひとつき",
+          "gloss": "one month"
+        },
+        {
+          "word": "一人",
+          "reading": "ひとり",
+          "gloss": "one person"
+        },
+        {
+          "word": "暇",
+          "reading": "ひま",
+          "gloss": "free time, leisure"
+        },
+        {
+          "word": "百",
+          "reading": "ひゃく",
+          "gloss": "hundred"
+        },
+        {
+          "word": "病院",
+          "reading": "びょういん",
+          "gloss": "hospital"
+        },
+        {
+          "word": "病気",
+          "reading": "びょうき",
+          "gloss": "illness; sickness"
+        },
+        {
+          "word": "平仮名",
+          "reading": "ひらがな",
+          "gloss": "hiragana"
+        },
+        {
+          "word": "昼",
+          "reading": "ひる",
+          "gloss": "noon, daytime"
+        },
+        {
+          "word": "昼御飯",
+          "reading": "ひるごはん",
+          "gloss": "lunch, midday meal"
+        },
+        {
+          "word": "広い",
+          "reading": "ひろい",
+          "gloss": "spacious; wide; broad"
+        },
+        {
+          "word": "フィルム",
+          "reading": "フィルム",
+          "gloss": "film (roll of)"
+        },
+        {
+          "word": "封筒",
+          "reading": "ふうとう",
+          "gloss": "envelope"
+        },
+        {
+          "word": "プール",
+          "reading": "プール",
+          "gloss": "swimming pool"
+        },
+        {
+          "word": "フォーク",
+          "reading": "フォーク",
+          "gloss": "fork"
+        },
+        {
+          "word": "吹く",
+          "reading": "ふく",
+          "gloss": "to blow (wind, etc.)"
+        },
+        {
+          "word": "服",
+          "reading": "ふく",
+          "gloss": "clothes"
+        },
+        {
+          "word": "二つ",
+          "reading": "ふたつ",
+          "gloss": "two things"
+        },
+        {
+          "word": "豚肉",
+          "reading": "ぶたにく",
+          "gloss": "pork"
+        },
+        {
+          "word": "二人",
+          "reading": "ふたり",
+          "gloss": "two people"
+        },
+        {
+          "word": "二日",
+          "reading": "ふつか",
+          "gloss": "two days; second day of the month"
+        },
+        {
+          "word": "太い",
+          "reading": "ふとい",
+          "gloss": "fat, thick"
+        },
+        {
+          "word": "冬",
+          "reading": "ふゆ",
+          "gloss": "winter"
+        },
+        {
+          "word": "降る",
+          "reading": "ふる",
+          "gloss": "to precipitate, to fall (e.g., rain, snow, etc.)"
+        },
+        {
+          "word": "古い",
+          "reading": "ふるい",
+          "gloss": "old (in reference to objects, not people), aged, ancient"
+        },
+        {
+          "word": "文章",
+          "reading": "ぶんしょう",
+          "gloss": "sentence, text"
+        },
+        {
+          "word": "ページ",
+          "reading": "ページ",
+          "gloss": "a page"
+        },
+        {
+          "word": "下手",
+          "reading": "へた",
+          "gloss": "unskillful, poor"
+        },
+        {
+          "word": "ベッド",
+          "reading": "ベッド",
+          "gloss": "bed"
+        },
+        {
+          "word": "ペット",
+          "reading": "ペット",
+          "gloss": "pet"
+        },
+        {
+          "word": "部屋",
+          "reading": "へや",
+          "gloss": "a room"
+        },
+        {
+          "word": "辺",
+          "reading": "へん",
+          "gloss": "area, vicinity"
+        },
+        {
+          "word": "ペン",
+          "reading": "ペン",
+          "gloss": "pen"
+        },
+        {
+          "word": "勉強",
+          "reading": "べんきょう (する)",
+          "gloss": "study"
+        },
+        {
+          "word": "便利",
+          "reading": "べんり",
+          "gloss": "convenient, handy"
+        },
+        {
+          "word": "帽子",
+          "reading": "ぼうし",
+          "gloss": "hat; cap"
+        },
+        {
+          "word": "ボールペン",
+          "reading": "ボールペン",
+          "gloss": "ball-point pen"
+        },
+        {
+          "word": "外",
+          "reading": "ほか",
+          "gloss": "other, the rest"
+        },
+        {
+          "word": "ポケット",
+          "reading": "ポケット",
+          "gloss": "pocket"
+        },
+        {
+          "word": "欲しい",
+          "reading": "ほしい",
+          "gloss": "to want, in need of"
+        },
+        {
+          "word": "ポスト",
+          "reading": "ポスト",
+          "gloss": "mailbox; post, position"
+        },
+        {
+          "word": "細い",
+          "reading": "ほそい",
+          "gloss": "thin, slender, fine"
+        },
+        {
+          "word": "ボタン",
+          "reading": "ボタン",
+          "gloss": "button"
+        },
+        {
+          "word": "ホテル",
+          "reading": "ホテル",
+          "gloss": "hotel"
+        },
+        {
+          "word": "本",
+          "reading": "ほん",
+          "gloss": "book"
+        },
+        {
+          "word": "本棚",
+          "reading": "ほんだな",
+          "gloss": "bookshelf"
+        },
+        {
+          "word": "本当",
+          "reading": "ほんとう",
+          "gloss": "real, true"
+        },
+        {
+          "word": "毎朝",
+          "reading": "まいあさ",
+          "gloss": "every morning"
+        },
+        {
+          "word": "毎月",
+          "reading": "まいげつ; まいつき",
+          "gloss": "every month, monthly"
+        },
+        {
+          "word": "毎週",
+          "reading": "まいしゅう",
+          "gloss": "every week"
+        },
+        {
+          "word": "毎日",
+          "reading": "まいにち",
+          "gloss": "every day"
+        },
+        {
+          "word": "毎年",
+          "reading": "まいねん; まいとし",
+          "gloss": "every year, yearly, annually"
+        },
+        {
+          "word": "毎晩",
+          "reading": "まいばん",
+          "gloss": "every night"
+        },
+        {
+          "word": "前",
+          "reading": "まえ",
+          "gloss": "before, in front"
+        },
+        {
+          "word": "曲る",
+          "reading": "まがる",
+          "gloss": "to turn, to bend"
+        },
+        {
+          "word": "まずい",
+          "reading": "まずい",
+          "gloss": "terrible (in reference to food), unappetizing, unpleasant (taste)"
+        },
+        {
+          "word": "また",
+          "reading": "また",
+          "gloss": "and; furthermore"
+        },
+        {
+          "word": "まだ",
+          "reading": "まだ",
+          "gloss": "yet, still, besides"
+        },
+        {
+          "word": "町",
+          "reading": "まち",
+          "gloss": "town; city"
+        },
+        {
+          "word": "待つ",
+          "reading": "まつ",
+          "gloss": "to wait"
+        },
+        {
+          "word": "まっすぐ",
+          "reading": "まっすぐ",
+          "gloss": "straight (ahead), direct"
+        },
+        {
+          "word": "マッチ",
+          "reading": "マッチ",
+          "gloss": "match"
+        },
+        {
+          "word": "窓",
+          "reading": "まど",
+          "gloss": "window"
+        },
+        {
+          "word": "丸い",
+          "reading": "まるい",
+          "gloss": "round, circular"
+        },
+        {
+          "word": "万",
+          "reading": "まん",
+          "gloss": "ten thousand"
+        },
+        {
+          "word": "万年筆",
+          "reading": "まんねんひつ",
+          "gloss": "fountain pen"
+        },
+        {
+          "word": "磨く",
+          "reading": "みがく",
+          "gloss": "to brush (teeth); to polish"
+        },
+        {
+          "word": "右",
+          "reading": "みぎ",
+          "gloss": "right hand side"
+        },
+        {
+          "word": "短い",
+          "reading": "みじかい",
+          "gloss": "short (length)"
+        },
+        {
+          "word": "水",
+          "reading": "みず",
+          "gloss": "water"
+        },
+        {
+          "word": "店",
+          "reading": "みせ",
+          "gloss": "store, shop"
+        },
+        {
+          "word": "見せる",
+          "reading": "みせる",
+          "gloss": "to show, to display"
+        },
+        {
+          "word": "道",
+          "reading": "みち",
+          "gloss": "road, street; way, directions"
+        },
+        {
+          "word": "三日",
+          "reading": "みっか",
+          "gloss": "three days, third day of the month"
+        },
+        {
+          "word": "三つ",
+          "reading": "みっつ",
+          "gloss": "three things"
+        },
+        {
+          "word": "緑",
+          "reading": "みどり",
+          "gloss": "green"
+        },
+        {
+          "word": "皆さん",
+          "reading": "みなさん",
+          "gloss": "all of you, everyone"
+        },
+        {
+          "word": "南",
+          "reading": "みなみ",
+          "gloss": "South"
+        },
+        {
+          "word": "耳",
+          "reading": "みみ",
+          "gloss": "ear"
+        },
+        {
+          "word": "見る",
+          "reading": "みる",
+          "gloss": "to see, to look"
+        },
+        {
+          "word": "みんな",
+          "reading": "みんな",
+          "gloss": "all, everyone, everybody"
+        },
+        {
+          "word": "六日",
+          "reading": "むいか",
+          "gloss": "six days; sixth day of month"
+        },
+        {
+          "word": "向こう",
+          "reading": "むこう",
+          "gloss": "beyond, over there"
+        },
+        {
+          "word": "難しい",
+          "reading": "むずかしい",
+          "gloss": "difficult"
+        },
+        {
+          "word": "六つ",
+          "reading": "むっつ",
+          "gloss": "six things"
+        },
+        {
+          "word": "村",
+          "reading": "むら",
+          "gloss": "village"
+        },
+        {
+          "word": "目",
+          "reading": "め",
+          "gloss": "eye(s)"
+        },
+        {
+          "word": "メートル",
+          "reading": "メートル",
+          "gloss": "meter"
+        },
+        {
+          "word": "眼鏡",
+          "reading": "めがね",
+          "gloss": "eye glasses"
+        },
+        {
+          "word": "もう",
+          "reading": "もう",
+          "gloss": "already; again; more"
+        },
+        {
+          "word": "木曜日",
+          "reading": "もくようび",
+          "gloss": "Thursday"
+        },
+        {
+          "word": "もしもし",
+          "reading": "もしもし",
+          "gloss": "Hello? (used on the phone)"
+        },
+        {
+          "word": "持つ",
+          "reading": "もつ",
+          "gloss": "to hold, to carry; to possess"
+        },
+        {
+          "word": "もっと",
+          "reading": "もっと",
+          "gloss": "more"
+        },
+        {
+          "word": "物",
+          "reading": "もの",
+          "gloss": "thing (concrete object)"
+        },
+        {
+          "word": "門",
+          "reading": "もん",
+          "gloss": "gate"
+        },
+        {
+          "word": "問題",
+          "reading": "もんだい",
+          "gloss": "a problem"
+        },
+        {
+          "word": "八百屋",
+          "reading": "やおや",
+          "gloss": "greengrocer"
+        },
+        {
+          "word": "野菜",
+          "reading": "やさい",
+          "gloss": "vegetable"
+        },
+        {
+          "word": "易しい",
+          "reading": "やさしい",
+          "gloss": "easy, plain, simple"
+        },
+        {
+          "word": "安い",
+          "reading": "やすい",
+          "gloss": "inexpensive; cheap (things)"
+        },
+        {
+          "word": "休み",
+          "reading": "やすみ",
+          "gloss": "holiday; day off; absence"
+        },
+        {
+          "word": "休む",
+          "reading": "やすむ",
+          "gloss": "to rest, to have a break, to get time off"
+        },
+        {
+          "word": "八つ",
+          "reading": "やっつ",
+          "gloss": "eight things"
+        },
+        {
+          "word": "山",
+          "reading": "やま",
+          "gloss": "mountain"
+        },
+        {
+          "word": "やる",
+          "reading": "やる",
+          "gloss": "to do; to give (to pets, parents, siblings, etc.)"
+        },
+        {
+          "word": "夕方",
+          "reading": "ゆうがた",
+          "gloss": "late afternoon (typically just before dinner time), evening"
+        },
+        {
+          "word": "夕飯",
+          "reading": "ゆうはん",
+          "gloss": "dinner, supper, evening meal"
+        },
+        {
+          "word": "郵便局",
+          "reading": "ゆうびんきょく",
+          "gloss": "post office"
+        },
+        {
+          "word": "昨夜",
+          "reading": "ゆうべ",
+          "gloss": "last night"
+        },
+        {
+          "word": "有名",
+          "reading": "ゆうめい",
+          "gloss": "famous"
+        },
+        {
+          "word": "雪",
+          "reading": "ゆき",
+          "gloss": "snow"
+        },
+        {
+          "word": "ゆっくりと",
+          "reading": "ゆっくりと",
+          "gloss": "slowly, at ease"
+        },
+        {
+          "word": "八日",
+          "reading": "ようか",
+          "gloss": "eight days; eighth day of the month"
+        },
+        {
+          "word": "洋服",
+          "reading": "ようふく",
+          "gloss": "Western-style clothes"
+        },
+        {
+          "word": "よく",
+          "reading": "よく",
+          "gloss": "frequently, often (much); well, skillfully"
+        },
+        {
+          "word": "横",
+          "reading": "よこ",
+          "gloss": "beside; side; width"
+        },
+        {
+          "word": "四日",
+          "reading": "よっか",
+          "gloss": "four days; fourth day of the month"
+        },
+        {
+          "word": "四つ",
+          "reading": "よっつ",
+          "gloss": "four things"
+        },
+        {
+          "word": "呼ぶ",
+          "reading": "よぶ",
+          "gloss": "to call (one's name); to invite"
+        },
+        {
+          "word": "読む",
+          "reading": "よむ",
+          "gloss": "to read"
+        },
+        {
+          "word": "夜",
+          "reading": "よる",
+          "gloss": "evening, night"
+        },
+        {
+          "word": "弱い",
+          "reading": "よわい",
+          "gloss": "weak"
+        },
+        {
+          "word": "来月",
+          "reading": "らいげつ",
+          "gloss": "next month"
+        },
+        {
+          "word": "来週",
+          "reading": "らいしゅう",
+          "gloss": "next week"
+        },
+        {
+          "word": "来年",
+          "reading": "らいねん",
+          "gloss": "next year"
+        },
+        {
+          "word": "ラジオ",
+          "reading": "ラジオ",
+          "gloss": "radio"
+        },
+        {
+          "word": "ラジオカセ",
+          "reading": "ラジオカセ",
+          "gloss": "radio cassette player"
+        },
+        {
+          "word": "りっぱ",
+          "reading": "りっぱ",
+          "gloss": "splendid, fine"
+        },
+        {
+          "word": "留学生",
+          "reading": "りゅうがくせい",
+          "gloss": "international student"
+        },
+        {
+          "word": "両親",
+          "reading": "りょうしん",
+          "gloss": "parents (lit., both parents)"
+        },
+        {
+          "word": "料理",
+          "reading": "りょうり",
+          "gloss": "cooking; cuisine"
+        },
+        {
+          "word": "旅行",
+          "reading": "りょこう",
+          "gloss": "travel, trip"
+        },
+        {
+          "word": "零",
+          "reading": "れい",
+          "gloss": "zero, nought"
+        },
+        {
+          "word": "冷蔵庫",
+          "reading": "れいぞうこ",
+          "gloss": "refrigerator"
+        },
+        {
+          "word": "レコード",
+          "reading": "レコード",
+          "gloss": "record"
+        },
+        {
+          "word": "レストラン",
+          "reading": "レストラン",
+          "gloss": "restaurant"
+        },
+        {
+          "word": "練習",
+          "reading": "れんしゅう (する)",
+          "gloss": "(to) practice"
+        },
+        {
+          "word": "廊下",
+          "reading": "ろうか",
+          "gloss": "corridor"
+        },
+        {
+          "word": "六",
+          "reading": "ろく",
+          "gloss": "six"
+        },
+        {
+          "word": "ワイシャツ",
+          "reading": "ワイシャツ",
+          "gloss": "shirt (lit: white shirt), business shirt"
+        },
+        {
+          "word": "若い",
+          "reading": "わかい",
+          "gloss": "young"
+        },
+        {
+          "word": "分かる",
+          "reading": "わかる",
+          "gloss": "to understand"
+        },
+        {
+          "word": "忘れる",
+          "reading": "わすれる",
+          "gloss": "to forget"
+        },
+        {
+          "word": "私",
+          "reading": "わたくし",
+          "gloss": "I (formal), myself, private affairs"
+        },
+        {
+          "word": "私",
+          "reading": "わたし",
+          "gloss": "I, myself"
+        },
+        {
+          "word": "渡す",
+          "reading": "わたす",
+          "gloss": "to hand (something) over (v.t.); to get across"
+        },
+        {
+          "word": "渡る",
+          "reading": "わたる",
+          "gloss": "to cross over, to go across"
+        },
+        {
+          "word": "悪い",
+          "reading": "わるい",
+          "gloss": "bad, sinful; inferior"
+        }
+      ]
+    },
+    {
+      "id": "n5-pronouns",
+      "name": "JLPT N5 · Pronouns & people",
+      "description": "Personal references.",
+      "words": [
+        {
+          "word": "あなた",
+          "reading": "あなた",
+          "gloss": "you"
+        },
+        {
+          "word": "兄",
+          "reading": "あに",
+          "gloss": "(my) older brother (humble)"
+        },
+        {
+          "word": "姉",
+          "reading": "あね",
+          "gloss": "(my) older sister (humble)"
+        },
+        {
+          "word": "妹",
+          "reading": "いもうと",
+          "gloss": "younger sister (humble)"
+        },
+        {
+          "word": "弟",
+          "reading": "おとうと",
+          "gloss": "younger brother"
+        },
+        {
+          "word": "男",
+          "reading": "おとこ",
+          "gloss": "man, male"
+        },
+        {
+          "word": "女",
+          "reading": "おんな",
+          "gloss": "woman, female"
+        },
+        {
+          "word": "学生",
+          "reading": "がくせい",
+          "gloss": "student"
+        },
+        {
+          "word": "家族",
+          "reading": "かぞく",
+          "gloss": "family, members of a family"
+        },
+        {
+          "word": "子供",
+          "reading": "こども",
+          "gloss": "child(ren)"
+        },
+        {
+          "word": "先生",
+          "reading": "せんせい",
+          "gloss": "teacher, professor; master; doctor"
+        },
+        {
+          "word": "誰",
+          "reading": "だれ",
+          "gloss": "who"
+        },
+        {
+          "word": "父",
+          "reading": "ちち",
+          "gloss": "(my) father"
+        },
+        {
+          "word": "友達",
+          "reading": "ともだち",
+          "gloss": "friend"
+        },
+        {
+          "word": "母",
+          "reading": "はは",
+          "gloss": "(my) mother"
+        },
+        {
+          "word": "人",
+          "reading": "ひと",
+          "gloss": "man, person"
+        },
+        {
+          "word": "皆さん",
+          "reading": "みなさん",
+          "gloss": "all of you, everyone"
+        },
+        {
+          "word": "私",
+          "reading": "わたくし",
+          "gloss": "I (formal), myself, private affairs"
+        },
+        {
+          "word": "私",
+          "reading": "わたし",
+          "gloss": "I, myself"
+        }
+      ]
+    },
+    {
+      "id": "n5-numbers",
+      "name": "JLPT N5 · Numbers",
+      "description": "Counting to ten thousand.",
+      "words": [
+        {
+          "word": "十",
+          "reading": "(〜を) とお",
+          "gloss": "ten (~)"
+        },
+        {
+          "word": "一",
+          "reading": "いち",
+          "gloss": "one"
+        },
+        {
+          "word": "九",
+          "reading": "きゅう",
+          "gloss": "nine"
+        },
+        {
+          "word": "九",
+          "reading": "く",
+          "gloss": "nine"
+        },
+        {
+          "word": "五",
+          "reading": "ご",
+          "gloss": "five"
+        },
+        {
+          "word": "三",
+          "reading": "さん",
+          "gloss": "three"
+        },
+        {
+          "word": "四",
+          "reading": "し",
+          "gloss": "four"
+        },
+        {
+          "word": "七",
+          "reading": "しち",
+          "gloss": "seven"
+        },
+        {
+          "word": "十",
+          "reading": "じゅう",
+          "gloss": "ten"
+        },
+        {
+          "word": "ゼロ",
+          "reading": "ゼロ",
+          "gloss": "zero"
+        },
+        {
+          "word": "千",
+          "reading": "せん",
+          "gloss": "thousand"
+        },
+        {
+          "word": "二",
+          "reading": "に",
+          "gloss": "two"
+        },
+        {
+          "word": "八",
+          "reading": "はち",
+          "gloss": "eight"
+        },
+        {
+          "word": "百",
+          "reading": "ひゃく",
+          "gloss": "hundred"
+        },
+        {
+          "word": "万",
+          "reading": "まん",
+          "gloss": "ten thousand"
+        },
+        {
+          "word": "六",
+          "reading": "ろく",
+          "gloss": "six"
+        }
+      ]
+    },
+    {
+      "id": "n5-time",
+      "name": "JLPT N5 · Time & days",
+      "description": "Mornings, weekdays, seasons.",
+      "words": [
+        {
+          "word": "秋",
+          "reading": "あき",
+          "gloss": "fall (season)"
+        },
+        {
+          "word": "朝",
+          "reading": "あさ",
+          "gloss": "morning"
+        },
+        {
+          "word": "明日",
+          "reading": "あした",
+          "gloss": "tomorrow"
+        },
+        {
+          "word": "今",
+          "reading": "いま",
+          "gloss": "now"
+        },
+        {
+          "word": "火曜日",
+          "reading": "かようび",
+          "gloss": "Tuesday"
+        },
+        {
+          "word": "昨日",
+          "reading": "きのう",
+          "gloss": "yesterday"
+        },
+        {
+          "word": "今日",
+          "reading": "きょう",
+          "gloss": "today, this day"
+        },
+        {
+          "word": "金曜日",
+          "reading": "きんようび",
+          "gloss": "Friday"
+        },
+        {
+          "word": "月曜日",
+          "reading": "げつようび",
+          "gloss": "Monday"
+        },
+        {
+          "word": "時間",
+          "reading": "じかん",
+          "gloss": "time"
+        },
+        {
+          "word": "水曜日",
+          "reading": "すいようび",
+          "gloss": "Wednesday"
+        },
+        {
+          "word": "年",
+          "reading": "とし",
+          "gloss": "year, age"
+        },
+        {
+          "word": "土曜日",
+          "reading": "どようび",
+          "gloss": "Saturday"
+        },
+        {
+          "word": "夏",
+          "reading": "なつ",
+          "gloss": "summer"
+        },
+        {
+          "word": "日曜日",
+          "reading": "にちようび",
+          "gloss": "Sunday"
+        },
+        {
+          "word": "春",
+          "reading": "はる",
+          "gloss": "spring"
+        },
+        {
+          "word": "昼",
+          "reading": "ひる",
+          "gloss": "noon, daytime"
+        },
+        {
+          "word": "冬",
+          "reading": "ふゆ",
+          "gloss": "winter"
+        },
+        {
+          "word": "木曜日",
+          "reading": "もくようび",
+          "gloss": "Thursday"
+        },
+        {
+          "word": "夜",
+          "reading": "よる",
+          "gloss": "evening, night"
+        }
+      ]
+    },
+    {
+      "id": "n5-everyday-verbs",
+      "name": "JLPT N5 · Everyday verbs",
+      "description": "The verbs that show up first.",
+      "words": [
+        {
+          "word": "言う",
+          "reading": "いう",
+          "gloss": "to say"
+        },
+        {
+          "word": "行く",
+          "reading": "いく; ゆく",
+          "gloss": "to go"
+        },
+        {
+          "word": "売る",
+          "reading": "うる",
+          "gloss": "to sell (v.t.)"
+        },
+        {
+          "word": "起きる",
+          "reading": "おきる",
+          "gloss": "to get up (e.g., from sleeping); to happen"
+        },
+        {
+          "word": "買う",
+          "reading": "かう",
+          "gloss": "to buy"
+        },
+        {
+          "word": "書く",
+          "reading": "かく",
+          "gloss": "to write"
+        },
+        {
+          "word": "聞く",
+          "reading": "きく",
+          "gloss": "to hear, to listen, to ask"
+        },
+        {
+          "word": "嫌い",
+          "reading": "きらい",
+          "gloss": "dislike"
+        },
+        {
+          "word": "来る",
+          "reading": "くる",
+          "gloss": "to come"
+        },
+        {
+          "word": "知る",
+          "reading": "しる",
+          "gloss": "to know, to understand"
+        },
+        {
+          "word": "好き",
+          "reading": "すき",
+          "gloss": "liking, fondness, love"
+        },
+        {
+          "word": "する",
+          "reading": "する",
+          "gloss": "to do, to try; to wear small items (e.g., necktie, watch, etc.)"
+        },
+        {
+          "word": "座る",
+          "reading": "すわる",
+          "gloss": "to sit"
+        },
+        {
+          "word": "立つ",
+          "reading": "たつ",
+          "gloss": "to stand up"
+        },
+        {
+          "word": "食べる",
+          "reading": "たべる",
+          "gloss": "to eat"
+        },
+        {
+          "word": "出る",
+          "reading": "でる",
+          "gloss": "to appear, to leave"
+        },
+        {
+          "word": "なる",
+          "reading": "なる",
+          "gloss": "to become"
+        },
+        {
+          "word": "寝る",
+          "reading": "ねる",
+          "gloss": "to sleep; to go to sleep; to go to bed"
+        },
+        {
+          "word": "飲む",
+          "reading": "のむ",
+          "gloss": "to drink"
+        },
+        {
+          "word": "入る",
+          "reading": "はいる",
+          "gloss": "to enter, to contain, to hold"
+        },
+        {
+          "word": "働く",
+          "reading": "はたらく",
+          "gloss": "to work"
+        },
+        {
+          "word": "話す",
+          "reading": "はなす",
+          "gloss": "to speak"
+        },
+        {
+          "word": "見る",
+          "reading": "みる",
+          "gloss": "to see, to look"
+        },
+        {
+          "word": "読む",
+          "reading": "よむ",
+          "gloss": "to read"
+        },
+        {
+          "word": "分かる",
+          "reading": "わかる",
+          "gloss": "to understand"
+        }
+      ]
+    },
+    {
+      "id": "n5-food",
+      "name": "JLPT N5 · Food & drink",
+      "description": "What's on the table.",
+      "words": [
+        {
+          "word": "朝御飯",
+          "reading": "あさごはん",
+          "gloss": "breakfast"
+        },
+        {
+          "word": "お茶",
+          "reading": "おちゃ",
+          "gloss": "(green) tea"
+        },
+        {
+          "word": "牛乳",
+          "reading": "ぎゅうにゅう",
+          "gloss": "milk"
+        },
+        {
+          "word": "果物",
+          "reading": "くだもの",
+          "gloss": "fruit"
+        },
+        {
+          "word": "コーヒー",
+          "reading": "コーヒー",
+          "gloss": "coffee"
+        },
+        {
+          "word": "魚",
+          "reading": "さかな",
+          "gloss": "fish"
+        },
+        {
+          "word": "砂糖",
+          "reading": "さとう",
+          "gloss": "sugar"
+        },
+        {
+          "word": "塩",
+          "reading": "しお",
+          "gloss": "salt"
+        },
+        {
+          "word": "卵",
+          "reading": "たまご",
+          "gloss": "egg"
+        },
+        {
+          "word": "肉",
+          "reading": "にく",
+          "gloss": "meat"
+        },
+        {
+          "word": "パン",
+          "reading": "パン",
+          "gloss": "bread"
+        },
+        {
+          "word": "晩御飯",
+          "reading": "ばんごはん",
+          "gloss": "dinner, evening meal"
+        },
+        {
+          "word": "昼御飯",
+          "reading": "ひるごはん",
+          "gloss": "lunch, midday meal"
+        },
+        {
+          "word": "水",
+          "reading": "みず",
+          "gloss": "water"
+        },
+        {
+          "word": "野菜",
+          "reading": "やさい",
+          "gloss": "vegetable"
+        }
+      ]
+    }
+  ],
+  "textbooks": [
+    {
+      "id": "japanese-n5-starter",
+      "title": "JLPT N5 Starter — 15 lessons",
+      "author": "Tokori",
+      "totalUnits": 15,
+      "unitLabel": "lessons",
+      "chapters": [
+        {
+          "position": 0,
+          "title": "Lesson 1 · はじめまして — Nice to meet you",
+          "notes": "Greetings and basic self-introduction. です sentences.",
+          "body": "はじめまして。\n私は田中です。\n学生です。\nどうぞよろしくお願いします。\n\nはじめまして。山田です。\nよろしくお願いします。",
+          "vocab": [
+            {
+              "word": "はじめまして",
+              "reading": "はじめまして",
+              "gloss": "nice to meet you"
+            },
+            {
+              "word": "私",
+              "reading": "わたし",
+              "gloss": "I, myself"
+            },
+            {
+              "word": "学生",
+              "reading": "がくせい",
+              "gloss": "student"
+            },
+            {
+              "word": "よろしくお願いします",
+              "reading": "よろしくおねがいします",
+              "gloss": "pleased to make your acquaintance"
+            },
+            {
+              "word": "どうぞ",
+              "reading": "どうぞ",
+              "gloss": "please, kindly, by all means"
+            }
+          ]
+        },
+        {
+          "position": 1,
+          "title": "Lesson 2 · これは何ですか — What is this",
+          "notes": "これ・それ・あれ・どれ. Identifying objects.",
+          "body": "これは何ですか。\nそれは本です。\nあれはペンですか。\nいいえ、あれは鉛筆です。\nどれが私の本ですか。\nこれがあなたの本です。",
+          "vocab": [
+            {
+              "word": "これ",
+              "reading": "これ",
+              "gloss": "this one"
+            },
+            {
+              "word": "それ",
+              "reading": "それ",
+              "gloss": "that one"
+            },
+            {
+              "word": "あれ",
+              "reading": "あれ",
+              "gloss": "that one (over there)"
+            },
+            {
+              "word": "どれ",
+              "reading": "どれ",
+              "gloss": "which one"
+            },
+            {
+              "word": "何",
+              "reading": "なん; なに",
+              "gloss": "what"
+            },
+            {
+              "word": "本",
+              "reading": "ほん",
+              "gloss": "book"
+            },
+            {
+              "word": "ペン",
+              "reading": "ペン",
+              "gloss": "pen"
+            },
+            {
+              "word": "鉛筆",
+              "reading": "えんぴつ",
+              "gloss": "pencil"
+            }
+          ]
+        },
+        {
+          "position": 2,
+          "title": "Lesson 3 · ここはどこですか — Where is this",
+          "notes": "ここ・そこ・あそこ. Asking about places.",
+          "body": "ここはどこですか。\nここは学校です。\nトイレはどこですか。\nトイレはあそこです。\n図書館はここですか。\nいいえ、図書館はあっちです。",
+          "vocab": [
+            {
+              "word": "ここ",
+              "reading": "ここ",
+              "gloss": "here, this place"
+            },
+            {
+              "word": "そこ",
+              "reading": "そこ",
+              "gloss": "that place, there; bottom, sole"
+            },
+            {
+              "word": "あそこ",
+              "reading": "あそこ",
+              "gloss": "there, over there, that place"
+            },
+            {
+              "word": "どこ",
+              "reading": "どこ",
+              "gloss": "where, what place"
+            },
+            {
+              "word": "学校",
+              "reading": "がっこう",
+              "gloss": "a school"
+            },
+            {
+              "word": "図書館",
+              "reading": "としょかん",
+              "gloss": "library"
+            }
+          ]
+        },
+        {
+          "position": 3,
+          "title": "Lesson 4 · 今、何時ですか — What time is it",
+          "notes": "Time, hours and minutes, daily schedule.",
+          "body": "今、何時ですか。\n今、八時です。\n何時に起きますか。\n七時に起きます。\n何時に寝ますか。\n十一時に寝ます。",
+          "vocab": [
+            {
+              "word": "今",
+              "reading": "いま",
+              "gloss": "now"
+            },
+            {
+              "word": "何時",
+              "reading": "なんじ",
+              "gloss": "what time"
+            },
+            {
+              "word": "起きる",
+              "reading": "おきる",
+              "gloss": "to get up (e.g., from sleeping); to happen"
+            },
+            {
+              "word": "寝る",
+              "reading": "ねる",
+              "gloss": "to sleep; to go to sleep; to go to bed"
+            },
+            {
+              "word": "～時",
+              "reading": "～とき",
+              "gloss": "at the time of ~"
+            }
+          ]
+        },
+        {
+          "position": 4,
+          "title": "Lesson 5 · 何曜日に行きますか — What day do you go",
+          "notes": "Days of the week, particles に・で, transport.",
+          "body": "明日、学校に行きますか。\nはい、行きます。\n何曜日に行きますか。\n月曜日と水曜日に行きます。\n電車で行きますか。\nいいえ、バスで行きます。",
+          "vocab": [
+            {
+              "word": "明日",
+              "reading": "あした",
+              "gloss": "tomorrow"
+            },
+            {
+              "word": "行く",
+              "reading": "いく; ゆく",
+              "gloss": "to go"
+            },
+            {
+              "word": "月曜日",
+              "reading": "げつようび",
+              "gloss": "Monday"
+            },
+            {
+              "word": "水曜日",
+              "reading": "すいようび",
+              "gloss": "Wednesday"
+            },
+            {
+              "word": "電車",
+              "reading": "でんしゃ",
+              "gloss": "electric train"
+            },
+            {
+              "word": "バス",
+              "reading": "バス",
+              "gloss": "bus; bath; bass"
+            }
+          ]
+        },
+        {
+          "position": 5,
+          "title": "Lesson 6 · 何を食べますか — What do you eat",
+          "notes": "を particle, ます-form for eating + drinking.",
+          "body": "今日、何を食べますか。\nラーメンを食べます。\n何を飲みますか。\nお茶を飲みます。\nおいしいですか。\nはい、とてもおいしいです。",
+          "vocab": [
+            {
+              "word": "今日",
+              "reading": "きょう",
+              "gloss": "today, this day"
+            },
+            {
+              "word": "食べる",
+              "reading": "たべる",
+              "gloss": "to eat"
+            },
+            {
+              "word": "飲む",
+              "reading": "のむ",
+              "gloss": "to drink"
+            },
+            {
+              "word": "お茶",
+              "reading": "おちゃ",
+              "gloss": "(green) tea"
+            },
+            {
+              "word": "美味しい",
+              "reading": "おいしい",
+              "gloss": "delicious, tasty"
+            },
+            {
+              "word": "とても",
+              "reading": "とても",
+              "gloss": "very (much), greatly, exceedingly"
+            }
+          ]
+        },
+        {
+          "position": 6,
+          "title": "Lesson 7 · いくつありますか — How many are there",
+          "notes": "Counters: いくつ・何人. Existence with あります・います.",
+          "body": "本はいくつありますか。\n本は三つあります。\n人は何人いますか。\n五人います。\n猫もいますか。\nはい、猫が二匹います。",
+          "vocab": [
+            {
+              "word": "いくつ",
+              "reading": "いくつ",
+              "gloss": "how many, how old"
+            },
+            {
+              "word": "在る",
+              "reading": "ある",
+              "gloss": "to be, to have"
+            },
+            {
+              "word": "居る",
+              "reading": "いる",
+              "gloss": "(humble) to be (animate), to exist"
+            },
+            {
+              "word": "人",
+              "reading": "ひと",
+              "gloss": "man, person"
+            },
+            {
+              "word": "猫",
+              "reading": "ねこ",
+              "gloss": "cat"
+            },
+            {
+              "word": "三つ",
+              "reading": "みっつ",
+              "gloss": "three things"
+            },
+            {
+              "word": "五つ",
+              "reading": "いつつ",
+              "gloss": "five things"
+            }
+          ]
+        },
+        {
+          "position": 7,
+          "title": "Lesson 8 · 大きいですか、小さいですか — Big or small",
+          "notes": "い-adjectives. Describing things.",
+          "body": "この本は大きいですか。\nはい、とても大きいです。\nそれは新しいですか。\nいいえ、古いです。\n学校はどうですか。\n楽しいです。",
+          "vocab": [
+            {
+              "word": "大きい",
+              "reading": "おおきい",
+              "gloss": "big, large"
+            },
+            {
+              "word": "小さい",
+              "reading": "ちいさい",
+              "gloss": "small, little"
+            },
+            {
+              "word": "新しい",
+              "reading": "あたらしい",
+              "gloss": "new"
+            },
+            {
+              "word": "古い",
+              "reading": "ふるい",
+              "gloss": "old (in reference to objects, not people), aged, ancient"
+            },
+            {
+              "word": "楽しい",
+              "reading": "たのしい",
+              "gloss": "enjoyable, fun"
+            }
+          ]
+        },
+        {
+          "position": 8,
+          "title": "Lesson 9 · 何が欲しいですか — What do you want",
+          "notes": "欲しい and ~たい. Expressing wants.",
+          "body": "何が欲しいですか。\n新しい本が欲しいです。\n何を買いたいですか。\nお茶を買いたいです。\n今、お茶を飲みたいですか。\nはい、飲みたいです。",
+          "vocab": [
+            {
+              "word": "欲しい",
+              "reading": "ほしい",
+              "gloss": "to want, in need of"
+            },
+            {
+              "word": "買う",
+              "reading": "かう",
+              "gloss": "to buy"
+            },
+            {
+              "word": "新しい",
+              "reading": "あたらしい",
+              "gloss": "new"
+            },
+            {
+              "word": "本",
+              "reading": "ほん",
+              "gloss": "book"
+            }
+          ]
+        },
+        {
+          "position": 9,
+          "title": "Lesson 10 · 教室に何がありますか — What's in the classroom",
+          "notes": "Existence and location: あります・います with に.",
+          "body": "教室に何がありますか。\n机と椅子があります。\n誰がいますか。\n先生がいます。\n学生もいますか。\nはい、学生もたくさんいます。",
+          "vocab": [
+            {
+              "word": "教室",
+              "reading": "きょうしつ",
+              "gloss": "classroom"
+            },
+            {
+              "word": "机",
+              "reading": "つくえ",
+              "gloss": "desk"
+            },
+            {
+              "word": "椅子",
+              "reading": "いす",
+              "gloss": "chair"
+            },
+            {
+              "word": "先生",
+              "reading": "せんせい",
+              "gloss": "teacher, professor; master; doctor"
+            },
+            {
+              "word": "学生",
+              "reading": "がくせい",
+              "gloss": "student"
+            },
+            {
+              "word": "沢山",
+              "reading": "たくさん",
+              "gloss": "many, much"
+            }
+          ]
+        },
+        {
+          "position": 10,
+          "title": "Lesson 11 · 家族は何人ですか — How many in your family",
+          "notes": "Family terms, possession with の.",
+          "body": "家族は何人ですか。\n四人家族です。\n父と母と妹と私です。\nお兄さんはいますか。\nいいえ、いません。\n家族はみんな日本人です。",
+          "vocab": [
+            {
+              "word": "家族",
+              "reading": "かぞく",
+              "gloss": "family, members of a family"
+            },
+            {
+              "word": "父",
+              "reading": "ちち",
+              "gloss": "(my) father"
+            },
+            {
+              "word": "母",
+              "reading": "はは",
+              "gloss": "(my) mother"
+            },
+            {
+              "word": "妹",
+              "reading": "いもうと",
+              "gloss": "younger sister (humble)"
+            },
+            {
+              "word": "兄",
+              "reading": "あに",
+              "gloss": "(my) older brother (humble)"
+            },
+            {
+              "word": "日本人",
+              "reading": "にほんじん",
+              "gloss": "Japanese person"
+            }
+          ]
+        },
+        {
+          "position": 11,
+          "title": "Lesson 12 · 好きですか — Do you like it",
+          "notes": "が好きです・が嫌いです. Likes and dislikes.",
+          "body": "寿司が好きですか。\nはい、大好きです。\n何の音楽が好きですか。\nジャズが好きです。\n料理は好きですか。\nいいえ、あまり好きじゃありません。",
+          "vocab": [
+            {
+              "word": "好き",
+              "reading": "すき",
+              "gloss": "liking, fondness, love"
+            },
+            {
+              "word": "嫌い",
+              "reading": "きらい",
+              "gloss": "dislike"
+            },
+            {
+              "word": "寿司",
+              "reading": "すし",
+              "gloss": "sushi"
+            },
+            {
+              "word": "音楽",
+              "reading": "おんがく",
+              "gloss": "Music"
+            },
+            {
+              "word": "料理",
+              "reading": "りょうり",
+              "gloss": "cooking; cuisine"
+            }
+          ]
+        },
+        {
+          "position": 12,
+          "title": "Lesson 13 · 今、何をしていますか — What are you doing now",
+          "notes": "Te-form + ~ています. Ongoing actions.",
+          "body": "今、何をしていますか。\n本を読んでいます。\n家で何をしますか。\nテレビを見ます。\n寝る前に、お茶を飲みます。\n毎日、勉強しています。",
+          "vocab": [
+            {
+              "word": "今",
+              "reading": "いま",
+              "gloss": "now"
+            },
+            {
+              "word": "読む",
+              "reading": "よむ",
+              "gloss": "to read"
+            },
+            {
+              "word": "家",
+              "reading": "いえ",
+              "gloss": "house, home"
+            },
+            {
+              "word": "見る",
+              "reading": "みる",
+              "gloss": "to see, to look"
+            },
+            {
+              "word": "テレビ",
+              "reading": "テレビ",
+              "gloss": "television, TV"
+            },
+            {
+              "word": "勉強",
+              "reading": "べんきょう (する)",
+              "gloss": "study"
+            }
+          ]
+        },
+        {
+          "position": 13,
+          "title": "Lesson 14 · どちらが好きですか — Which do you prefer",
+          "notes": "Comparisons with ~の方が. でも.",
+          "body": "コーヒーとお茶と、どちらが好きですか。\nコーヒーの方が好きです。\n夏と冬と、どちらがいいですか。\n夏の方がいいです。\n日本語は難しいですか。\n少し難しいです。でも、楽しいです。",
+          "vocab": [
+            {
+              "word": "どちら",
+              "reading": "どちら",
+              "gloss": "which (one) (way); where (polite)"
+            },
+            {
+              "word": "コーヒー",
+              "reading": "コーヒー",
+              "gloss": "coffee"
+            },
+            {
+              "word": "夏",
+              "reading": "なつ",
+              "gloss": "summer"
+            },
+            {
+              "word": "冬",
+              "reading": "ふゆ",
+              "gloss": "winter"
+            },
+            {
+              "word": "日本語",
+              "reading": "にほんご",
+              "gloss": "Japanese language"
+            },
+            {
+              "word": "難しい",
+              "reading": "むずかしい",
+              "gloss": "difficult"
+            },
+            {
+              "word": "少し",
+              "reading": "すこし",
+              "gloss": "little, few"
+            }
+          ]
+        },
+        {
+          "position": 14,
+          "title": "Lesson 15 · 昨日、何をしましたか — What did you do yesterday",
+          "notes": "Past tense ました. Talking about yesterday.",
+          "body": "昨日、何をしましたか。\n友達と映画を見ました。\nどうでしたか。\nとても面白かったです。\n晩ご飯は何を食べましたか。\n寿司を食べました。おいしかったです。",
+          "vocab": [
+            {
+              "word": "昨日",
+              "reading": "きのう",
+              "gloss": "yesterday"
+            },
+            {
+              "word": "友達",
+              "reading": "ともだち",
+              "gloss": "friend"
+            },
+            {
+              "word": "映画",
+              "reading": "えいが",
+              "gloss": "movie, film"
+            },
+            {
+              "word": "面白い",
+              "reading": "おもしろい",
+              "gloss": "interesting, amusing"
+            },
+            {
+              "word": "晩御飯",
+              "reading": "ばんごはん",
+              "gloss": "dinner, evening meal"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

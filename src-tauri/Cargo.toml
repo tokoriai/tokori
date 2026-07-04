@@ -1,0 +1,115 @@
+[package]
+name = "tokori"
+version = "0.1.0-alpha.1"
+description = "Local-first AI tutor for language learners."
+authors = ["Florian Schneller"]
+license = "AGPL-3.0-or-later"
+repository = "https://github.com/tokoriai/tokori"
+homepage = "https://tokori.ai"
+edition = "2021"
+# paddle-ocr-rs requires Rust 2024 edition (1.85+).
+rust-version = "1.85"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "tokori_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.6.2", features = [] }
+
+[dependencies]
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+log = "0.4"
+# `macos-private-api` unlocks `.transparent(true)` on macOS (the
+# Spotlight palette window) — without it the method doesn't even
+# compile there. Fine for direct distribution; only the App Store
+# would object. Pairs with `app.macOSPrivateApi` in tauri.conf.json.
+tauri = { version = "2.11.2", features = ["tray-icon", "image-png", "macos-private-api"] }
+tauri-plugin-log = "2"
+tauri-plugin-sql = { version = "2", features = ["sqlite"] }
+# URL opener — routes external HTTPS URLs (Stripe Checkout, billing
+# portal, marketing links) through the OS shell. Without this, Tauri's
+# webview silently swallows window.open + anchor target=_blank for
+# external URLs.
+tauri-plugin-opener = "2"
+# Global-shortcut plugin: register OS-level hotkeys (used by the
+# "Global search" feature so the user can summon the spotlight popup
+# even when Tokori doesn't have focus).
+tauri-plugin-global-shortcut = "2"
+# WebSocket client with custom-header support. The browser WebSocket
+# API can't set an Authorization header, which DashScope's realtime
+# endpoint requires — the Qwen live-voice backend connects through
+# this plugin instead.
+tauri-plugin-websocket = "2"
+tokio = { version = "1", features = ["sync", "rt", "rt-multi-thread", "macros", "io-util", "net", "time", "process", "fs"] }
+futures-util = "0.3"
+async-trait = "0.1"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json", "stream", "gzip", "brotli", "cookies"] }
+flate2 = "1.0"
+thiserror = "2"
+jieba-rs = "0.7"
+tar = "0.4"
+tokio-tungstenite = { version = "0.24", features = ["rustls-tls-webpki-roots", "url"] }
+uuid = { version = "1", features = ["v4"] }
+sha2 = "0.10"
+quick-xml = "0.36"
+# Read Yomitan dictionary archives (ZIP of `index.json` + `term_bank_*.json`).
+# `default-features = false` + `deflate` keeps the build trim — Yomitan
+# archives are always deflate-compressed, and we don't need bzip2 / zstd /
+# AES decryption support.
+zip = { version = "2", default-features = false, features = ["deflate"] }
+# ── Local HTTP API server (`tokori serve` equivalent). Runs in-process
+# alongside the desktop app, gated by a bearer token, on 127.0.0.1:53210. ──
+axum = { version = "0.7", default-features = false, features = ["http1", "json", "tokio", "query", "matched-path"] }
+tower-http = { version = "0.6", default-features = false, features = ["cors", "trace"] }
+sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio", "sqlite", "macros"] }
+dirs = "5"
+rand = "0.8"
+base64 = "0.22"
+chrono = { version = "0.4", features = ["serde"] }
+# OCR: PaddleOCR ONNX models via ONNX Runtime. Default features pull
+# `ort/download-binaries` so onnxruntime native libs are fetched at
+# build time — no manual install. Models themselves are downloaded
+# lazily on first OCR call (~10MB per language) and cached under the
+# app data dir.
+paddle-ocr-rs = "0.6.1"
+# ort/ndarray pins: paddle-ocr-rs 0.6.1 was written against ort rc.10
+# and ndarray 0.16; without these explicit pins Cargo's pre-release
+# resolution promotes ort to rc.12 (private-field changes break the
+# build) and pulls in ndarray 0.17 alongside 0.16, which makes the
+# OwnedTensorArrayData trait bounds fail to unify.
+ort = { version = "=2.0.0-rc.10", default-features = false, features = ["download-binaries", "copy-dylibs", "ndarray"] }
+ndarray = "=0.16.1"
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp", "bmp", "gif"] }
+once_cell = "1"
+# Persists each window's last size + position to a JSON file under the app
+# config dir, then restores it on the next launch. The first-launch sizer
+# in lib.rs still runs once (gated by .window-init.done) for fresh installs;
+# the plugin takes over from launch #2 onward.
+tauri-plugin-window-state = "2"
+# In-app auto-update. The updater checks the GitHub Releases feed
+# (`latest.json`) on launch, verifies the bundle against our minisign
+# public key (see `tauri.conf.json::plugins.updater.pubkey`), and
+# installs it in place. Desktop-only — registered under `#[cfg(desktop)]`
+# in `run()`. `process` provides `relaunch()` so the app can restart
+# itself once an update is staged.
+tauri-plugin-updater = "2"
+tauri-plugin-process = "2"
+
+# Linux-only: direct dep on webkit2gtk so we can connect the
+# `permission-request` signal on the main webview and grant the
+# microphone on demand. WebKit2GTK 4.1 silently denies media
+# permissions in a Tauri app unless the host wires a handler — that's
+# the "The request is not allowed by the user agent…" error users
+# hit when they try voice mode. Pinned to 2.0 to match what wry
+# already pulls in transitively, so cargo doesn't end up with two
+# versions of the bindings.
+[target.'cfg(target_os = "linux")'.dependencies]
+webkit2gtk = "=2.0.2"
+# Linux taskbar/dock icon: we call `gtk::Window::set_default_icon` at
+# startup. `gtk` is already a transitive dep via webkit2gtk; naming it
+# explicitly here lets us import it without versioning surprises.
+gtk = "0.18"

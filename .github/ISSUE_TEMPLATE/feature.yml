@@ -1,0 +1,41 @@
+name: Feature request
+description: Suggest a new feature or an improvement.
+title: "[feature] "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Got an idea? Tell us about it. The more concrete you can be
+        about *why* you want this, the easier it is for us to figure
+        out whether (and how) to build it.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the situation that made you want this. A real example beats abstract reasoning.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to see?
+      description: Your proposed solution — feel free to sketch UI, API shape, config, etc.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+      description: Workarounds you've tried, other tools that solve this, why those aren't enough.
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - label: This fits Tokori's focus on language learning (vs. a general chat app).
+        - label: I'd be willing to send a PR.

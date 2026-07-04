@@ -1,0 +1,3529 @@
+{
+  "schema": "tokori-pack/v1",
+  "id": "free:chinese-hsk1-new3",
+  "name": "HSK 1 (new HSK 3.0) — Free",
+  "language": "zh",
+  "description": "All 506 vocabulary items at the new HSK 1 level (HSK 3.0, 2021), verified against the canonical word list, plus a Chinese course textbook with 15 lessons and per-lesson vocab. Free for everyone.",
+  "version": "1.0.0",
+  "license": "Free for personal use. Vocab list courtesy of the official HSK 3.0 standard; lesson texts written for Tokori.",
+  "collections": [
+    {
+      "id": "hsk1-band",
+      "name": "HSK 1 · all 461 words",
+      "description": "Every vocabulary item in HSK Level 1 (new HSK 3.0).",
+      "words": [
+        {
+          "word": "爱",
+          "reading": "ài",
+          "gloss": "love, like, be fond of, be keen on, cherish, be apt to"
+        },
+        {
+          "word": "爱好",
+          "reading": "àihào",
+          "gloss": "love, like, be fond of, be keen on"
+        },
+        {
+          "word": "爸爸",
+          "reading": "bàba",
+          "gloss": "old man, father, papa, pappa, daddy, pa, begetter, pop, dada, dad, male parent, pater, pappy, pops, poppa"
+        },
+        {
+          "word": "白",
+          "reading": "bái",
+          "gloss": "white, clear, pure, plain, wrongly written; mispronounced,"
+        },
+        {
+          "word": "八",
+          "reading": "bā",
+          "gloss": "det.: eight"
+        },
+        {
+          "word": "班",
+          "reading": "bān",
+          "gloss": "m.[event]"
+        },
+        {
+          "word": "百",
+          "reading": "bǎi",
+          "gloss": "cent, centum, century, hundred, det.: hundred"
+        },
+        {
+          "word": "半",
+          "reading": "bàn",
+          "gloss": "det.: half"
+        },
+        {
+          "word": "半年",
+          "reading": "bànnián",
+          "gloss": "half a year"
+        },
+        {
+          "word": "半天",
+          "reading": "bàntiān",
+          "gloss": "half of the day, a long time, quite a while, midair, CL:個|个[ge4]"
+        },
+        {
+          "word": "帮",
+          "reading": "bāng",
+          "gloss": "help"
+        },
+        {
+          "word": "帮忙",
+          "reading": "bāng máng",
+          "gloss": "assist, aid, smile, lend a hand, do a favour, help, oblige, give a hand, do favor, do a good turn"
+        },
+        {
+          "word": "包",
+          "reading": "bāo",
+          "gloss": "wrap, surround, encircle, envelop, include, contain, undertake the whole thing, assure, guarantee"
+        },
+        {
+          "word": "包子",
+          "reading": "bāozi",
+          "gloss": "steamed stuffed bun, CL:個|个[ge4]"
+        },
+        {
+          "word": "杯",
+          "reading": "bēi",
+          "gloss": "m.[container]"
+        },
+        {
+          "word": "杯子",
+          "reading": "bēizi",
+          "gloss": "tumbler, drinking glass, cup, glass"
+        },
+        {
+          "word": "本",
+          "reading": "běn",
+          "gloss": "det.: this"
+        },
+        {
+          "word": "北京",
+          "reading": "Běijīng",
+          "gloss": "capital of Red China, Beijing, Peking, Beijing (Peking), Peiping"
+        },
+        {
+          "word": "北",
+          "reading": "běi",
+          "gloss": "atomic number 97, northward, north, berkelium, Bk, northern"
+        },
+        {
+          "word": "本子",
+          "reading": "běnzi",
+          "gloss": "book, notebook, edition, CL:本[ben3]"
+        },
+        {
+          "word": "别",
+          "reading": "bié",
+          "gloss": "don't"
+        },
+        {
+          "word": "别的",
+          "reading": "biéde",
+          "gloss": "else, other"
+        },
+        {
+          "word": "别人",
+          "reading": "biéren",
+          "gloss": "others, other people, another person"
+        },
+        {
+          "word": "病",
+          "reading": "bìng",
+          "gloss": "disease"
+        },
+        {
+          "word": "病人",
+          "reading": "bìngrén",
+          "gloss": "shut-in, patient, subject, sufferer, case, valetudinarian, invalid"
+        },
+        {
+          "word": "比",
+          "reading": "bǐ",
+          "gloss": "compared with"
+        },
+        {
+          "word": "不大",
+          "reading": "bùdà",
+          "gloss": "not very; too, not often"
+        },
+        {
+          "word": "不用",
+          "reading": "bùyòng",
+          "gloss": "need not"
+        },
+        {
+          "word": "菜",
+          "reading": "cài",
+          "gloss": "vegetable, greens, dish, course, food"
+        },
+        {
+          "word": "不对",
+          "reading": "bù duì",
+          "gloss": "incorrect, wrong, amiss, abnormal, queer"
+        },
+        {
+          "word": "不",
+          "reading": "bù",
+          "gloss": "non, do not, no, nowise, not, nope, nae, no more, nix"
+        },
+        {
+          "word": "茶",
+          "reading": "chá",
+          "gloss": "tea"
+        },
+        {
+          "word": "常常",
+          "reading": "chángcháng",
+          "gloss": "oftentimes, ofttimes, commonly, ordinarily, oft, often, a great deal, normally, frequently, unremarkably, much, usually"
+        },
+        {
+          "word": "常",
+          "reading": "cháng",
+          "gloss": "often, usually, frequently"
+        },
+        {
+          "word": "车",
+          "reading": "chē",
+          "gloss": "vehicle"
+        },
+        {
+          "word": "唱歌",
+          "reading": "chàng gē",
+          "gloss": "sing"
+        },
+        {
+          "word": "车上",
+          "reading": "chē shàng",
+          "gloss": "Car"
+        },
+        {
+          "word": "车票",
+          "reading": "chēpiào",
+          "gloss": "ticket (for train; bus)"
+        },
+        {
+          "word": "唱",
+          "reading": "chàng",
+          "gloss": "cry, chant, chirm, tune, vocalize, call, sing"
+        },
+        {
+          "word": "吃",
+          "reading": "chī",
+          "gloss": "feed, have, be subject to, absorb, chow, live on, eat, have one's meals, be a strain, exhaust, fare, take in, live off, annihilate, wipe out, partake, suffer, ingest, consume, graze, lunch, manducate, incur, take, get, use up, make, taste, soak up"
+        },
+        {
+          "word": "车站",
+          "reading": "chēzhàn",
+          "gloss": "station"
+        },
+        {
+          "word": "吃饭",
+          "reading": "chī fàn",
+          "gloss": "feed, dine, make a living, keep alive, have a meal, eat"
+        },
+        {
+          "word": "出",
+          "reading": "chū",
+          "gloss": "produce, turn out, arise, happen"
+        },
+        {
+          "word": "床",
+          "reading": "chuáng",
+          "gloss": "bed"
+        },
+        {
+          "word": "次",
+          "reading": "cì",
+          "gloss": "order, sequence, next"
+        },
+        {
+          "word": "穿",
+          "reading": "chuān",
+          "gloss": "to wear, to put on, to dress, to bore through, to pierce, to perforate, to penetrate, to pass through, to thread"
+        },
+        {
+          "word": "错",
+          "reading": "cuò",
+          "gloss": "wrong, mistaken, bad, poor, confused, complex"
+        },
+        {
+          "word": "从",
+          "reading": "cóng",
+          "gloss": "from, since, through"
+        },
+        {
+          "word": "打",
+          "reading": "dǎ",
+          "gloss": "generalized verb of doing with specific meaning determined by its object, strike, hit, fight, construct, forge, mix"
+        },
+        {
+          "word": "打车",
+          "reading": "dǎchē",
+          "gloss": "to take a taxi (in town), to hitch a lift"
+        },
+        {
+          "word": "打电话",
+          "reading": "dǎ diànhuà",
+          "gloss": "make telephone call"
+        },
+        {
+          "word": "打开",
+          "reading": "dǎ kāi",
+          "gloss": "unscrew, undo, break_out, open up, unbar, unpack, unwind, shoot, turn, switch_on, open, switch on, unroll, turn; switch on, unclose, straighten, unfold, crack, unwrap, ope, turn_on, turn on, chop"
+        },
+        {
+          "word": "打球",
+          "reading": "dǎqiú",
+          "gloss": "play a ball game using arms; hands"
+        },
+        {
+          "word": "大学",
+          "reading": "dàxué",
+          "gloss": "university, college"
+        },
+        {
+          "word": "大",
+          "reading": "dà",
+          "gloss": "great, macro, old, very, vast, tall, big, high, much"
+        },
+        {
+          "word": "大学生",
+          "reading": "dàxuéshēng",
+          "gloss": "man, university; college student, college man, university student, colleger, university, undergrad, undergraduate, college boy, college student, collegian, university_student, undergraduate student, geeks"
+        },
+        {
+          "word": "得到",
+          "reading": "dé dào",
+          "gloss": "to get, to obtain, to receive"
+        },
+        {
+          "word": "到",
+          "reading": "dào",
+          "gloss": "up until"
+        },
+        {
+          "word": "等",
+          "reading": "děng",
+          "gloss": "conj.: and so on, etc"
+        },
+        {
+          "word": "地点",
+          "reading": "dìdiǎn",
+          "gloss": "location, site, locale, locality, topographic point, point, venue, spot, situs, land site, place, locus"
+        },
+        {
+          "word": "地上",
+          "reading": "dìshang",
+          "gloss": "on the ground, on the floor"
+        },
+        {
+          "word": "的",
+          "reading": "de",
+          "gloss": "particle: emphasizing an action; situation"
+        },
+        {
+          "word": "地图",
+          "reading": "dìtú",
+          "gloss": "map"
+        },
+        {
+          "word": "弟弟",
+          "reading": "dìdi",
+          "gloss": "brother, little brother, younger brother, cadet, little_brother, viscount"
+        },
+        {
+          "word": "第",
+          "reading": "dì",
+          "gloss": "mansion, stadium, decker, det.: marker of ordinal numerals, abomasum, residence"
+        },
+        {
+          "word": "点",
+          "reading": "diǎn",
+          "gloss": "m.[proximation]"
+        },
+        {
+          "word": "电话",
+          "reading": "diànhuà",
+          "gloss": "blower, phone call, headphone, earpiece, telephone, telephone_call, buzz, earphone, horn, telephone set, phone_call, telephony, phone"
+        },
+        {
+          "word": "电",
+          "reading": "diàn",
+          "gloss": "electricity"
+        },
+        {
+          "word": "电脑",
+          "reading": "diànnǎo",
+          "gloss": "electronic computer, computery, data processor, information processing system, computer"
+        },
+        {
+          "word": "电视机",
+          "reading": "diànshìjī",
+          "gloss": "set, idiot_box, tv, goggle-box, idiot box, television receiver; set, teleset, television set, television receiver, TV set, goggle_box, tv set, goggle box, boob tube, receiver, telly, television"
+        },
+        {
+          "word": "电影",
+          "reading": "diànyǐng",
+          "gloss": "cinematography, moving_picture, pix, kinema, picture, film, movie, moving picture, flick, cinema, motion_picture, cinematic, celluloid, picture show, motion picture, flicker"
+        },
+        {
+          "word": "电视",
+          "reading": "diànshì",
+          "gloss": "TV, box, iconoscope, video, television set, teevee, orthicon, huckster, TV set, radiovision, television, telecasting, airwave, telly"
+        },
+        {
+          "word": "电影院",
+          "reading": "diànyǐng yuàn",
+          "gloss": "cinema, movie (house)"
+        },
+        {
+          "word": "东",
+          "reading": "dōng",
+          "gloss": "east"
+        },
+        {
+          "word": "东西",
+          "reading": "dōngxi",
+          "gloss": "thing, creature"
+        },
+        {
+          "word": "动",
+          "reading": "dòng",
+          "gloss": "concuss, get moving, travel, go, use, eat or drink, act, arouse, stir, disturb, alter, touch, change, dynamic, locomote, move"
+        },
+        {
+          "word": "动作",
+          "reading": "dòngzuò",
+          "gloss": "demeanor, motion, behavior, performance, demeanour, play, turn, operation, operative, looseness, agency, gesticulation, movement, gesture, comportment, business, action, move"
+        },
+        {
+          "word": "读",
+          "reading": "dú",
+          "gloss": "study, read, attend school, take, read aloud, read (aloud), peruse"
+        },
+        {
+          "word": "读书",
+          "reading": "dú shū",
+          "gloss": "read, study, attend school"
+        },
+        {
+          "word": "对不起",
+          "reading": "duìbuqǐ",
+          "gloss": "be unfair to, I'm sorry, let ... down, let sb. down, excuse me"
+        },
+        {
+          "word": "多",
+          "reading": "duō",
+          "gloss": "many, much, more, more than the correct; required number, excessive, too much, much; far more"
+        },
+        {
+          "word": "儿子",
+          "reading": "érzi",
+          "gloss": "viscount, man-child, boy, male offspring, son"
+        },
+        {
+          "word": "饿",
+          "reading": "è",
+          "gloss": "starve"
+        },
+        {
+          "word": "对",
+          "reading": "duì",
+          "gloss": "correct, true, toward"
+        },
+        {
+          "word": "二",
+          "reading": "èr",
+          "gloss": "det.: two, second"
+        },
+        {
+          "word": "饭",
+          "reading": "fàn",
+          "gloss": "food, meal, repast, cooked rice or other cereals, dinner"
+        },
+        {
+          "word": "饭店",
+          "reading": "fàndiàn",
+          "gloss": "restraurant, restaurant, hotel"
+        },
+        {
+          "word": "房间",
+          "reading": "fángjiān",
+          "gloss": "apartment, aspect, houseroom, room, chamber, bedroom"
+        },
+        {
+          "word": "房子",
+          "reading": "fángzi",
+          "gloss": "building (of less than three stories), room, building, property, house"
+        },
+        {
+          "word": "放",
+          "reading": "fàng",
+          "gloss": "loose, bloom, make longer, set ... free, let sb. have his own way, show, readjust, free, make larger, put in, fly, etc., release, discharge, leave alone, bung, lay aside, put, expansion, make longer; larger; etc., fling, localize, lend (money) at interest, let go, set, pasture, pose, set free, blossom, lay, let off, put out to pasture, send away, play, expand, make larger"
+        },
+        {
+          "word": "放假",
+          "reading": "fàng jià",
+          "gloss": "have a day off, have a vacation, have day off, have or be on vacation, have or be on holiday, have a holiday, vacation"
+        },
+        {
+          "word": "飞",
+          "reading": "fēi",
+          "gloss": "hover in the air, flight, hover, volatilize, wing, disappear through volatilization, flutter, skip, hover; flutter in the air, fly, blow, flutter in the air, flit"
+        },
+        {
+          "word": "放学",
+          "reading": "fàng xué",
+          "gloss": "have winter holidays, classes are over, finish classes, have summer holidays, finish classes (for the day)"
+        },
+        {
+          "word": "飞机",
+          "reading": "fēijī",
+          "gloss": "aerocraft, airplane, machine, craft, aeroplane, ship, aero, avion, aeronef, plane, aircraft"
+        },
+        {
+          "word": "非常",
+          "reading": "fēicháng",
+          "gloss": "extraordinary, unusual, special, very, extremely, highly"
+        },
+        {
+          "word": "分",
+          "reading": "fēn",
+          "gloss": "m.[general]"
+        },
+        {
+          "word": "风",
+          "reading": "fēng",
+          "gloss": "wind, common practice, custom, general mood, style, news, information"
+        },
+        {
+          "word": "干净",
+          "reading": "gānjìng",
+          "gloss": "clean, clear"
+        },
+        {
+          "word": "高兴",
+          "reading": "gāoxìng",
+          "gloss": "glad, happy, cheerful, merry, pleased"
+        },
+        {
+          "word": "高",
+          "reading": "gāo",
+          "gloss": "tall, high"
+        },
+        {
+          "word": "告诉",
+          "reading": "gàosu",
+          "gloss": "tell, preach, notify, impart, inform, represent, apprize, send word, share, advise, give notice, apprise, assure, let know"
+        },
+        {
+          "word": "哥哥",
+          "reading": "gēge",
+          "gloss": "big brother, elder brother, big_brother"
+        },
+        {
+          "word": "歌",
+          "reading": "gē",
+          "gloss": "song"
+        },
+        {
+          "word": "干什么",
+          "reading": "gànshénme",
+          "gloss": "do something"
+        },
+        {
+          "word": "个",
+          "reading": "gè",
+          "gloss": "piece, item"
+        },
+        {
+          "word": "给",
+          "reading": "gěi",
+          "gloss": "give, give to"
+        },
+        {
+          "word": "跟",
+          "reading": "gēn",
+          "gloss": "with, to, from"
+        },
+        {
+          "word": "工作",
+          "reading": "gōngzuò",
+          "gloss": "work, job"
+        },
+        {
+          "word": "关",
+          "reading": "guān",
+          "gloss": "shut, close, turn off, lock up, close down"
+        },
+        {
+          "word": "关上",
+          "reading": "guānshàng",
+          "gloss": "to close (a door), to turn off (light, electrical equipment etc)"
+        },
+        {
+          "word": "国",
+          "reading": "guó",
+          "gloss": "surname Guo, country, nation, state, national, CL:個|个[ge4]"
+        },
+        {
+          "word": "国家",
+          "reading": "guójiā",
+          "gloss": "sirkar, state, country, patria, a people, nationality, nation, republic, soli, body politic, clime, national, civil order, polity, commonwealth, land, res publica"
+        },
+        {
+          "word": "贵",
+          "reading": "guì",
+          "gloss": "expensive, costly, highly valued"
+        },
+        {
+          "word": "国外",
+          "reading": "guówài",
+          "gloss": "overseas"
+        },
+        {
+          "word": "还是",
+          "reading": "háishi",
+          "gloss": "still, nevertheless"
+        },
+        {
+          "word": "孩子",
+          "reading": "háizi",
+          "gloss": "kid, issue, chap, daughter, children, sonny, son or daughter, child, spawn, boy, kipper, son"
+        },
+        {
+          "word": "还有",
+          "reading": "háiyǒu",
+          "gloss": "conj.: furthermore, in addition"
+        },
+        {
+          "word": "过",
+          "reading": "guò",
+          "gloss": "[aspect]"
+        },
+        {
+          "word": "汉语",
+          "reading": "Hànyǔ",
+          "gloss": "Chinese language, CL:門|门[men2]"
+        },
+        {
+          "word": "汉字",
+          "reading": "Hànzì",
+          "gloss": "Chinese character, CL:個|个[ge4], Japanese: kanji, Korean: hanja, Vietnamese: hán tự"
+        },
+        {
+          "word": "好",
+          "reading": "hǎo",
+          "gloss": "good"
+        },
+        {
+          "word": "好看",
+          "reading": "hǎokàn",
+          "gloss": "embarrassed, interesting, nice, good-looking, delightful"
+        },
+        {
+          "word": "好听",
+          "reading": "hǎotīng",
+          "gloss": "pleasant to hear"
+        },
+        {
+          "word": "好玩儿",
+          "reading": "hǎowánr",
+          "gloss": "interesting, delightful, amusing"
+        },
+        {
+          "word": "号",
+          "reading": "hào",
+          "gloss": "m.[general]"
+        },
+        {
+          "word": "喝",
+          "reading": "hē",
+          "gloss": "drink"
+        },
+        {
+          "word": "和",
+          "reading": "hé",
+          "gloss": "and, with, gentle, peaceful"
+        },
+        {
+          "word": "很",
+          "reading": "hěn",
+          "gloss": "pretty, thrice, monstrously, gey, quite, mighty, stinking, sopping, some, assai, full, most, clinking, much, thumping, awfully, fiendishly, thundering, very, real, really, bally, proper, grossly, powerful, so, rattling, well, considerably, greatly, terribly"
+        },
+        {
+          "word": "后",
+          "reading": "hòu",
+          "gloss": "rear, back, behind"
+        },
+        {
+          "word": "后边",
+          "reading": "hòubian",
+          "gloss": "back, rear, behind"
+        },
+        {
+          "word": "话",
+          "reading": "huà",
+          "gloss": "words, thing, language, tongue, talk, speech, spoken_language, conversation, utterance, expression, story, tale, saying, natural language, sayings, word"
+        },
+        {
+          "word": "后天",
+          "reading": "hòutiān",
+          "gloss": "the day after tomorrow, post-natal, acquired (not innate), a posteriori"
+        },
+        {
+          "word": "坏",
+          "reading": "huài",
+          "gloss": "spoiled"
+        },
+        {
+          "word": "回答",
+          "reading": "huídá",
+          "gloss": "answer, reply"
+        },
+        {
+          "word": "回",
+          "reading": "huí",
+          "gloss": "return, go back"
+        },
+        {
+          "word": "花",
+          "reading": "huā",
+          "gloss": "spend, expend, cost"
+        },
+        {
+          "word": "回到",
+          "reading": "huídào",
+          "gloss": "remount, retour, recur, turn back, regress, regain, revert, go_back, return to, return, go back to"
+        },
+        {
+          "word": "回家",
+          "reading": "huí jiā",
+          "gloss": "return home"
+        },
+        {
+          "word": "回去",
+          "reading": "huí  qu",
+          "gloss": "go_home, go_back, retrocede, go back, be back, go, return"
+        },
+        {
+          "word": "回来",
+          "reading": "huí lai",
+          "gloss": "come back, get_back, recur, revisit, come, return, be back, come_back"
+        },
+        {
+          "word": "会",
+          "reading": "huì",
+          "gloss": "to be able, can, will, to meet"
+        },
+        {
+          "word": "火车",
+          "reading": "huǒchē",
+          "gloss": "choo-choo, railroad train, car train, marshalling_yard, puff-puff, train"
+        },
+        {
+          "word": "机场",
+          "reading": "jīchǎng",
+          "gloss": "landing field, flying field, airfield, airport, airdrome, field, aerodrome"
+        },
+        {
+          "word": "鸡蛋",
+          "reading": "jīdàn",
+          "gloss": "(chicken) egg, hen's egg, CL:個|个[ge4],打[da2]"
+        },
+        {
+          "word": "机票",
+          "reading": "jīpiào",
+          "gloss": "air ticket, passenger ticket, CL:張|张[zhang1]"
+        },
+        {
+          "word": "几",
+          "reading": "jǐ",
+          "gloss": "det.: how many, a few, several, some"
+        },
+        {
+          "word": "记得",
+          "reading": "jì de",
+          "gloss": "come to mind, think back, remember, recollect, recall, rememberance, mind, retain, place, spring to mind, bear in mind"
+        },
+        {
+          "word": "记住",
+          "reading": "jì zhu",
+          "gloss": "to remember, to bear in mind, to learn by heart"
+        },
+        {
+          "word": "家",
+          "reading": "jiā",
+          "gloss": "family, household, home, house"
+        },
+        {
+          "word": "记",
+          "reading": "jì",
+          "gloss": "write down, record"
+        },
+        {
+          "word": "家里",
+          "reading": "jiālǐ",
+          "gloss": "home"
+        },
+        {
+          "word": "见面",
+          "reading": "jiàn miàn",
+          "gloss": "meet, see"
+        },
+        {
+          "word": "教",
+          "reading": "jiào",
+          "gloss": "teach"
+        },
+        {
+          "word": "家人",
+          "reading": "jiārén",
+          "gloss": "relation, homefolk, inmate, kindred, household, relative, people, folks, kin, family members, family, kinsfolk, house"
+        },
+        {
+          "word": "间",
+          "reading": "jiān",
+          "gloss": "locality, room"
+        },
+        {
+          "word": "见",
+          "reading": "jiàn",
+          "gloss": "see, be exposed to, become visible, call on, refer to, meet with, appear to be, appear, vide, catch sight of, meet"
+        },
+        {
+          "word": "叫",
+          "reading": "jiào",
+          "gloss": "to be called"
+        },
+        {
+          "word": "教学楼",
+          "reading": "jiàoxuélóu",
+          "gloss": "teaching block, school building"
+        },
+        {
+          "word": "介绍",
+          "reading": "jièshào",
+          "gloss": "introduce, present, recommend, suggest, let know, brief"
+        },
+        {
+          "word": "今年",
+          "reading": "jīnnián",
+          "gloss": "this year"
+        },
+        {
+          "word": "姐姐",
+          "reading": "jiějie",
+          "gloss": "sis, big_sister, elder sister, sister"
+        },
+        {
+          "word": "今天",
+          "reading": "jīntiān",
+          "gloss": "today, at the present, now"
+        },
+        {
+          "word": "进",
+          "reading": "jìn",
+          "gloss": "enter, come; go into, advance"
+        },
+        {
+          "word": "就",
+          "reading": "jiù",
+          "gloss": "then, at once, right away, an indicator strengthening speaker's evaluation"
+        },
+        {
+          "word": "觉得",
+          "reading": "juéde",
+          "gloss": "imagine, guess, believe, reckon, suspect, suppose, think, listen, feel, consider, think_of, appear, conceive"
+        },
+        {
+          "word": "九",
+          "reading": "jiǔ",
+          "gloss": "det.: nine"
+        },
+        {
+          "word": "开",
+          "reading": "kāi",
+          "gloss": "open, open up, reclaim (land), open out, come loose, start, begin, operate, turn on (light), run (business), hold (meeting; etc.), divide into, reveal"
+        },
+        {
+          "word": "开车",
+          "reading": "kāi chē",
+          "gloss": "to drive a car"
+        },
+        {
+          "word": "开会",
+          "reading": "kāi huì",
+          "gloss": "hold; attend meeting"
+        },
+        {
+          "word": "开玩笑",
+          "reading": "kāi wánxiào",
+          "gloss": "kid, spoof, jive, gag, make fun of, josh, daff, rot, quip, chaff, rib, banter, jolly, fun, sport, put_on, clown, fool, droll, jape, joke, skylark, jest, jocose, crack a joke"
+        },
+        {
+          "word": "看",
+          "reading": "kàn",
+          "gloss": "see, look at, watch, read, look upon, regard, look after, call on, visit"
+        },
+        {
+          "word": "看病",
+          "reading": "kàn bìng",
+          "gloss": "to visit a doctor, to see a patient"
+        },
+        {
+          "word": "看到",
+          "reading": "kàn dào",
+          "gloss": "view, receive, ken, observe, lamp, catch, see, take in, watch, chatter away, lay_eyes_on, boast, brag, shoot the breeze, spy, catch sight of, catch sight of"
+        },
+        {
+          "word": "考",
+          "reading": "kǎo",
+          "gloss": "study, inspect, give test, inspection, give, give; take test, test, investigate, verify, take test, give or take an examination, quiz, check"
+        },
+        {
+          "word": "考试",
+          "reading": "kǎoshì",
+          "gloss": "examination, test"
+        },
+        {
+          "word": "渴",
+          "reading": "kě",
+          "gloss": "thirsty"
+        },
+        {
+          "word": "课",
+          "reading": "kè",
+          "gloss": "subject, course, class"
+        },
+        {
+          "word": "课本",
+          "reading": "kèběn",
+          "gloss": "text edition, textbook, text, school text, schoolbook"
+        },
+        {
+          "word": "课文",
+          "reading": "kèwén",
+          "gloss": "text, CL:篇[pian1]"
+        },
+        {
+          "word": "口",
+          "reading": "kǒu",
+          "gloss": "m.[general]"
+        },
+        {
+          "word": "块",
+          "reading": "kuài",
+          "gloss": "m.[general]"
+        },
+        {
+          "word": "快",
+          "reading": "kuài",
+          "gloss": "fast, quick, quick-witted, ingenious, sharp (of knives), straightforward"
+        },
+        {
+          "word": "来",
+          "reading": "lái",
+          "gloss": "to"
+        },
+        {
+          "word": "来到",
+          "reading": "láidào",
+          "gloss": "arrive, come"
+        },
+        {
+          "word": "老",
+          "reading": "lǎo",
+          "gloss": "old, aged; of long standing, outdated, tough, overgrown, dark (of colors)"
+        },
+        {
+          "word": "老师",
+          "reading": "lǎoshī",
+          "gloss": "rabbi, professor, swami, instructor, teacher, mast"
+        },
+        {
+          "word": "了",
+          "reading": "le",
+          "gloss": "entirely"
+        },
+        {
+          "word": "冷",
+          "reading": "lěng",
+          "gloss": "cool, rare, cold, unfrequented, feel cold, chill, frosty(in manner), shot from hiding, strange"
+        },
+        {
+          "word": "里",
+          "reading": "lǐ",
+          "gloss": "inside"
+        },
+        {
+          "word": "里边",
+          "reading": "lǐbian",
+          "gloss": "inside"
+        },
+        {
+          "word": "两",
+          "reading": "liǎng",
+          "gloss": "det.: two, both (sides), either (side), a few, some"
+        },
+        {
+          "word": "零",
+          "reading": "líng",
+          "gloss": "det.: zero, naught, nil"
+        },
+        {
+          "word": "六",
+          "reading": "liù",
+          "gloss": "det.: six"
+        },
+        {
+          "word": "楼",
+          "reading": "lóu",
+          "gloss": "storey, Lou, tower, superstructure, storied building, story, floor, Surname, a storied building"
+        },
+        {
+          "word": "楼上",
+          "reading": "lóushàng",
+          "gloss": "upstairs"
+        },
+        {
+          "word": "楼下",
+          "reading": "lóuxià",
+          "gloss": "downstairs"
+        },
+        {
+          "word": "路口",
+          "reading": "lùkǒu",
+          "gloss": "crossing, intersection (of roads)"
+        },
+        {
+          "word": "路上",
+          "reading": "lùshang",
+          "gloss": "on the road, on a journey, road surface"
+        },
+        {
+          "word": "妈妈",
+          "reading": "māma",
+          "gloss": "mummy, mammy, ma, mother, mamma, mum, mommy, female parent, mom, Mama, mater, mama, momma"
+        },
+        {
+          "word": "马路",
+          "reading": "mǎlù",
+          "gloss": "drive, road, driveway, riding, a road, carriageway, avenue, street, a street used by vehicular traffic"
+        },
+        {
+          "word": "路",
+          "reading": "lù",
+          "gloss": "road, path, way, journey, distance, means, sequence, logic, line, region, district, route, sort, grade, class"
+        },
+        {
+          "word": "马上",
+          "reading": "mǎshàng",
+          "gloss": "in a short time, at_once, instantaneously, promptly, at once, incontinent, in the same breath, directively, instantly, slapbang, pronto, right_away, immediately, shortly, without delay, right away, tout-de-suite, forthwith, presently, in_no_time, at a time, soon, hereupon, in a few seconds, before long, at one time, outright, straightaway, in a minute, directly, momently, in a f"
+        },
+        {
+          "word": "买",
+          "reading": "mǎi",
+          "gloss": "pick up, invest, hire, buy, purchase, put_down, trade, get"
+        },
+        {
+          "word": "吗",
+          "reading": "ma",
+          "gloss": "particle: calling for agreement or disagreement"
+        },
+        {
+          "word": "慢",
+          "reading": "màn",
+          "gloss": "tardy, rude, slow down, slow, slow up, retard, lose, defer, supercilious, postpone, decelerate"
+        },
+        {
+          "word": "忙",
+          "reading": "máng",
+          "gloss": "hurry, hasten"
+        },
+        {
+          "word": "毛",
+          "reading": "máo",
+          "gloss": "Mao, wool, bristle, nap, pilus, down, feather, mold, mildew, Surname, hair, 1 1 0 th yuan, 1 0 th yuan, dime, silk, cent, fur, marking"
+        },
+        {
+          "word": "没",
+          "reading": "méi",
+          "gloss": "not"
+        },
+        {
+          "word": "没关系",
+          "reading": "méiguānxi",
+          "gloss": "it doesn't matter, never mind"
+        },
+        {
+          "word": "没什么",
+          "reading": "méishénme",
+          "gloss": "nothing, it doesn't matter, it's nothing, never mind"
+        },
+        {
+          "word": "没事儿",
+          "reading": "méishìr",
+          "gloss": "to have spare time, free from work, it's not important, it's nothing, never mind"
+        },
+        {
+          "word": "妹妹",
+          "reading": "mèimei",
+          "gloss": "little_sister, sis, younger sister, little sister, sister"
+        },
+        {
+          "word": "门",
+          "reading": "mén",
+          "gloss": "door, gate"
+        },
+        {
+          "word": "门口",
+          "reading": "ménkǒu",
+          "gloss": "porch, portal, doorway, gateway, threshold, room access, door, entering, entrance"
+        },
+        {
+          "word": "门票",
+          "reading": "ménpiào",
+          "gloss": "entrance; admission ticket, admission ticket, admission fee, admission price, entrance ticket, admission charge, cover_charge, admission, entrance fee, entrance money, pasteboard, price of admission, entrance"
+        },
+        {
+          "word": "米饭",
+          "reading": "mǐfàn",
+          "gloss": "(cooked) rice"
+        },
+        {
+          "word": "们",
+          "reading": "men",
+          "gloss": "pluralizer after pronouns and nouns of persons"
+        },
+        {
+          "word": "面包",
+          "reading": "miànbāo",
+          "gloss": "bun, staff of life, cookie, breadstuff, bread"
+        },
+        {
+          "word": "面条儿",
+          "reading": "miàntiáor",
+          "gloss": "noodles, erhua variant of 麵條|面条[mian4 tiao2]"
+        },
+        {
+          "word": "明白",
+          "reading": "míngbai",
+          "gloss": "clarify, downright, recognize, agnize, tumble, follow, make out, catch, understand, discern, think, know, seize, agnise, twig, realize, get, realization"
+        },
+        {
+          "word": "明年",
+          "reading": "míngnián",
+          "gloss": "next year"
+        },
+        {
+          "word": "明天",
+          "reading": "míngtiān",
+          "gloss": "tomorrow"
+        },
+        {
+          "word": "哪",
+          "reading": "nǎ",
+          "gloss": "det.: which"
+        },
+        {
+          "word": "哪儿",
+          "reading": "nǎr",
+          "gloss": "where"
+        },
+        {
+          "word": "哪些",
+          "reading": "nǎxiē",
+          "gloss": "det.: which"
+        },
+        {
+          "word": "拿",
+          "reading": "ná",
+          "gloss": "take, hold, seize, capture"
+        },
+        {
+          "word": "那边",
+          "reading": "nàbian",
+          "gloss": "beyond, that side, there"
+        },
+        {
+          "word": "那",
+          "reading": "nà",
+          "gloss": "det.: that"
+        },
+        {
+          "word": "那些",
+          "reading": "nàxiē",
+          "gloss": "det.: those"
+        },
+        {
+          "word": "奶",
+          "reading": "nǎi",
+          "gloss": "breasts, milk"
+        },
+        {
+          "word": "那儿",
+          "reading": "nàr",
+          "gloss": "that place"
+        },
+        {
+          "word": "奶奶",
+          "reading": "nǎinai",
+          "gloss": "nanna, address for married woman, granny, gran, grandmother, grandma, respectful form of address for an old woman, paternal grandmother"
+        },
+        {
+          "word": "男孩儿",
+          "reading": "nánháir",
+          "gloss": "boy, erhua variant of 男孩[nan2 hai2]"
+        },
+        {
+          "word": "男朋友",
+          "reading": "nánpéngyou",
+          "gloss": "boyfriend"
+        },
+        {
+          "word": "男",
+          "reading": "nán",
+          "gloss": "baron, male, man, steady, mankind, male person, boy, chauvinism, creature, son"
+        },
+        {
+          "word": "男生",
+          "reading": "nánshēng",
+          "gloss": "brother, sonny boy, man, male, laddie, lad, boy student, male student, boy, schoolboy, sonny, cub, man student"
+        },
+        {
+          "word": "南",
+          "reading": "nán",
+          "gloss": "Yugoslavia, South, Nan, south, Surname, S, due south, austral, southern"
+        },
+        {
+          "word": "南边",
+          "reading": "nánbian",
+          "gloss": "south, south side, southern part, to the south of"
+        },
+        {
+          "word": "呢",
+          "reading": "ne",
+          "gloss": "particle: marking quesitons about subject already mentioned; indicating strong affirmation"
+        },
+        {
+          "word": "难",
+          "reading": "nán",
+          "gloss": "make difficulties, take to task, put ... into a difficult position, disagreeable, make difficult, unpleasant, hard, difficult, troublesome, blame"
+        },
+        {
+          "word": "你",
+          "reading": "nǐ",
+          "gloss": "you"
+        },
+        {
+          "word": "能",
+          "reading": "néng",
+          "gloss": "can or to be capable of"
+        },
+        {
+          "word": "你们",
+          "reading": "nǐmen",
+          "gloss": "you, you (plural), you-all"
+        },
+        {
+          "word": "您",
+          "reading": "nín",
+          "gloss": "you"
+        },
+        {
+          "word": "牛奶",
+          "reading": "niúnǎi",
+          "gloss": "cow's milk"
+        },
+        {
+          "word": "女",
+          "reading": "nǚ",
+          "gloss": "girl, female, woman, neodymium, hen, daughter, beaver, creature"
+        },
+        {
+          "word": "年",
+          "reading": "nián",
+          "gloss": "year"
+        },
+        {
+          "word": "女孩儿",
+          "reading": "nǚháir",
+          "gloss": "girl, erhua variant of 女孩[nu:3 hai2]"
+        },
+        {
+          "word": "女儿",
+          "reading": "nǚér",
+          "gloss": "daughter, girl"
+        },
+        {
+          "word": "女生",
+          "reading": "nǚshēng",
+          "gloss": "schoolgirl, girl student, female student, female, girl, woman student, co-ed"
+        },
+        {
+          "word": "女朋友",
+          "reading": "nǚpéngyou",
+          "gloss": "jane, girl, girl friend, lady friend, girlfriend, amie"
+        },
+        {
+          "word": "旁边",
+          "reading": "pángbiān",
+          "gloss": "by the side of, side, adjacency, near by"
+        },
+        {
+          "word": "跑",
+          "reading": "pǎo",
+          "gloss": "travel, race, be away, escape, course, run errands, skirr, double, walk, be away; off, run away, be off, run about doing sth., run, drive, paw the earth, run about doing ..., ride, leg"
+        },
+        {
+          "word": "朋友",
+          "reading": "péngyou",
+          "gloss": "amigo, connections, kith, friend, boy, crony, ami, boy; girl friend, companion, mate, boy friend or girl friend, compadre, boy friend, Mac, paisano, matey, old_boy, sport, folks, pard, hearty, Kamerad, cocker, cobber, girl friend, pardner, company"
+        },
+        {
+          "word": "票",
+          "reading": "piào",
+          "gloss": "ticket, ballot, note"
+        },
+        {
+          "word": "七",
+          "reading": "qī",
+          "gloss": "det.: seven"
+        },
+        {
+          "word": "起床",
+          "reading": "qǐ chuáng",
+          "gloss": "uprise, get up from bed, arise, get out of bed, turn out, rise, deck, get_up, awake, get up"
+        },
+        {
+          "word": "起来",
+          "reading": "qǐ  lai",
+          "gloss": "[aspect]"
+        },
+        {
+          "word": "起",
+          "reading": "qǐ",
+          "gloss": "[aspect]"
+        },
+        {
+          "word": "汽车",
+          "reading": "qìchē",
+          "gloss": "automotive vehicle, machine, wheels, motorcar, motor vehicle, car, automotive, auto, wheel, autocar, motor, automobile, hoot, mobile, bus"
+        },
+        {
+          "word": "前",
+          "reading": "qián",
+          "gloss": "front"
+        },
+        {
+          "word": "前边",
+          "reading": "qiánbian",
+          "gloss": "front, the front side, in front of"
+        },
+        {
+          "word": "钱",
+          "reading": "qián",
+          "gloss": "copper coin, cash, money, fund, sum"
+        },
+        {
+          "word": "钱包",
+          "reading": "qiánbāo",
+          "gloss": "purse, wallet"
+        },
+        {
+          "word": "请",
+          "reading": "qǐng",
+          "gloss": "request, ask (a favor), engage, hire (teacher; etc.), Please..."
+        },
+        {
+          "word": "前天",
+          "reading": "qiántiān",
+          "gloss": "the day before yesterday"
+        },
+        {
+          "word": "请假",
+          "reading": "qǐng jià",
+          "gloss": "vacate, ask for leave"
+        },
+        {
+          "word": "请问",
+          "reading": "qǐngwèn",
+          "gloss": "Excuse me, may I ask...?"
+        },
+        {
+          "word": "请进",
+          "reading": "qǐngjìn",
+          "gloss": "'please come in'"
+        },
+        {
+          "word": "请坐",
+          "reading": "qǐng zuò",
+          "gloss": "Sitting"
+        },
+        {
+          "word": "球",
+          "reading": "qiú",
+          "gloss": "ball"
+        },
+        {
+          "word": "去年",
+          "reading": "qùnián",
+          "gloss": "last year"
+        },
+        {
+          "word": "热",
+          "reading": "rè",
+          "gloss": "hot"
+        },
+        {
+          "word": "人",
+          "reading": "rén",
+          "gloss": "person, people"
+        },
+        {
+          "word": "认识",
+          "reading": "rènshi",
+          "gloss": "know, recognize"
+        },
+        {
+          "word": "认真",
+          "reading": "rènzhēn",
+          "gloss": "serious, earnest, take for real"
+        },
+        {
+          "word": "去",
+          "reading": "qù",
+          "gloss": "to go, to leave, in order to"
+        },
+        {
+          "word": "日",
+          "reading": "rì",
+          "gloss": "m.[standard]"
+        },
+        {
+          "word": "日期",
+          "reading": "rìqī",
+          "gloss": "calendar, when, date"
+        },
+        {
+          "word": "肉",
+          "reading": "ròu",
+          "gloss": "pulp, chilli, cabobs, meat, lobscouse, paella, meaty, fleshy, flesh, marmite"
+        },
+        {
+          "word": "山",
+          "reading": "shān",
+          "gloss": "Shan, jebel, pike, mountain, whitethorn, hump, anything resembling a mountain, gable, kop, chimney, hill, Surname, mount"
+        },
+        {
+          "word": "商场",
+          "reading": "shāngchǎng",
+          "gloss": "department store, bazar, line of business, field of operation, grocery store, emporium, bazaar, grocery, mall, commercial circle, field, market"
+        },
+        {
+          "word": "上",
+          "reading": "shàng",
+          "gloss": "on, above"
+        },
+        {
+          "word": "三",
+          "reading": "sān",
+          "gloss": "det.: three"
+        },
+        {
+          "word": "商店",
+          "reading": "shāngdiàn",
+          "gloss": "concern, hospital, business, store, shoppe, shop"
+        },
+        {
+          "word": "上班",
+          "reading": "shàng bān",
+          "gloss": "start work, go to work, be on duty"
+        },
+        {
+          "word": "上车",
+          "reading": "shàngchē",
+          "gloss": "to get on or into (a bus, train, car etc)"
+        },
+        {
+          "word": "上课",
+          "reading": "shàng kè",
+          "gloss": "attend class, go to class; give lesson; lecture"
+        },
+        {
+          "word": "上网",
+          "reading": "shàng wǎng",
+          "gloss": "to go online, to connect to the Internet, (of a document etc) to be uploaded to the Internet, (tennis, volleyball etc) to move in close to the net"
+        },
+        {
+          "word": "上边",
+          "reading": "shàngbian",
+          "gloss": "the top, above, overhead, upwards, the top margin, above-mentioned, those higher up"
+        },
+        {
+          "word": "上学",
+          "reading": "shàng xué",
+          "gloss": "attend school, be at school"
+        },
+        {
+          "word": "上午",
+          "reading": "shàngwǔ",
+          "gloss": "morning, CL:個|个[ge4]"
+        },
+        {
+          "word": "少",
+          "reading": "shǎo",
+          "gloss": "lack, be deficient, lose, be missing"
+        },
+        {
+          "word": "上次",
+          "reading": "shàngcì",
+          "gloss": "last time"
+        },
+        {
+          "word": "身上",
+          "reading": "shēnshang",
+          "gloss": "on the body, at hand, among"
+        },
+        {
+          "word": "谁",
+          "reading": "shéi",
+          "gloss": "who, someone, anyone"
+        },
+        {
+          "word": "身体",
+          "reading": "shēntǐ",
+          "gloss": "soma, system, physical structure, body, health, carcase, corpus, frame, person, somatic, organic structure, personage"
+        },
+        {
+          "word": "生病",
+          "reading": "shēng bìng",
+          "gloss": "come down, ail, fall ill, traik, sick, sicken"
+        },
+        {
+          "word": "生气",
+          "reading": "shēng qì",
+          "gloss": "get angry, be angry"
+        },
+        {
+          "word": "十",
+          "reading": "shí",
+          "gloss": "det.: ten"
+        },
+        {
+          "word": "时候",
+          "reading": "shíhou",
+          "gloss": "day, moment, (a point in) time, (duration of) time, time"
+        },
+        {
+          "word": "时间",
+          "reading": "shíjiān",
+          "gloss": "moment, day, clock time, fourth_dimension, relativity, hour, duration, time, when, while, temporal, economy"
+        },
+        {
+          "word": "事",
+          "reading": "shì",
+          "gloss": "responsibility, trouble, event, thing, worry, accident, case, involvement, work, affair, job, concern, business, toast, matter"
+        },
+        {
+          "word": "试",
+          "reading": "shì",
+          "gloss": "offer, attempt, essay, flesh, try, seek, assay, test"
+        },
+        {
+          "word": "是不是",
+          "reading": "shìbùshì",
+          "gloss": "is or isn't, yes or no, whether or not"
+        },
+        {
+          "word": "是",
+          "reading": "shì",
+          "gloss": "is, are, am, yes, to be, variant of 是[shi4], (used in given names)"
+        },
+        {
+          "word": "手机",
+          "reading": "shǒujī",
+          "gloss": "cell phone, mobile phone, CL:部[bu4],支[zhi1]"
+        },
+        {
+          "word": "手",
+          "reading": "shǒu",
+          "gloss": "hand"
+        },
+        {
+          "word": "书包",
+          "reading": "shūbāo",
+          "gloss": "bag, book bag, satchel, schoolbag"
+        },
+        {
+          "word": "书",
+          "reading": "shū",
+          "gloss": "volume, document, style of calligraphy, book, script, letter"
+        },
+        {
+          "word": "书店",
+          "reading": "shūdiàn",
+          "gloss": "bookstore"
+        },
+        {
+          "word": "树",
+          "reading": "shù",
+          "gloss": "wood, Ruptiliocarpon caracolito, tree, arbor, Surname, caracolito"
+        },
+        {
+          "word": "水",
+          "reading": "shuǐ",
+          "gloss": "water, H2O, liquid, bubble, a general term for rivers, lakes, seas, etc., Shiu, waters, aqueous, Aquarius, river, Surname, blister, drink, eau, aqua"
+        },
+        {
+          "word": "水果",
+          "reading": "shuǐguǒ",
+          "gloss": "fruit"
+        },
+        {
+          "word": "睡",
+          "reading": "shuì",
+          "gloss": "sleep"
+        },
+        {
+          "word": "说",
+          "reading": "shuō",
+          "gloss": "speak, talk, explain, scold"
+        },
+        {
+          "word": "说话",
+          "reading": "shuō huà",
+          "gloss": "philosophize, thrum, talk, peach, babble out, speech, articulate, chat, speak, babble, gossip, blab out, sing, address, tattle, blab, mouth, say"
+        },
+        {
+          "word": "睡觉",
+          "reading": "shuì jiào",
+          "gloss": "turn_in, log Z's, doss, slumber, catch some Z's, go to bed, sleep, doss down, crash, go_to_sleep, hit_the_sack, kip"
+        },
+        {
+          "word": "送",
+          "reading": "sòng",
+          "gloss": "accompaniment, escort, see sb. off, see sb. off; out, to dispatch, see ... off, accompany, to deliver, send, direct, serve, guide, give as a present, deliver, see sb. out, see, lead, see ... out, conduct, give, to send, carry, delivery, carriage, take, hospitalize"
+        },
+        {
+          "word": "四",
+          "reading": "sì",
+          "gloss": "det.: four"
+        },
+        {
+          "word": "岁",
+          "reading": "suì",
+          "gloss": "year (for crops), m.[standard], , year of age, year (of age), year, annum, year for crops"
+        },
+        {
+          "word": "他们",
+          "reading": "tāmen",
+          "gloss": "they"
+        },
+        {
+          "word": "什么",
+          "reading": "shénme",
+          "gloss": "anything, what"
+        },
+        {
+          "word": "她",
+          "reading": "tā",
+          "gloss": "she, her, she (neologism for {1ta1}[2]), )"
+        },
+        {
+          "word": "她们",
+          "reading": "tāmen",
+          "gloss": "they (female)"
+        },
+        {
+          "word": "天",
+          "reading": "tiān",
+          "gloss": "m.[standard]"
+        },
+        {
+          "word": "他",
+          "reading": "tā",
+          "gloss": "he, she, it, they (referring to inanimate things in object position)"
+        },
+        {
+          "word": "太",
+          "reading": "tài",
+          "gloss": "excessively, too, extremely, very"
+        },
+        {
+          "word": "天气",
+          "reading": "tiānqì",
+          "gloss": "sky, elements, weather condition, atmospheric condition, weather"
+        },
+        {
+          "word": "听到",
+          "reading": "tīngdào",
+          "gloss": "hear"
+        },
+        {
+          "word": "听写",
+          "reading": "tīngxiě",
+          "gloss": "dictate, dictation, CL:次[ci4]"
+        },
+        {
+          "word": "听",
+          "reading": "tīng",
+          "gloss": "hear, list, hearken, obey, obedience, listen, heed, administer, let, allow, hark"
+        },
+        {
+          "word": "图书馆",
+          "reading": "túshūguǎn",
+          "gloss": "library"
+        },
+        {
+          "word": "外",
+          "reading": "wài",
+          "gloss": "outside, in addition, foreign, external"
+        },
+        {
+          "word": "外边",
+          "reading": "wàibian",
+          "gloss": "outside, outer surface, abroad, place other than one's home"
+        },
+        {
+          "word": "同学",
+          "reading": "tóngxué",
+          "gloss": "class fellow, fellow student, condisciple, classmate, schoolmate, schoolfellow, form of address used in speaking to a student"
+        },
+        {
+          "word": "外国",
+          "reading": "wàiguó",
+          "gloss": "foreign, foreign country, outland, outremer"
+        },
+        {
+          "word": "玩儿",
+          "reading": "wánr",
+          "gloss": "to play, to have fun, to hang out"
+        },
+        {
+          "word": "晚",
+          "reading": "wǎn",
+          "gloss": "far on in time, late"
+        },
+        {
+          "word": "晚饭",
+          "reading": "wǎnfàn",
+          "gloss": "evening meal, dinner, supper, CL:份[fen4],頓|顿[dun4],次[ci4],餐[can1]"
+        },
+        {
+          "word": "网上",
+          "reading": "wǎngshàng",
+          "gloss": "online"
+        },
+        {
+          "word": "网友",
+          "reading": "wǎngyǒu",
+          "gloss": "online friend, Internet user"
+        },
+        {
+          "word": "外语",
+          "reading": "wàiyǔ",
+          "gloss": "foreign language"
+        },
+        {
+          "word": "忘记",
+          "reading": "wàngjì",
+          "gloss": "misremember, block, blank out, neglect, overlook, draw a blank, leave_out, disremember, fail, forget"
+        },
+        {
+          "word": "忘",
+          "reading": "wàng",
+          "gloss": "forget, overlook, neglect"
+        },
+        {
+          "word": "问",
+          "reading": "wèn",
+          "gloss": "ask, examine, question, interrogate"
+        },
+        {
+          "word": "我们",
+          "reading": "wǒmen",
+          "gloss": "we"
+        },
+        {
+          "word": "我",
+          "reading": "wǒ",
+          "gloss": "I, me, ego, self"
+        },
+        {
+          "word": "五",
+          "reading": "wǔ",
+          "gloss": "det.: five"
+        },
+        {
+          "word": "午饭",
+          "reading": "wǔfàn",
+          "gloss": "lunch, CL:份[fen4],頓|顿[dun4],次[ci4],餐[can1]"
+        },
+        {
+          "word": "西",
+          "reading": "xī",
+          "gloss": "W, Spain, west, occident, due west, western"
+        },
+        {
+          "word": "洗",
+          "reading": "xǐ",
+          "gloss": "wash, bathe, sack, develop (film), shuffle (cards; etc.)"
+        },
+        {
+          "word": "洗手间",
+          "reading": "xǐshǒujiān",
+          "gloss": "toilet, lavatory, washroom"
+        },
+        {
+          "word": "喜欢",
+          "reading": "xǐhuan",
+          "gloss": "like, love, be fond of, be happy; elated"
+        },
+        {
+          "word": "下",
+          "reading": "xià",
+          "gloss": "under (condition; fact etc.)"
+        },
+        {
+          "word": "下班",
+          "reading": "xià bān",
+          "gloss": "get_off"
+        },
+        {
+          "word": "下边",
+          "reading": "xiàbian",
+          "gloss": "under, the underside, below"
+        },
+        {
+          "word": "下车",
+          "reading": "xiàchē",
+          "gloss": "get off; out of vehicle"
+        },
+        {
+          "word": "下次",
+          "reading": "xiàcì",
+          "gloss": "next time"
+        },
+        {
+          "word": "下课",
+          "reading": "xià kè",
+          "gloss": "finish class, get out of class"
+        },
+        {
+          "word": "下午",
+          "reading": "xiàwǔ",
+          "gloss": "afternoon, CL:個|个[ge4], p.m."
+        },
+        {
+          "word": "下雨",
+          "reading": "xiàyǔ",
+          "gloss": "rain"
+        },
+        {
+          "word": "先",
+          "reading": "xiān",
+          "gloss": "earlier, in advance, before"
+        },
+        {
+          "word": "先生",
+          "reading": "xiānsheng",
+          "gloss": "doctor of Chinese medicine, Don, mulla, Ms., sir., teacher, gentleman, gospodin, Signor, signor, fortune-teller, babu, baboo, Herr, Mister, bey, mister, bwana, husband, siree, buckra, sirrah, senor, guv, sahib, Mr., rabbi, don, signore, Dan, sir, m'sieur, effendi, Tuan, baas, Monsieur, lording, monsieur, doctor, Mr, milord, Mynheer, signior, esquire, bookkeeper, Senor, rabboni, Senhor, sieur, sen"
+        },
+        {
+          "word": "想",
+          "reading": "xiǎng",
+          "gloss": "think, suppose, reckon, consider, want to, would like to, feel like (doing sth.)"
+        },
+        {
+          "word": "现在",
+          "reading": "xiànzài",
+          "gloss": "now, at present, at the moment, modern, current, nowadays"
+        },
+        {
+          "word": "小",
+          "reading": "xiǎo",
+          "gloss": "small, little, petty, minor; young"
+        },
+        {
+          "word": "小孩儿",
+          "reading": "xiǎoháir",
+          "gloss": "child, erhua variant of 小孩[xiao3 hai2]"
+        },
+        {
+          "word": "小时",
+          "reading": "xiǎoshí",
+          "gloss": "hour"
+        },
+        {
+          "word": "小朋友",
+          "reading": "xiǎopéngyǒu",
+          "gloss": "child (adult address to child), little boy, children, little boy; girl, girl, little girl, little boy or girl, child"
+        },
+        {
+          "word": "小学",
+          "reading": "xiǎoxué",
+          "gloss": "primary school, elementary school"
+        },
+        {
+          "word": "笑",
+          "reading": "xiào",
+          "gloss": "smile, laugh"
+        },
+        {
+          "word": "写",
+          "reading": "xiě",
+          "gloss": "description, bewrite, direct, describe, pencil, draw, paint, inscribe, write, depiction, write_out, throw_off, depict, address, author, screeve, word, compose"
+        },
+        {
+          "word": "谢谢",
+          "reading": "xièxie",
+          "gloss": "thank"
+        },
+        {
+          "word": "新",
+          "reading": "xīn",
+          "gloss": "new, fresh, up-to-date"
+        },
+        {
+          "word": "新年",
+          "reading": "xīnnián",
+          "gloss": "New Year, CL:個|个[ge4]"
+        },
+        {
+          "word": "星期",
+          "reading": "xīngqī",
+          "gloss": "Sunday, week"
+        },
+        {
+          "word": "星期日",
+          "reading": "Xīngqīrì",
+          "gloss": "Sunday, CL:個|个[ge4]"
+        },
+        {
+          "word": "星期天",
+          "reading": "xīngqītiān",
+          "gloss": "Sunday, CL:個|个[ge4]"
+        },
+        {
+          "word": "行",
+          "reading": "xíng",
+          "gloss": "go, travel, prevail, circulate, be current"
+        },
+        {
+          "word": "休息",
+          "reading": "xiūxi",
+          "gloss": "repose, have, lie dormant, respire, take time off, have a rest, take a rest, take off, relax, take_time_off, have; take a rest, rest"
+        },
+        {
+          "word": "学生",
+          "reading": "xuésheng",
+          "gloss": "academic, pupil, pup, tutee, follower, scholar, schoolchild, schoolboy, alumnus, disciple, learner, scholastic, student"
+        },
+        {
+          "word": "学",
+          "reading": "xué",
+          "gloss": "study, learn, imitate, mimic"
+        },
+        {
+          "word": "学习",
+          "reading": "xuéxí",
+          "gloss": "study, learn, emulate"
+        },
+        {
+          "word": "学校",
+          "reading": "xuéxiào",
+          "gloss": "seminary, schoolhouse, educational institution, school, institution"
+        },
+        {
+          "word": "学院",
+          "reading": "xuéyuàn",
+          "gloss": "seminary, college, school, hall, institute, academy, faculty"
+        },
+        {
+          "word": "要",
+          "reading": "yào",
+          "gloss": "want, need, must, should"
+        },
+        {
+          "word": "爷爷",
+          "reading": "yéye",
+          "gloss": "grandad, Grandpa, granddad, grandpa, (paternal) grandfather, gramps, granddaddy, grandfather"
+        },
+        {
+          "word": "页",
+          "reading": "yè",
+          "gloss": "page, leaf, m.[general], ,sheet of paper, sheet, piece, piece of paper, folio"
+        },
+        {
+          "word": "也",
+          "reading": "yě",
+          "gloss": "also, too, as well, either, even"
+        },
+        {
+          "word": "医生",
+          "reading": "yīshēng",
+          "gloss": "Galen, MD, physician, Dr., medic, doc, hakeem, medico, Aesculapius, medical man, surgeon, leech, doctor"
+        },
+        {
+          "word": "医院",
+          "reading": "yīyuàn",
+          "gloss": "spital, hospital, infirmary, hospice"
+        },
+        {
+          "word": "一",
+          "reading": "yī",
+          "gloss": "det.: one"
+        },
+        {
+          "word": "一会儿",
+          "reading": "yīhuìr",
+          "gloss": "a moment, a while, in a moment, now...now..., also pr. [yi1 hui3 r5]"
+        },
+        {
+          "word": "一块儿",
+          "reading": "yīkuàir",
+          "gloss": "together"
+        },
+        {
+          "word": "一下儿",
+          "reading": "yīxiàr",
+          "gloss": "(used after a verb) give it a go, to do (sth for a bit to give it a try), one time, once, in a while, all of a sudden, all at once, erhua variant of 一下[yi1 xia4]"
+        },
+        {
+          "word": "一半",
+          "reading": "yībàn",
+          "gloss": "det.: one half, in part, half"
+        },
+        {
+          "word": "一边",
+          "reading": "yībiān",
+          "gloss": "at the same time, simultaneously; on the one; other hand"
+        },
+        {
+          "word": "一点儿",
+          "reading": "yīdiǎnr",
+          "gloss": "det.: a little bit"
+        },
+        {
+          "word": "一起",
+          "reading": "yīqǐ",
+          "gloss": "in_chorus, together, in all, in the same place, holus-bolus, altogether, in company"
+        },
+        {
+          "word": "一些",
+          "reading": "yīxiē",
+          "gloss": "det.: some, a few, a little"
+        },
+        {
+          "word": "一样",
+          "reading": "yīyàng",
+          "gloss": "same, equal, similar"
+        },
+        {
+          "word": "有的",
+          "reading": "yǒude",
+          "gloss": "det : some"
+        },
+        {
+          "word": "有",
+          "reading": "yǒu",
+          "gloss": "have, possess"
+        },
+        {
+          "word": "有名",
+          "reading": "yǒu míng",
+          "gloss": "well-known, famous"
+        },
+        {
+          "word": "用",
+          "reading": "yòng",
+          "gloss": "with"
+        },
+        {
+          "word": "有时候",
+          "reading": "yǒushíhou",
+          "gloss": "from time to time, on_occasion, occasionally, somewhile, otherwhile, now and again, sometimes, now and then, at times, on occasion, whiles, once in a while"
+        },
+        {
+          "word": "有些",
+          "reading": "yǒuxiē",
+          "gloss": "kind_of, rather, somewhat"
+        },
+        {
+          "word": "有用",
+          "reading": "yǒuyòng",
+          "gloss": "belong, profit, count, useful, avail, powerful"
+        },
+        {
+          "word": "右",
+          "reading": "yòu",
+          "gloss": "right side as side of precedence, right side, west, winger, right, the right side, the Right, the right"
+        },
+        {
+          "word": "右边",
+          "reading": "yòubian",
+          "gloss": "right side, right, to the right"
+        },
+        {
+          "word": "雨",
+          "reading": "yǔ",
+          "gloss": "rain"
+        },
+        {
+          "word": "元",
+          "reading": "yuán",
+          "gloss": "m.[standard]"
+        },
+        {
+          "word": "远",
+          "reading": "yuǎn",
+          "gloss": "far, distant (lit.; fig.)"
+        },
+        {
+          "word": "月",
+          "reading": "yuè",
+          "gloss": "moon"
+        },
+        {
+          "word": "再",
+          "reading": "zài",
+          "gloss": "again, once more, further(more), in a higher degree, and then, not (do sth.) before"
+        },
+        {
+          "word": "再见",
+          "reading": "zàijiàn",
+          "gloss": "good-bye, see you again"
+        },
+        {
+          "word": "在",
+          "reading": "zài",
+          "gloss": "in, at, on, etc."
+        },
+        {
+          "word": "在家",
+          "reading": "zàijiā",
+          "gloss": "At home"
+        },
+        {
+          "word": "早",
+          "reading": "zǎo",
+          "gloss": "early, long ago, in advance, beforehand, prematurely"
+        },
+        {
+          "word": "早饭",
+          "reading": "zǎofàn",
+          "gloss": "breakfast, CL:份[fen4],頓|顿[dun4],次[ci4],餐[can1]"
+        },
+        {
+          "word": "早上",
+          "reading": "zǎoshang",
+          "gloss": "early morning, CL:個|个[ge4]"
+        },
+        {
+          "word": "怎么",
+          "reading": "zěnme",
+          "gloss": "how"
+        },
+        {
+          "word": "站",
+          "reading": "zhàn",
+          "gloss": "to stand"
+        },
+        {
+          "word": "找",
+          "reading": "zhǎo",
+          "gloss": "look for, seek, call on, approach"
+        },
+        {
+          "word": "找到",
+          "reading": "zhǎodào",
+          "gloss": "light upon, find, discover, run_down, founded, regain, strike, come upon, come across, run down, trace, turn_up, happen upon, get, chance on, chance upon"
+        },
+        {
+          "word": "这边",
+          "reading": "zhèbiān",
+          "gloss": "this side, here"
+        },
+        {
+          "word": "这",
+          "reading": "zhè",
+          "gloss": "now, this, det.: this, it"
+        },
+        {
+          "word": "这里",
+          "reading": "zhèlǐ",
+          "gloss": "this place, there, here"
+        },
+        {
+          "word": "这儿",
+          "reading": "zhèr",
+          "gloss": "now, here"
+        },
+        {
+          "word": "这些",
+          "reading": "zhèxiē",
+          "gloss": "det.: these"
+        },
+        {
+          "word": "着",
+          "reading": "zhe",
+          "gloss": "[aspect]"
+        },
+        {
+          "word": "真",
+          "reading": "zhēn",
+          "gloss": "really, truly, indeed, clearly"
+        },
+        {
+          "word": "真的",
+          "reading": "zhēn de",
+          "gloss": "really, truly, indeed"
+        },
+        {
+          "word": "正",
+          "reading": "zhèng",
+          "gloss": "precisely, punctually"
+        },
+        {
+          "word": "正在",
+          "reading": "zhèngzài",
+          "gloss": "course of, be, be in process"
+        },
+        {
+          "word": "知识",
+          "reading": "zhīshi",
+          "gloss": "lear, know-how, understanding, ken, instruction, science, sophistication, consciousness, light, awareness, cognizance, knowledge, lore, mastery, know, cognition, acquaintanceship, mind, intellect, knowingness, equipment"
+        },
+        {
+          "word": "中国",
+          "reading": "Zhōngguó",
+          "gloss": "Cathay, China, china"
+        },
+        {
+          "word": "中",
+          "reading": "zhōng",
+          "gloss": "center, middle, interior"
+        },
+        {
+          "word": "中间",
+          "reading": "zhōngjiān",
+          "gloss": "center, middle"
+        },
+        {
+          "word": "中文",
+          "reading": "Zhōngwén",
+          "gloss": "Chinese, Ch. (written) language, Ch. language, Sinitic"
+        },
+        {
+          "word": "中午",
+          "reading": "zhōngwǔ",
+          "gloss": "noon, midday, CL:個|个[ge4]"
+        },
+        {
+          "word": "中学",
+          "reading": "zhōngxué",
+          "gloss": "middle_school, grammar_school, secondary school, Ch. learning, middle school, high_school, grammar school"
+        },
+        {
+          "word": "中学生",
+          "reading": "zhōngxuéshēng",
+          "gloss": "middle-school student, high school student"
+        },
+        {
+          "word": "重",
+          "reading": "zhòng",
+          "gloss": "heavy, weighty, important, considerable in amount; value"
+        },
+        {
+          "word": "重要",
+          "reading": "zhòngyào",
+          "gloss": "important, significant, major"
+        },
+        {
+          "word": "住",
+          "reading": "zhù",
+          "gloss": "inhabit, cease, stay, visit, shack, dwell, stop, people, live, reside, populate, dig"
+        },
+        {
+          "word": "准备",
+          "reading": "zhǔnbèi",
+          "gloss": "prepare, get ready"
+        },
+        {
+          "word": "桌子",
+          "reading": "zhuōzi",
+          "gloss": "mahogany, table, desk"
+        },
+        {
+          "word": "字",
+          "reading": "zì",
+          "gloss": "graphic symbol, writing, pronunciation (of a word), form of a written character, receipt, printing type, script, name taken at the age of 20, courtesy name, wordage, character, grapheme, contract, scripts, symbolic representation, style of handwriting, word"
+        },
+        {
+          "word": "子",
+          "reading": "zi",
+          "gloss": "son, child, seed, egg, small thing, 1st earthly branch: 11 p.m.-1 a.m., midnight, 11th solar month (7th December to 5th January), year of the Rat, Viscount, fourth of five orders of nobility 五等爵位[wu3 deng3 jue2 wei4], ancient Chinese compass point: 0° (north), (noun suffix)"
+        },
+        {
+          "word": "走",
+          "reading": "zǒu",
+          "gloss": "scram, travel, foot, go away, evaporate, ankle, waltz, step, bugger off, etc., go through, leave, leak, run, buzz off, leg, pad, fork, visit, go, escape, lose flavor, work, call on, strike, sashay, trace, pursue, gang, lose shape; etc., get_along, come_along, walk, hoof it, lose flavor; shape"
+        },
+        {
+          "word": "最",
+          "reading": "zuì",
+          "gloss": "most, to the highest degree, much, superlatively"
+        },
+        {
+          "word": "走路",
+          "reading": "zǒu lù",
+          "gloss": "go away, stroam, go on foot, walk"
+        },
+        {
+          "word": "最好",
+          "reading": "zuìhǎo",
+          "gloss": "had better, it would be best"
+        },
+        {
+          "word": "最后",
+          "reading": "zuìhòu",
+          "gloss": "final, last, finally, ultimate"
+        },
+        {
+          "word": "昨天",
+          "reading": "zuótiān",
+          "gloss": "yesterday"
+        },
+        {
+          "word": "左边",
+          "reading": "zuǒbian",
+          "gloss": "left, the left side, to the left of"
+        },
+        {
+          "word": "左",
+          "reading": "zuǒ",
+          "gloss": "left side, east, the Left"
+        },
+        {
+          "word": "坐",
+          "reading": "zuò",
+          "gloss": "sit, take seat"
+        },
+        {
+          "word": "做",
+          "reading": "zuò",
+          "gloss": "make, do"
+        },
+        {
+          "word": "爸",
+          "reading": "bà",
+          "gloss": "father; dad; pa; papa"
+        },
+        {
+          "word": "吧",
+          "reading": "bā",
+          "gloss": "bar (loanword) (serving drinks, or providing Internet access etc); to puff (on a pipe etc); (onom.) bang"
+        },
+        {
+          "word": "白天",
+          "reading": "báitiān",
+          "gloss": "daytime; during the day; day"
+        },
+        {
+          "word": "北边",
+          "reading": "běibiān",
+          "gloss": "north; north side; northern part; to the north of"
+        },
+        {
+          "word": "不客气",
+          "reading": "bùkèqi",
+          "gloss": "you're welcome; don't mention it; impolite; rude; blunt"
+        },
+        {
+          "word": "差",
+          "reading": "chā",
+          "gloss": "difference; discrepancy; (math.) difference (amount remaining after a subtraction); (literary) a little; somewhat; slightly"
+        },
+        {
+          "word": "出来",
+          "reading": "chūlái",
+          "gloss": "to come out; to appear; to arise"
+        },
+        {
+          "word": "出去",
+          "reading": "chūqù",
+          "gloss": "to go out"
+        },
+        {
+          "word": "地",
+          "reading": "de",
+          "gloss": "-ly; structural particle: used before a verb or adjective, linking it to preceding modifying adverbial adjunct"
+        },
+        {
+          "word": "地方",
+          "reading": "dìfāng",
+          "gloss": "region; regional (away from the central administration); local"
+        },
+        {
+          "word": "弟",
+          "reading": "dì",
+          "gloss": "younger brother; junior male; I (modest word in letter)"
+        },
+        {
+          "word": "第二",
+          "reading": "dìèr",
+          "gloss": "second; number two; next; secondary"
+        },
+        {
+          "word": "东边",
+          "reading": "dōngbian",
+          "gloss": "east; east side; eastern part; to the east of"
+        },
+        {
+          "word": "都",
+          "reading": "Dū",
+          "gloss": "surname Du"
+        },
+        {
+          "word": "多少",
+          "reading": "duōshǎo",
+          "gloss": "number; amount; somewhat"
+        },
+        {
+          "word": "干",
+          "reading": "gān",
+          "gloss": "old variant of 干"
+        },
+        {
+          "word": "哥",
+          "reading": "gē",
+          "gloss": "elder brother"
+        },
+        {
+          "word": "工人",
+          "reading": "gōngrén",
+          "gloss": "worker"
+        },
+        {
+          "word": "还",
+          "reading": "Huán",
+          "gloss": "surname Huan"
+        },
+        {
+          "word": "好吃",
+          "reading": "hǎochī",
+          "gloss": "tasty; delicious"
+        },
+        {
+          "word": "姐",
+          "reading": "jiě",
+          "gloss": "older sister"
+        },
+        {
+          "word": "进来",
+          "reading": "jìnlái",
+          "gloss": "to come in"
+        },
+        {
+          "word": "进去",
+          "reading": "jìnqù",
+          "gloss": "to go in"
+        },
+        {
+          "word": "看见",
+          "reading": "kànjiàn",
+          "gloss": "to see; to catch sight of"
+        },
+        {
+          "word": "老人",
+          "reading": "lǎorén",
+          "gloss": "old man or woman; the elderly; one's aged parents or grandparents"
+        },
+        {
+          "word": "累",
+          "reading": "lěi",
+          "gloss": "to accumulate; to involve or implicate (Taiwan pr. [lèi]); continuous; repeated"
+        },
+        {
+          "word": "妈",
+          "reading": "mā",
+          "gloss": "ma; mom; mother"
+        },
+        {
+          "word": "没有",
+          "reading": "méiyǒu",
+          "gloss": "haven't; hasn't; doesn't exist; to not have; to not be"
+        },
+        {
+          "word": "妹",
+          "reading": "mèi",
+          "gloss": "younger sister"
+        },
+        {
+          "word": "名字",
+          "reading": "míngzi",
+          "gloss": "name (of a person or thing)"
+        },
+        {
+          "word": "哪里",
+          "reading": "nǎlǐ",
+          "gloss": "where?; somewhere; anywhere; wherever; nowhere (negative answer to question); humble expression denying compliment"
+        },
+        {
+          "word": "那里",
+          "reading": "nàli",
+          "gloss": "there; that place"
+        },
+        {
+          "word": "男人",
+          "reading": "nánrén",
+          "gloss": "a man; a male; men"
+        },
+        {
+          "word": "女人",
+          "reading": "nǚrén",
+          "gloss": "woman"
+        },
+        {
+          "word": "生日",
+          "reading": "shēngrì",
+          "gloss": "birthday"
+        },
+        {
+          "word": "听见",
+          "reading": "tīngjiàn",
+          "gloss": "to hear"
+        },
+        {
+          "word": "晚上",
+          "reading": "wǎnshang",
+          "gloss": "evening; night; in the evening"
+        },
+        {
+          "word": "西边",
+          "reading": "xībiān",
+          "gloss": "west; west side; western part; to the west of"
+        },
+        {
+          "word": "小姐",
+          "reading": "xiǎojie",
+          "gloss": "young lady; miss; (slang) prostitute"
+        },
+        {
+          "word": "小学生",
+          "reading": "xiǎoxuéshēng",
+          "gloss": "primary school student; schoolchild; (fig.) beginner"
+        },
+        {
+          "word": "衣服",
+          "reading": "yīfu",
+          "gloss": "clothes"
+        },
+        {
+          "word": "有时",
+          "reading": "yǒushí",
+          "gloss": "sometimes; now and then"
+        },
+        {
+          "word": "有一些",
+          "reading": "yǒuyīxiē",
+          "gloss": "somewhat; rather; some"
+        },
+        {
+          "word": "知道",
+          "reading": "zhīdào",
+          "gloss": "to know; to become aware of"
+        },
+        {
+          "word": "坐下",
+          "reading": "zuòxia",
+          "gloss": "to sit down"
+        }
+      ]
+    }
+  ],
+  "textbooks": [
+    {
+      "id": "hsk-standard-course-1",
+      "title": "HSK Standard Course 1",
+      "author": "Jiang Liping (course structure)",
+      "totalUnits": 15,
+      "unitLabel": "lessons",
+      "chapters": [
+        {
+          "position": 0,
+          "title": "Lesson 1 · 你好 — Hello",
+          "notes": "Greetings, courtesy phrases.",
+          "body": "你好!\n你好!\n你好吗?\n我很好,谢谢。你呢?\n我也很好。\n再见!\n再见!",
+          "vocab": [
+            {
+              "word": "你",
+              "reading": "nǐ",
+              "gloss": "you"
+            },
+            {
+              "word": "你们",
+              "reading": "nǐ men",
+              "gloss": "you (plural)"
+            },
+            {
+              "word": "好",
+              "reading": "hǎo",
+              "gloss": "good; well; proper"
+            },
+            {
+              "word": "对不起",
+              "reading": "duì bu qǐ",
+              "gloss": "I'm sorry; to let down; excuse me"
+            },
+            {
+              "word": "您",
+              "reading": "nín",
+              "gloss": "you (courteous, as opposed to informal 你[ni3])"
+            },
+            {
+              "word": "没关系",
+              "reading": "méi guān xi",
+              "gloss": "it doesn't matter"
+            }
+          ]
+        },
+        {
+          "position": 1,
+          "title": "Lesson 2 · 谢谢你 — Thank you",
+          "notes": "Saying thank you, you're welcome, sorry, no problem.",
+          "body": "谢谢你!\n不客气。\n对不起。\n没关系。\n再见!\n明天见!",
+          "vocab": [
+            {
+              "word": "不",
+              "reading": "bù",
+              "gloss": "(negative prefix); not; no"
+            },
+            {
+              "word": "不客气",
+              "reading": "bù kè qi",
+              "gloss": "you're welcome; don't mention it; impolite"
+            },
+            {
+              "word": "再见",
+              "reading": "zài jiàn",
+              "gloss": "goodbye; see you again later"
+            },
+            {
+              "word": "谢谢",
+              "reading": "xiè xie",
+              "gloss": "to thank; thanks; thank you"
+            }
+          ]
+        },
+        {
+          "position": 2,
+          "title": "Lesson 3 · 你叫什么名字 — What's your name",
+          "notes": "Names, asking and answering basic identity questions.",
+          "body": "你好!你叫什么名字?\n我叫李月。你呢?\n我叫王大伟。\n认识你很高兴。\n认识你我也很高兴。",
+          "vocab": [
+            {
+              "word": "中国",
+              "reading": "Zhōng guó",
+              "gloss": "PN:China"
+            },
+            {
+              "word": "人",
+              "reading": "rén",
+              "gloss": "man; person; people"
+            },
+            {
+              "word": "什么",
+              "reading": "shén me",
+              "gloss": "what?; something; anything"
+            },
+            {
+              "word": "叫",
+              "reading": "jiào",
+              "gloss": "to shout; to call; to order"
+            },
+            {
+              "word": "名字",
+              "reading": "míng zi",
+              "gloss": "name (of a person or thing); CL:個|个[ge4]"
+            },
+            {
+              "word": "吗",
+              "reading": "ma",
+              "gloss": "(question particle for \"yes-no\" questions)"
+            },
+            {
+              "word": "学生",
+              "reading": "xué sheng",
+              "gloss": "student; schoolchild"
+            },
+            {
+              "word": "我",
+              "reading": "wǒ",
+              "gloss": "I; me; my"
+            },
+            {
+              "word": "是",
+              "reading": "shì",
+              "gloss": "is; are; am"
+            },
+            {
+              "word": "美国",
+              "reading": "Měi guó",
+              "gloss": "PN:United States; PN:USA; PN:US"
+            },
+            {
+              "word": "老师",
+              "reading": "lǎo shī",
+              "gloss": "teacher; CL:個|个[ge4],位[wei4]"
+            },
+            {
+              "word": "李月",
+              "reading": "Lǐ Yùe",
+              "gloss": "PN:Li Yue, name of a person"
+            }
+          ]
+        },
+        {
+          "position": 3,
+          "title": "Lesson 4 · 她是我的汉语老师 — She is my Chinese teacher",
+          "notes": "Family, occupations, possessive 的.",
+          "body": "这是我的爸爸,这是我的妈妈。\n她是我的汉语老师,她叫陈老师。\n他是医生,我也是学生。\n我们都是中国人吗?\n不,他是英国人。",
+          "vocab": [
+            {
+              "word": "朋友",
+              "reading": "péng you",
+              "gloss": "friend; CL:個|个[ge4],位[wei4]"
+            },
+            {
+              "word": "他",
+              "reading": "tā",
+              "gloss": "he or him; (used for either sex when the sex is unknown or unimportant); (used before sb's name for emphasis)"
+            },
+            {
+              "word": "同学",
+              "reading": "tóng xué",
+              "gloss": "to study at the same school; fellow student; classmate"
+            },
+            {
+              "word": "呢",
+              "reading": "ne",
+              "gloss": "particle indicating that a previously asked question is to be applied to the preceding word (\"What about ...?\", \"And ...?\"); particle for inquiring about location (\"Where is ...?\"); particle signaling a pause, to emphasize the preceding words and allow the listener time to take them on board (\"ok?\", \"are you with me?\")"
+            },
+            {
+              "word": "哪",
+              "reading": "nǎ",
+              "gloss": "how; which"
+            },
+            {
+              "word": "国",
+              "reading": "Guó",
+              "gloss": "surname Guo; country; nation"
+            },
+            {
+              "word": "她",
+              "reading": "tā",
+              "gloss": "she"
+            },
+            {
+              "word": "汉语",
+              "reading": "Hàn yǔ",
+              "gloss": "PN:Chinese language; PN:CL:門"
+            },
+            {
+              "word": "的",
+              "reading": "de",
+              "gloss": "of; ~'s (possessive particle); (used after an attribute)"
+            },
+            {
+              "word": "谁",
+              "reading": "shéi",
+              "gloss": "who; also pr. [shui2]"
+            }
+          ]
+        },
+        {
+          "position": 4,
+          "title": "Lesson 5 · 她女儿今年二十岁 — Her daughter is twenty this year",
+          "notes": "Numbers, age, family members.",
+          "body": "他今年多大?\n他今年二十五岁。\n你的女儿几岁?\n她今年八岁。\n我儿子十岁。\n我们家有四口人:爸爸、妈妈、姐姐和我。",
+          "vocab": [
+            {
+              "word": "有",
+              "reading": "yǒu",
+              "gloss": "to have; there is; there are"
+            },
+            {
+              "word": "了",
+              "reading": "le",
+              "gloss": "(modal particle intensifying preceding clause); (completed action marker)"
+            },
+            {
+              "word": "今年",
+              "reading": "jīn nián",
+              "gloss": "this year"
+            },
+            {
+              "word": "口",
+              "reading": "kǒu",
+              "gloss": "mouth; classifier for things with mouths (people, domestic animals, cannons, wells etc); classifier for bites or mouthfuls"
+            },
+            {
+              "word": "多",
+              "reading": "duō",
+              "gloss": "many; much; often"
+            },
+            {
+              "word": "大",
+              "reading": "dà",
+              "gloss": "big; huge; large"
+            },
+            {
+              "word": "女儿",
+              "reading": "nǚ ér",
+              "gloss": "daughter"
+            },
+            {
+              "word": "家",
+              "reading": "jiā",
+              "gloss": "home; family; (polite) my (sister, uncle etc)"
+            },
+            {
+              "word": "几",
+              "reading": "jǐ",
+              "gloss": "how much; how many; several"
+            },
+            {
+              "word": "岁",
+              "reading": "suì",
+              "gloss": "classifier for years (of age); year; year (of crop harvests)"
+            }
+          ]
+        },
+        {
+          "position": 5,
+          "title": "Lesson 6 · 我能用一下你的铅笔吗 — May I use your pencil",
+          "notes": "Polite requests, may/can with 能, classifiers.",
+          "body": "请问,你的书在哪儿?\n在桌子上。\n我能用一下你的铅笔吗?\n当然可以。\n谢谢!\n不客气。",
+          "vocab": [
+            {
+              "word": "会",
+              "reading": "huì",
+              "gloss": "can; to be possible; to be able to"
+            },
+            {
+              "word": "做",
+              "reading": "zuò",
+              "gloss": "to do; to make; to produce"
+            },
+            {
+              "word": "好吃",
+              "reading": "hǎo chī",
+              "gloss": "tasty; delicious"
+            },
+            {
+              "word": "妈妈",
+              "reading": "mā ma",
+              "gloss": "mama; mommy; mother"
+            },
+            {
+              "word": "字",
+              "reading": "zì",
+              "gloss": "letter; symbol; character"
+            },
+            {
+              "word": "写",
+              "reading": "xiě",
+              "gloss": "to write"
+            },
+            {
+              "word": "很",
+              "reading": "hěn",
+              "gloss": "(adverb of degree); quite; very"
+            },
+            {
+              "word": "怎么",
+              "reading": "zěn me",
+              "gloss": "how?; what?; why?"
+            },
+            {
+              "word": "汉字",
+              "reading": "hàn zì",
+              "gloss": "Chinese character; CL:個|个[ge4]; Japanese: kanji"
+            },
+            {
+              "word": "茶",
+              "reading": "chá",
+              "gloss": "tea; tea plant; CL:杯[bei1],壺|壶[hu2]"
+            },
+            {
+              "word": "说",
+              "reading": "shuō",
+              "gloss": "to speak; to say; to explain"
+            },
+            {
+              "word": "读",
+              "reading": "dú",
+              "gloss": "to read; to study; reading of word (i.e. pronunciation), similar to 拼音[pin1 yin1]"
+            }
+          ]
+        },
+        {
+          "position": 6,
+          "title": "Lesson 7 · 今天几号 — What's the date today",
+          "notes": "Dates, days of the week, months.",
+          "body": "今天几号?\n今天五月四号。\n今天星期几?\n今天星期一。\n明天是我的生日!\n祝你生日快乐!",
+          "vocab": [
+            {
+              "word": "月",
+              "reading": "yuè",
+              "gloss": "moon; month; monthly"
+            },
+            {
+              "word": "今天",
+              "reading": "jīn tiān",
+              "gloss": "today; at the present; now"
+            },
+            {
+              "word": "去",
+              "reading": "qù",
+              "gloss": "to go; to go to (a place); (of a time etc) last"
+            },
+            {
+              "word": "问",
+              "reading": "wèn",
+              "gloss": "to ask"
+            },
+            {
+              "word": "学校",
+              "reading": "xué xiào",
+              "gloss": "school; CL:所[suo3]"
+            },
+            {
+              "word": "明天",
+              "reading": "míng tiān",
+              "gloss": "tomorrow"
+            },
+            {
+              "word": "星期",
+              "reading": "xīng qī",
+              "gloss": "week; CL:個|个[ge4]; day of the week"
+            },
+            {
+              "word": "昨天",
+              "reading": "zuó tiān",
+              "gloss": "yesterday"
+            },
+            {
+              "word": "书",
+              "reading": "Shū",
+              "gloss": "PN:abbr. for 書經; book; letter"
+            },
+            {
+              "word": "看",
+              "reading": "kàn",
+              "gloss": "to see; to look at; to read"
+            },
+            {
+              "word": "号",
+              "reading": "hào",
+              "gloss": "ordinal number; day of a month; mark"
+            },
+            {
+              "word": "请",
+              "reading": "qǐng",
+              "gloss": "to ask; to invite; please (do sth)"
+            }
+          ]
+        },
+        {
+          "position": 7,
+          "title": "Lesson 8 · 我感冒了 — I have a cold",
+          "notes": "Health, feelings, simple complaints.",
+          "body": "你怎么了?\n我感冒了,头疼。\n你应该多喝水,多休息。\n谢谢医生。\n不客气,明天再来。",
+          "vocab": [
+            {
+              "word": "杯子",
+              "reading": "bēi zi",
+              "gloss": "cup; glass; CL:個|个[ge4],隻|只[zhi1]"
+            },
+            {
+              "word": "下午",
+              "reading": "xià wǔ",
+              "gloss": "afternoon; CL:個|个[ge4]; p.m."
+            },
+            {
+              "word": "个",
+              "reading": "gè",
+              "gloss": "individual; this; that"
+            },
+            {
+              "word": "吃",
+              "reading": "chī",
+              "gloss": "to eat; to consume; to eat at (a cafeteria etc)"
+            },
+            {
+              "word": "商店",
+              "reading": "shāng diàn",
+              "gloss": "store; shop; CL:家[jia1],個|个[ge4]"
+            },
+            {
+              "word": "喝",
+              "reading": "hē",
+              "gloss": "to drink; My goodness!"
+            },
+            {
+              "word": "块",
+              "reading": "kuài",
+              "gloss": "lump (of earth); chunk; piece"
+            },
+            {
+              "word": "多少",
+              "reading": "duō shao",
+              "gloss": "how much; how many; which (number)"
+            },
+            {
+              "word": "想",
+              "reading": "xiǎng",
+              "gloss": "to think; to believe; to suppose"
+            },
+            {
+              "word": "米饭",
+              "reading": "mǐ fàn",
+              "gloss": "(cooked) rice"
+            },
+            {
+              "word": "茶",
+              "reading": "chá",
+              "gloss": "tea; tea plant; CL:杯[bei1],壺|壶[hu2]"
+            },
+            {
+              "word": "买",
+              "reading": "mǎi",
+              "gloss": "to buy; to purchase"
+            },
+            {
+              "word": "这",
+              "reading": "zhè",
+              "gloss": "this; these; (commonly pr. [zhei"
+            },
+            {
+              "word": "那",
+              "reading": "nà",
+              "gloss": "that; those; then (in that case)"
+            },
+            {
+              "word": "钱",
+              "reading": "Qián",
+              "gloss": "surname Qian; coin; money"
+            }
+          ]
+        },
+        {
+          "position": 8,
+          "title": "Lesson 9 · 他在哪儿呢 — Where is he",
+          "notes": "Locations, asking where, prepositions.",
+          "body": "请问,王老师在哪儿?\n他在教室里。\n图书馆在哪里?\n图书馆在那儿,在学校的右边。\n谢谢!\n不客气。",
+          "vocab": [
+            {
+              "word": "下面",
+              "reading": "xià miàn",
+              "gloss": "below; under; next"
+            },
+            {
+              "word": "儿子",
+              "reading": "ér zi",
+              "gloss": "son"
+            },
+            {
+              "word": "哪儿",
+              "reading": "nǎ r",
+              "gloss": "where?; wherever; anywhere"
+            },
+            {
+              "word": "在",
+              "reading": "zài",
+              "gloss": "(located) at; (to be) in; to exist"
+            },
+            {
+              "word": "小",
+              "reading": "xiǎo",
+              "gloss": "small; tiny; few"
+            },
+            {
+              "word": "工作",
+              "reading": "gōng zuò",
+              "gloss": "to work; (of a machine) to operate; job"
+            },
+            {
+              "word": "椅子",
+              "reading": "yǐ zi",
+              "gloss": "chair; CL:把[ba3],套[tao4]"
+            },
+            {
+              "word": "爸爸",
+              "reading": "bà ba",
+              "gloss": "(informal) father; CL:個|个[ge4],位[wei4]"
+            },
+            {
+              "word": "狗",
+              "reading": "gǒu",
+              "gloss": "dog; CL:隻|只[zhi1],條|条[tiao2]"
+            },
+            {
+              "word": "猫",
+              "reading": "māo",
+              "gloss": "cat; CL:隻|只[zhi1]; (dialect) to hide oneself"
+            },
+            {
+              "word": "那儿",
+              "reading": "nà r",
+              "gloss": "there"
+            },
+            {
+              "word": "医生",
+              "reading": "yī shēng",
+              "gloss": "doctor; CL:個|个[ge4],位[wei4],名[ming2]"
+            },
+            {
+              "word": "医院",
+              "reading": "yī yuàn",
+              "gloss": "hospital; CL:所[suo3],家[jia1],座[zuo4]"
+            }
+          ]
+        },
+        {
+          "position": 9,
+          "title": "Lesson 10 · 我喝茶,你呢 — I drink tea, what about you",
+          "notes": "Food and drink, eating out, simple choice questions.",
+          "body": "你想喝什么?\n我想喝茶。你呢?\n我喝咖啡。\n你饿吗?\n我有点儿饿,我们吃饭吧!\n好的,我们去餐馆。",
+          "vocab": [
+            {
+              "word": "本",
+              "reading": "běn",
+              "gloss": "root; stem; origin"
+            },
+            {
+              "word": "桌子",
+              "reading": "zhuō zi",
+              "gloss": "table; desk; CL:張|张[zhang1],套[tao4]"
+            },
+            {
+              "word": "上",
+              "reading": "shàng",
+              "gloss": "on top; upon; above"
+            },
+            {
+              "word": "前面",
+              "reading": "qián miàn",
+              "gloss": "ahead; in front; preceding"
+            },
+            {
+              "word": "和",
+              "reading": "Hé",
+              "gloss": "surname He; Japanese (food, clothes etc); and"
+            },
+            {
+              "word": "坐",
+              "reading": "zuò",
+              "gloss": "to sit; to take a seat; to take (a bus, airplane etc)"
+            },
+            {
+              "word": "后面",
+              "reading": "hòu miàn",
+              "gloss": "rear; back; behind"
+            },
+            {
+              "word": "没有",
+              "reading": "méi yǒu",
+              "gloss": "haven't; hasn't; doesn't exist"
+            },
+            {
+              "word": "能",
+              "reading": "Néng",
+              "gloss": "surname Neng; can; to be able to"
+            },
+            {
+              "word": "这儿",
+              "reading": "zhè r",
+              "gloss": "here"
+            },
+            {
+              "word": "里",
+              "reading": "lǐ",
+              "gloss": "inside; lining; interior"
+            },
+            {
+              "word": "电脑",
+              "reading": "diàn nǎo",
+              "gloss": "computer; CL:臺|台[tai2]"
+            },
+            {
+              "word": "谢朋",
+              "reading": "Xìe Péng",
+              "gloss": "PN:Xie Peng, name of a person"
+            },
+            {
+              "word": "王方",
+              "reading": "Wáng Fāng",
+              "gloss": "PN:Wang Fang, name of a person"
+            }
+          ]
+        },
+        {
+          "position": 10,
+          "title": "Lesson 11 · 我想喝茶 — I want to drink tea",
+          "notes": "Wishes and intentions with 想, ordering food.",
+          "body": "服务员!\n你好,你想吃什么?\n我想吃米饭和鱼。\n你想喝什么?\n我想喝一杯茶。\n好的,请等一下。",
+          "vocab": [
+            {
+              "word": "时候",
+              "reading": "shí hou",
+              "gloss": "time; length of time; moment"
+            },
+            {
+              "word": "中午",
+              "reading": "zhōng wǔ",
+              "gloss": "noon; midday; CL:個|个[ge4]"
+            },
+            {
+              "word": "住",
+              "reading": "zhù",
+              "gloss": "to live; to dwell; to stay"
+            },
+            {
+              "word": "分",
+              "reading": "fēn",
+              "gloss": "to divide; to separate; to distribute"
+            },
+            {
+              "word": "前",
+              "reading": "qián",
+              "gloss": "front; forward; ahead"
+            },
+            {
+              "word": "北京",
+              "reading": "Běi jīng",
+              "gloss": "PN:Beijing, capital of People's Republic of China; PN:Peking; PN:PRC government"
+            },
+            {
+              "word": "吃饭",
+              "reading": "chī fàn",
+              "gloss": "to have a meal; to eat; to make a living"
+            },
+            {
+              "word": "回",
+              "reading": "huí",
+              "gloss": "to circle; to go back; to turn around"
+            },
+            {
+              "word": "我们",
+              "reading": "wǒ men",
+              "gloss": "we; us; ourselves"
+            },
+            {
+              "word": "现在",
+              "reading": "xiàn zài",
+              "gloss": "now; at present; at the moment"
+            },
+            {
+              "word": "电影",
+              "reading": "diàn yǐng",
+              "gloss": "movie; film; CL:部[bu4],片[pian4],幕[mu4],場|场[chang3]"
+            },
+            {
+              "word": "点",
+              "reading": "diǎn",
+              "gloss": "point; dot; drop"
+            }
+          ]
+        },
+        {
+          "position": 11,
+          "title": "Lesson 12 · 多少钱 — How much",
+          "notes": "Shopping, prices, quantities.",
+          "body": "请问,这个苹果多少钱?\n一个三块钱。\n我要五个,谢谢。\n一共十五块。\n给您。\n谢谢!",
+          "vocab": [
+            {
+              "word": "下雨",
+              "reading": "xià yǔ",
+              "gloss": "to rain"
+            },
+            {
+              "word": "些",
+              "reading": "xiē",
+              "gloss": "some; few; several"
+            },
+            {
+              "word": "来",
+              "reading": "lái",
+              "gloss": "to come; to arrive; to come round"
+            },
+            {
+              "word": "冷",
+              "reading": "Lěng",
+              "gloss": "surname Leng; cold"
+            },
+            {
+              "word": "天气",
+              "reading": "tiān qì",
+              "gloss": "weather"
+            },
+            {
+              "word": "太",
+              "reading": "tài",
+              "gloss": "highest; greatest; too (much)"
+            },
+            {
+              "word": "小姐",
+              "reading": "xiǎo jie",
+              "gloss": "young lady; miss; (slang) prostitute"
+            },
+            {
+              "word": "怎么样",
+              "reading": "zěn me yàng",
+              "gloss": "how?; how about?; how was it?"
+            },
+            {
+              "word": "爱",
+              "reading": "ài",
+              "gloss": "to love; to be fond of; to like"
+            },
+            {
+              "word": "水",
+              "reading": "Shuǐ",
+              "gloss": "surname Shui; water; river"
+            },
+            {
+              "word": "水果",
+              "reading": "shuǐ guǒ",
+              "gloss": "fruit; CL:個|个[ge4]"
+            },
+            {
+              "word": "热",
+              "reading": "rè",
+              "gloss": "to warm up; to heat up; hot (of weather)"
+            },
+            {
+              "word": "身体",
+              "reading": "shēn tǐ",
+              "gloss": "the body; one's health; CL:具[ju4],個|个[ge4]"
+            }
+          ]
+        },
+        {
+          "position": 12,
+          "title": "Lesson 13 · 我们坐公共汽车去吧 — Let's take the bus",
+          "notes": "Transport, suggestions with 吧, simple plans.",
+          "body": "我们怎么去学校?\n我们坐公共汽车去吧。\n太慢了!打车吧。\n好的,打车快一点儿。\n出租车在那儿。\n我们走吧!",
+          "vocab": [
+            {
+              "word": "上午",
+              "reading": "shàng wǔ",
+              "gloss": "morning; CL:個|个[ge4]"
+            },
+            {
+              "word": "也",
+              "reading": "Yě",
+              "gloss": "surname Ye; also; too"
+            },
+            {
+              "word": "吧",
+              "reading": "ba",
+              "gloss": "(modal particle indicating suggestion or surmise); ...right?; ...OK?"
+            },
+            {
+              "word": "喂",
+              "reading": "wèi",
+              "gloss": "hey; to feed (an animal, baby, invalid etc)"
+            },
+            {
+              "word": "喜欢",
+              "reading": "xǐ huan",
+              "gloss": "to like; to be fond of"
+            },
+            {
+              "word": "大卫",
+              "reading": "Dà wèi",
+              "gloss": "PN:David (name); PN:Jacques-Louis David (1748-1825), French neoclassical painter"
+            },
+            {
+              "word": "学习",
+              "reading": "xué xí",
+              "gloss": "to learn; to study"
+            },
+            {
+              "word": "打电话",
+              "reading": "dǎ diàn huà",
+              "gloss": "to make a telephone call"
+            },
+            {
+              "word": "睡觉",
+              "reading": "shuì jiào",
+              "gloss": "to go to bed; to sleep"
+            },
+            {
+              "word": "给",
+              "reading": "gěi",
+              "gloss": "to; for; for the benefit of"
+            },
+            {
+              "word": "电视",
+              "reading": "diàn shì",
+              "gloss": "television; TV; CL:臺|台[tai2],個|个[ge4]"
+            }
+          ]
+        },
+        {
+          "position": 13,
+          "title": "Lesson 14 · 喂,请问王老师在吗 — Hello, is Teacher Wang there",
+          "notes": "Phone calls, polite questions, leaving a message.",
+          "body": "喂,你好。\n你好,请问王老师在吗?\n他不在。请问您是谁?\n我是李月,他的学生。\n请他给我打电话,谢谢!\n好的,再见。",
+          "vocab": [
+            {
+              "word": "东西",
+              "reading": "dōng xi",
+              "gloss": "thing; stuff; person"
+            },
+            {
+              "word": "一点儿",
+              "reading": "yī diǎn r",
+              "gloss": "a bit; a little; one dot"
+            },
+            {
+              "word": "先生",
+              "reading": "Xiān sheng",
+              "gloss": "Mister (Mr.); teacher; husband"
+            },
+            {
+              "word": "分钟",
+              "reading": "fēn zhōng",
+              "gloss": "minute"
+            },
+            {
+              "word": "啊",
+              "reading": "a",
+              "gloss": "modal particle ending sentence, showing affirmation, approval, or consent"
+            },
+            {
+              "word": "回来",
+              "reading": "huí lai",
+              "gloss": "to return; to come back"
+            },
+            {
+              "word": "少",
+              "reading": "shǎo",
+              "gloss": "few; less; to lack"
+            },
+            {
+              "word": "张",
+              "reading": "Zhāng",
+              "gloss": "surname Zhang; to open up; to spread"
+            },
+            {
+              "word": "后",
+              "reading": "hòu",
+              "gloss": "back; behind; rear"
+            },
+            {
+              "word": "漂亮",
+              "reading": "piào liang",
+              "gloss": "pretty; beautiful"
+            },
+            {
+              "word": "看见",
+              "reading": "kàn jiàn",
+              "gloss": "to see; to catch sight of"
+            },
+            {
+              "word": "苹果",
+              "reading": "píng guǒ",
+              "gloss": "apple; CL:個|个[ge4],顆|颗[ke1]"
+            },
+            {
+              "word": "衣服",
+              "reading": "yī fu",
+              "gloss": "clothes; CL:件[jian4],套[tao4]"
+            },
+            {
+              "word": "车",
+              "reading": "Chē",
+              "gloss": "surname Che; car; vehicle"
+            },
+            {
+              "word": "这些",
+              "reading": "zhè xiē",
+              "gloss": "these"
+            },
+            {
+              "word": "都",
+              "reading": "dōu",
+              "gloss": "all; both; entirely"
+            },
+            {
+              "word": "开",
+              "reading": "kāi",
+              "gloss": "to open; to start; to turn on"
+            }
+          ]
+        },
+        {
+          "position": 14,
+          "title": "Lesson 15 · 祝你生日快乐 — Happy birthday",
+          "notes": "Wishes, celebrations, gifts.",
+          "body": "今天是我的生日!\n真的吗?生日快乐!\n谢谢!这是我的生日蛋糕。\n这是给你的礼物。\n谢谢你!\n不客气,祝你健康!",
+          "vocab": [
+            {
+              "word": "一起",
+              "reading": "yī qǐ",
+              "gloss": "in the same place; together; with"
+            },
+            {
+              "word": "出租车",
+              "reading": "chū zū chē",
+              "gloss": "taxi; (Taiwan) rental car"
+            },
+            {
+              "word": "大学",
+              "reading": "Dà xué",
+              "gloss": "PN:the Great Learning, one of the Four Books 四書; university; college"
+            },
+            {
+              "word": "年",
+              "reading": "Nián",
+              "gloss": "surname Nian; year; CL:個|个[ge4]"
+            },
+            {
+              "word": "听",
+              "reading": "tīng",
+              "gloss": "to listen; to hear; to obey"
+            },
+            {
+              "word": "认识",
+              "reading": "rèn shi",
+              "gloss": "to know; to recognize; to be familiar with"
+            },
+            {
+              "word": "飞机",
+              "reading": "fēi jī",
+              "gloss": "airplane; CL:架[jia4]"
+            },
+            {
+              "word": "饭店",
+              "reading": "fàn diàn",
+              "gloss": "restaurant; hotel; CL:家[jia1],個|个[ge4]"
+            },
+            {
+              "word": "高兴",
+              "reading": "gāo xìng",
+              "gloss": "happy; glad; willing (to do sth)"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

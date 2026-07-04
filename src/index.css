@@ -1,0 +1,326 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@keyframes breath {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.06); opacity: 1; }
+}
+
+@theme {
+  /* Light: pure white surface, cool slate ink, restrained violet accent. */
+  --color-background: oklch(1 0 0);
+  --color-foreground: oklch(0.16 0.005 250);
+  --color-card: oklch(1 0 0);
+  --color-card-foreground: oklch(0.16 0.005 250);
+  --color-popover: oklch(1 0 0);
+  --color-popover-foreground: oklch(0.16 0.005 250);
+  --color-primary: oklch(0.21 0.01 250);
+  --color-primary-foreground: oklch(0.985 0 0);
+  --color-secondary: oklch(0.97 0.005 250);
+  --color-secondary-foreground: oklch(0.21 0.01 250);
+  --color-muted: oklch(0.97 0.005 250);
+  --color-muted-foreground: oklch(0.51 0.01 250);
+  --color-accent: oklch(0.965 0.006 250);
+  --color-accent-foreground: oklch(0.21 0.01 250);
+  --color-destructive: oklch(0.585 0.225 27);
+  --color-destructive-foreground: oklch(0.985 0 0);
+  --color-border: oklch(0.93 0.006 250);
+  --color-input: oklch(0.93 0.006 250);
+  --color-ring: oklch(0.62 0.16 280);
+  --color-brand: oklch(0.55 0.2 280);              /* electric indigo-violet */
+  --color-brand-foreground: oklch(0.985 0 0);
+  --color-sidebar: oklch(0.985 0.003 250);
+  --color-sidebar-foreground: oklch(0.16 0.005 250);
+
+  --radius: 0.75rem;
+  --font-sans:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif:
+    "Charter", "Iowan Old Style", "Apple Garamond", Baskerville, Georgia,
+    "Times New Roman", serif;
+}
+
+:root {
+  color-scheme: light dark;
+  font-family: var(--font-sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "cv11", "ss01", "ss03";
+}
+
+/* Class-based dark theme — applied when html.dark is set (toggled by ProfileProvider).
+   This wins over the OS preference, so picking "Light" in settings actually shows light
+   even on a dark-mode OS. The "System" choice toggles the class to follow the OS. */
+.dark {
+  --color-background: oklch(0.13 0.006 250);
+  --color-foreground: oklch(0.97 0.005 250);
+  --color-card: oklch(0.165 0.007 250);
+  --color-card-foreground: oklch(0.97 0.005 250);
+  --color-popover: oklch(0.18 0.008 250);
+  --color-popover-foreground: oklch(0.97 0.005 250);
+  --color-primary: oklch(0.97 0.005 250);
+  --color-primary-foreground: oklch(0.21 0.01 250);
+  --color-secondary: oklch(0.22 0.008 250);
+  --color-secondary-foreground: oklch(0.97 0.005 250);
+  --color-muted: oklch(0.22 0.008 250);
+  --color-muted-foreground: oklch(0.71 0.012 250);
+  --color-accent: oklch(0.24 0.01 250);
+  --color-accent-foreground: oklch(0.97 0.005 250);
+  --color-destructive: oklch(0.7 0.2 22);
+  --color-destructive-foreground: oklch(0.97 0.005 250);
+  --color-border: oklch(1 0 0 / 0.08);
+  --color-input: oklch(1 0 0 / 0.13);
+  --color-ring: oklch(0.66 0.17 280);
+  --color-brand: oklch(0.7 0.18 280);
+  --color-brand-foreground: oklch(0.13 0.006 250);
+  --color-sidebar: oklch(0.115 0.005 250);
+  --color-sidebar-foreground: oklch(0.97 0.005 250);
+}
+
+html {
+  font-family: var(--font-sans);
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+/* Spotlight window — frameless + transparent on the Tauri side, so the
+ * page itself must be transparent so the rounded card we paint inside
+ * SpotlightApp shows clean edges. Fallback to opaque outside spotlight
+ * mode (the .is-spotlight class is added by the spotlight bootstrap). */
+html.is-spotlight,
+html.is-spotlight body,
+html.is-spotlight #root {
+  background: transparent !important;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  /* Lock the window to the viewport. Any oversize child must scroll itself,
+     not push the whole document around — otherwise scrolling near a wide code
+     block or table makes the entire app pan, which looks broken. */
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* Tailwind v4's Preflight reverted buttons to the native `cursor: default`
+   (an arrow), so clickable controls built on <button> — sidebar nav, the
+   settings button, toggles, popover triggers — stopped showing the pointing
+   hand and read as non-interactive. Restore the pointer on enabled buttons
+   app-wide. `:not(:disabled)` leaves genuinely-disabled controls on the
+   default arrow, which is the correct affordance for something you can't click. */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* Pinyin shown as ruby above each character. */
+.ruby-pinyin { display: inline-flex; flex-direction: column; align-items: center; line-height: 1.05; vertical-align: baseline; }
+.ruby-pinyin > span:first-child { display: inline-block; }
+/* Re-anchor the parent's text-decoration onto the char span so the
+   underline lands BELOW each glyph (where it visually belongs)
+   instead of being absorbed by the inline-flex container's synthetic
+   baseline — which is what made click-to-define underlines vanish on
+   Chinese text in chat / live mode. The `rt` stays free of the
+   underline since we only inherit on the char span. */
+.ruby-pinyin > rt + span {
+  text-decoration: inherit;
+  text-decoration-color: inherit;
+  text-decoration-thickness: inherit;
+  text-underline-offset: inherit;
+}
+.ruby-pinyin-rt {
+  font-size: 0.55em;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  letter-spacing: 0.01em;
+  opacity: 0.78;
+  margin-bottom: 1px;
+  user-select: none;
+  /* The decoration-inherit rule above applies to the char `span` (and
+     only the char span via `rt + span`), but be defensive: explicitly
+     remove any decoration on rt so a future tweak to the inheritance
+     selector can't accidentally underline the pinyin. */
+  text-decoration: none;
+}
+.ruby-pinyin:hover .ruby-pinyin-rt { opacity: 1; }
+
+/* Mandarin pinyin tone colours. The per-tone hex values live in CSS
+   custom properties so the workspace's Chinese-settings picker can
+   override them at runtime via `applyToneColorsToDocument()`. The
+   defaults below mirror Pleco's classic palette
+   (red / orange / green / blue / neutral grey) — same palette
+   `PLECO_TONE_COLORS` ships in `chinese-config.ts`. Keep these two
+   in sync if you change either side. */
+:root {
+  --tone-1: #e53935;
+  --tone-2: #fb8c00;
+  --tone-3: #43a047;
+  --tone-4: #1e88e5;
+  --tone-5: #9e9e9e;
+}
+[data-tone="1"] { color: var(--tone-1); }
+[data-tone="2"] { color: var(--tone-2); }
+[data-tone="3"] { color: var(--tone-3); }
+[data-tone="4"] { color: var(--tone-4); }
+[data-tone="5"] { color: var(--tone-5); }
+
+/* Japanese pitch-accent colours. The JA analogue of the pinyin tone
+   palette above. We use two hues — a saturated red for "high" and a
+   muted slate for "low" — because the visual contrast is what helps
+   a learner pick up the pattern; richer per-category palettes drown
+   the underlying text. Same theme-token style as the tones above so
+   light / dark mode handle themselves. */
+:root {
+  --pitch-high: #d32f2f;
+  --pitch-low: #64748b;
+}
+.dark {
+  --pitch-high: #f87171;
+  --pitch-low: #94a3b8;
+}
+.pitch-high { color: var(--pitch-high); }
+.pitch-low { color: var(--pitch-low); }
+
+/* Streaming chat ink. The block being typed (see `fadeText` in
+ * chat-markdown.tsx) fades each word/glyph in so text settles instead of
+ * snapping — a light "typing" effect. Completed blocks render behind it with
+ * full pinyin + click-to-define. Opacity only: it's the cheapest animatable
+ * property (compositor-handled, no repaint). An earlier version also animated
+ * `filter: blur()`, which re-rasterises every glyph every frame and spiked
+ * CPU during fast streams; the plain fade reads just as smooth. */
+@keyframes token-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* 0.3s reads noticeably smoother than the old 0.18s on bursty token
+   * batches (chunks overlap-fade instead of popping), while staying an
+   * opacity-only compositor animation. */
+  .token-in { animation: token-in 0.3s ease-out both; }
+}
+
+/* Indeterminate progress bar (used for the dictionary download/parse
+ * phases, which stream no byte counts). A 40%-wide segment sweeps across
+ * the track. Base style is the reduced-motion fallback: a static full
+ * bar, so the affordance still reads as "working" without animation. */
+@keyframes progress-indeterminate {
+  0%   { left: -40%; }
+  100% { left: 100%; }
+}
+.progress-indeterminate { left: 0; width: 100%; }
+@media (prefers-reduced-motion: no-preference) {
+  .progress-indeterminate {
+    width: 40%;
+    animation: progress-indeterminate 1.1s ease-in-out infinite;
+  }
+}
+
+.font-serif { font-family: var(--font-serif); font-feature-settings: "kern", "liga"; }
+
+/* Minimal markdown styles for the notes preview. */
+.markdown-body h1 { font-family: var(--font-serif); font-size: 1.875rem; line-height: 1.2; margin: 1.4em 0 .6em; letter-spacing: -0.01em; }
+.markdown-body h2 { font-family: var(--font-serif); font-size: 1.5rem; line-height: 1.25; margin: 1.4em 0 .5em; letter-spacing: -0.01em; }
+.markdown-body h3 { font-size: 1.125rem; font-weight: 600; margin: 1.2em 0 .4em; }
+.markdown-body p { margin: .65em 0; }
+.markdown-body ul, .markdown-body ol { margin: .5em 0; padding-left: 1.4em; }
+.markdown-body ul { list-style: disc; }
+.markdown-body ol { list-style: decimal; }
+.markdown-body li { margin: .15em 0; }
+.markdown-body a { color: var(--color-brand); text-decoration: underline; text-underline-offset: 3px; }
+.markdown-body code {
+  background: var(--color-muted);
+  padding: 0.05em 0.35em;
+  border-radius: 4px;
+  font-size: 0.92em;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", monospace;
+}
+.markdown-body pre {
+  background: var(--color-muted);
+  border-radius: 8px;
+  padding: 0.85em 1em;
+  overflow-x: auto;
+  margin: .7em 0;
+}
+.markdown-body pre code { background: transparent; padding: 0; }
+.markdown-body blockquote {
+  border-left: 3px solid var(--color-border);
+  padding: .15em 0 .15em 1em;
+  margin: .8em 0;
+  color: var(--color-muted-foreground);
+  font-style: italic;
+}
+.markdown-body table { border-collapse: collapse; margin: .8em 0; font-size: .92em; }
+.markdown-body th, .markdown-body td { border: 1px solid var(--color-border); padding: .35em .6em; }
+.markdown-body th { background: var(--color-muted); }
+.markdown-body hr { border: none; border-top: 1px solid var(--color-border); margin: 1.5em 0; }
+
+/* Soft scrollbars */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--color-muted-foreground) 28%, transparent);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklch, var(--color-muted-foreground) 50%, transparent);
+  background-clip: padding-box;
+}
+
+
+/* Karaoke-style highlight applied to the segment currently being
+ * spoken by TTS in the reader. Soft yellow that reads as "now" without
+ * fighting the underline + status colors already on words. The class
+ * is added by `Tokenized` when its `activeRange` overlaps the
+ * segment\x27s character range. */
+.tts-active {
+  background-color: color-mix(in oklch, oklch(0.93 0.16 95) 70%, transparent);
+  border-radius: 3px;
+  box-shadow: 0 0 0 2px color-mix(in oklch, oklch(0.93 0.16 95) 40%, transparent);
+  transition: background-color 120ms linear, box-shadow 120ms linear;
+}
+.dark .tts-active {
+  background-color: color-mix(in oklch, oklch(0.78 0.16 90) 35%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in oklch, oklch(0.78 0.16 90) 25%, transparent);
+}
+
+/* Sentence-card target-word emphasis. Stronger than the reader's
+ * karaoke highlight because the user is *looking for* this word — it
+ * isn't just a passing cursor. The colour scope is limited to
+ * `.study-sentence-target` so the reader's TTS treatment is untouched.
+ *
+ * Three layers stack on the active segment:
+ *   1. Saturated yellow background (the highlight itself).
+ *   2. A thicker outer halo via `box-shadow` so the word reads as
+ *      "the one I'm learning" at a glance.
+ *   3. A bold colored underline on the character that survives even
+ *      when ruby/pinyin is turned off — the user explicitly asked
+ *      for the *character* (not just the pinyin) to be marked. */
+.study-sentence-target .tts-active {
+  background-color: color-mix(in oklch, oklch(0.93 0.16 95) 95%, transparent);
+  box-shadow:
+    0 0 0 3px color-mix(in oklch, oklch(0.93 0.16 95) 65%, transparent),
+    0 0 0 4px color-mix(in oklch, oklch(0.78 0.16 90) 30%, transparent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, oklch(0.65 0.18 50) 80%, transparent);
+  text-decoration-thickness: 2.5px;
+  text-underline-offset: 4px;
+  font-weight: 600;
+}
+.dark .study-sentence-target .tts-active {
+  background-color: color-mix(in oklch, oklch(0.78 0.16 90) 55%, transparent);
+  box-shadow:
+    0 0 0 3px color-mix(in oklch, oklch(0.78 0.16 90) 40%, transparent),
+    0 0 0 4px color-mix(in oklch, oklch(0.78 0.16 90) 20%, transparent);
+  text-decoration-color: color-mix(in oklch, oklch(0.78 0.16 60) 80%, transparent);
+}

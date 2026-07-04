@@ -1,0 +1,79 @@
+name: Bug report
+description: Something is broken or behaving unexpectedly.
+title: "[bug] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug. Please fill in as
+        much of the form as you can — empty fields slow triage down a
+        lot.
+
+        For **security issues**, do not open a public issue. Email
+        security@tokori.ai instead.
+
+  - type: input
+    id: version
+    attributes:
+      label: Tokori version
+      description: "Settings → About, or `tokori --version`."
+      placeholder: "0.1.2"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - macOS
+        - Windows
+        - Linux
+        - Other (specify below)
+    validations:
+      required: true
+
+  - type: input
+    id: provider
+    attributes:
+      label: Active provider
+      description: "Which model provider is configured (Ollama, OpenAI, …) and which model?"
+      placeholder: "Ollama / llama3.1:8b"
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, what happened instead.
+      placeholder: |
+        Steps:
+        1. ...
+        2. ...
+
+        Expected: ...
+        Actual: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / console output
+      description: |
+        On macOS/Linux: `~/Library/Logs/ai.tokori.desktop/` or
+        `~/.local/state/ai.tokori.desktop/logs/`. On Windows:
+        `%LOCALAPPDATA%\ai.tokori.desktop\logs\`.
+
+        Strip anything sensitive before pasting.
+      render: shell
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues and didn't find a duplicate.
+          required: true
+        - label: I'm on the latest release (or `main`).
+          required: true

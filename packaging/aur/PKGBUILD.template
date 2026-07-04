@@ -1,0 +1,41 @@
+# Maintainer: Florian Schneller <contact@tokori.ai>
+#
+# Template for the `tokori-bin` AUR package. `__VERSION__` and
+# `__SHA256__` are filled in by .github/workflows/aur.yml on every
+# published GitHub Release, then pushed to the AUR. Don't hand-edit the
+# version here — bump the repo's manifests and cut a tag (see
+# docs/guides/releasing.md).
+#
+# This is a `-bin` package: it installs the prebuilt binary out of the
+# release `.deb` rather than compiling from source, so `yay -S
+# tokori-bin` is a few-second install with no Rust/Node toolchain.
+pkgname=tokori-bin
+_appname=tokori
+pkgver=__VERSION__
+pkgrel=1
+pkgdesc="Local-first desktop AI workspace for language learners"
+arch=('x86_64')
+url="https://github.com/tokoriai/tokori"
+license=('AGPL-3.0-or-later')
+# Tauri 2 (webkit2gtk-4.1) + system tray (ayatana appindicator).
+depends=('webkit2gtk-4.1' 'gtk3' 'libayatana-appindicator')
+optdepends=('ollama: run language models locally for the zero-cost path')
+provides=("${_appname}")
+conflicts=("${_appname}")
+# Prebuilt binary — don't strip or re-process what the release already shipped.
+options=('!strip' '!emptydirs')
+source=("${url}/releases/download/v${pkgver}/${_appname}_${pkgver}_amd64.deb"
+        "LICENSE-${pkgver}::${url}/raw/v${pkgver}/LICENSE")
+sha256sums=('__SHA256__'
+            'SKIP')
+
+package() {
+    # The Tauri .deb is an `ar` archive whose data.tar.gz carries the
+    # /usr tree (binary, .desktop entry, hicolor icons). bsdtar reads
+    # both the outer ar and the inner tar, so no dpkg needed.
+    bsdtar -xf "${_appname}_${pkgver}_amd64.deb" -C "${srcdir}"
+    bsdtar -xf "${srcdir}/data.tar.gz" -C "${pkgdir}"
+
+    install -Dm644 "${srcdir}/LICENSE-${pkgver}" \
+        "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

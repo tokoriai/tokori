@@ -1,0 +1,93 @@
+name: docs
+
+on:
+  push:
+    branches: [main]
+    # Only re-run when something a docs build cares about changes.
+    paths:
+      - "docs/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/docs.yml"
+  pull_request:
+    paths:
+      - "docs/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/docs.yml"
+  workflow_dispatch:
+
+# Builds the VitePress site and deploys it to Cloudflare Pages
+# (project: docs). Push to main → production deploy; any other
+# branch / PR → an isolated preview deploy on its own *.pages.dev URL.
+#
+# ── One-time setup (run once locally, then CI owns it) ───────────────
+#   1. Create the Pages project (production branch = main):
+#        npx wrangler pages project create docs --production-branch main
+#   2. Seed the first production deploy so the project has content:
+#        npm run docs:build
+#        npx wrangler pages deploy docs/.vitepress/dist \
+#          --project-name=docs --branch=main
+#   3. Attach the custom domain in the dashboard:
+#        Workers & Pages → docs → Custom domains → add docs.tokori.ai
+#        (first remove docs.tokori.ai from the old `docs` Worker — a
+#         hostname can only be claimed by one resource; brief cutover).
+#
+#   GitHub repo secrets required:
+#     CLOUDFLARE_API_TOKEN  — token with the "Cloudflare Pages: Edit" perm
+#     CLOUDFLARE_ACCOUNT_ID — your Cloudflare account id
+
+concurrency:
+  # Allow one production deploy at a time, but let PR previews build
+  # in parallel — each PR gets its own group keyed on the ref.
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      deployments: write
+      # Lets the action comment the preview URL back on the PR.
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      # Must match the npm that wrote package-lock.json — see ci.yml.
+      - name: Pin npm to the lockfile's generation
+        run: npm i -g npm@11.18.0
+
+      - run: npm ci
+
+      - name: Build VitePress site
+        run: npm run docs:build
+
+      # Non-blocking until the Cloudflare Pages project "docs" exists.
+      # Until then the deploy fails with "project not found"; the build
+      # step above is the real gate. One-time setup to make it deploy
+      # for real (run once with a Pages:Edit token):
+      #   npx wrangler@4 pages project create docs --production-branch=main
+      # After that, remove `continue-on-error` so deploy failures surface.
+      - name: Deploy to Cloudflare Pages
+        continue-on-error: true
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Pin so CI is reproducible and matches the local toolchain.
+          wranglerVersion: "4.94.0"
+          # `pages deploy` uploads the build directory. `--branch=main`
+          # marks it the production deploy; any other branch (incl. PR
+          # refs) creates a preview deploy with its own *.pages.dev URL.
+          command: >-
+            pages deploy docs/.vitepress/dist
+            --project-name=docs
+            --branch=${{ github.head_ref || github.ref_name }}
+            --commit-dirty=true
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

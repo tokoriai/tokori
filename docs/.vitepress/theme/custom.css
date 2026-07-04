@@ -1,0 +1,671 @@
+/* Charter — self-hosted (Bitstream Charter, redistributable per the
+   notice in /fonts/charter/LICENSE.txt). Inter + JetBrains Mono come
+   from the @fontsource imports in theme/index.ts. */
+@font-face {
+  font-family: "Charter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/charter/charter_regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Charter";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/charter/charter_italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Charter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/charter/charter_bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Charter";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/charter/charter_bold_italic.woff2") format("woff2");
+}
+
+/*
+  Tokori docs theme overrides.
+
+  Two surfaces to keep in mind:
+
+  • The Mintlify-style HOMEPAGE — rendered from index.md with
+    `layout: page` so VitePress strips its sidebar + aside. The
+    `.tk-doc-home` block (hero, sections, cards) is hand-rolled to
+    match the existing tokori-cloud/public/docs/ design.
+
+  • The CONTENT pages — every other markdown file. Those still use
+    VitePress's `doc` layout (sidebar + TOC + edit link). We just
+    swap fonts + nudge a couple of tokens so the typography matches
+    the homepage chrome.
+
+  When adding more styling, prefer overriding the existing VitePress
+  CSS variables (https://vitepress.dev/reference/default-theme-customization)
+  over introducing parallel tokens — that keeps dark/light mode
+  working without duplicating the whole palette.
+*/
+
+:root {
+  /* Typography stack — Inter for UI, Charter for serif headings,
+     JetBrains Mono for code. Same trio as the marketing site. */
+  --vp-font-family-base:
+    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
+  --vp-font-family-mono:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
+    "DejaVu Sans Mono", monospace;
+  --tk-font-serif:
+    "Charter", "Iowan Old Style", Georgia, ui-serif, serif;
+
+  /* Colour palette — mirrors the cloud's --polot-* tokens exactly
+     so the docs reads as the same product. Light: white card on
+     off-white subtle bg, near-black text. Dark: very dark grey
+     card on slightly-darker subtle bg. */
+  --tk-bg: #ffffff;
+  --tk-fg: #111111;
+  --tk-card: #ffffff;
+  --tk-subtle: #f5f5f5;
+  --tk-muted: #6b6b6b;
+  --tk-border: #e5e5e5;
+  --tk-accent: #111111;
+
+  /* Map onto VitePress's own theme vars so its components inherit
+     the same look without per-component overrides. */
+  --vp-c-bg: var(--tk-bg);
+  --vp-c-bg-alt: var(--tk-bg);
+  --vp-c-bg-elv: var(--tk-card);
+  --vp-c-bg-soft: var(--tk-subtle);
+  --vp-c-divider: var(--tk-border);
+  --vp-c-text-1: var(--tk-fg);
+  --vp-c-text-2: var(--tk-muted);
+  --vp-c-text-3: #9a9a9a;
+  --vp-c-brand-1: var(--tk-accent);
+  --vp-c-brand-2: #1a1a1a;
+  --vp-c-brand-3: #262626;
+  --vp-c-brand-soft: rgba(17, 17, 17, 0.06);
+
+  --vp-layout-max-width: 1440px;
+}
+
+.dark {
+  --tk-bg: #0b0b0c;
+  --tk-fg: #f5f5f5;
+  --tk-card: #131316;
+  --tk-subtle: #1a1a1d;
+  --tk-muted: #a1a1a1;
+  --tk-border: #26262a;
+  --tk-accent: #f5f5f5;
+
+  --vp-c-bg: var(--tk-bg);
+  --vp-c-bg-alt: var(--tk-bg);
+  --vp-c-bg-elv: var(--tk-card);
+  --vp-c-bg-soft: var(--tk-subtle);
+  --vp-c-divider: var(--tk-border);
+  --vp-c-text-1: var(--tk-fg);
+  --vp-c-text-2: var(--tk-muted);
+  --vp-c-text-3: #6b6b6b;
+  --vp-c-brand-1: var(--tk-accent);
+  --vp-c-brand-2: #e5e5e5;
+  --vp-c-brand-3: #d4d4d4;
+  --vp-c-brand-soft: rgba(255, 255, 255, 0.08);
+}
+
+/* Serif headings inside the prose content. Matches the cloud docs
+   where H1 / H2 are serif but body stays Inter. */
+.vp-doc h1,
+.vp-doc h2,
+.tk-section h2 {
+  font-family: var(--tk-font-serif);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+/* Every guide / reference page gets a hero-style top:
+     - Big serif H1 (already styled above)
+     - First paragraph after it renders as a muted lede line
+     - Tighter top margin so the title sits closer to the chrome
+   This mirrors the cloud docs where every page has H1 + 1-line
+   tagline. Authors don't need any frontmatter — just write a
+   leading paragraph and it'll style itself. */
+.vp-doc > div > h1:first-child {
+  margin-top: 12px;
+  font-size: clamp(32px, 4vw, 40px);
+  line-height: 1.1;
+}
+.vp-doc > div > h1:first-child + p {
+  margin-top: 10px;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--vp-c-text-2);
+  /* Spacing before the first real H2 of the page. Doubles the
+     normal paragraph margin so the lede visibly sits "with" the
+     title block, not as just another body paragraph. */
+  margin-bottom: 36px;
+}
+
+/* Code blocks get a soft border in light mode so they don't blend
+   into the page. Dark stays as-is. */
+:root:not(.dark) div[class*="language-"] {
+  border: 1px solid var(--vp-c-divider);
+}
+
+/* ── Unified chrome background ────────────────────────────────────────
+   VitePress's navbar + sidebar each draw their own slightly-different
+   panel background. We collapse them onto the same `--vp-c-bg` so the
+   whole chrome reads as one continuous surface, like the cloud docs
+   nav. The sidebar still feels separate thanks to the right-edge
+   divider VitePress already draws. */
+.VPNavBar,
+.VPNavBar:not(.has-sidebar),
+.VPNavBar.has-sidebar .content-body,
+.VPSidebar,
+.VPLocalNav {
+  background-color: var(--vp-c-bg) !important;
+}
+.VPNavBar .divider {
+  display: none;
+}
+.VPNav {
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+/* Keep the sidebar / content visually separated via a single hair
+   line, not a panel-tone difference. */
+.VPSidebar {
+  border-right: 1px solid var(--vp-c-divider);
+}
+
+/* Default nav menu items kept lightweight — the heavy Guide/API
+   chrome lives in our custom .tk-nav-right block below. */
+.VPNavBarMenu .VPNavBarMenuLink {
+  font-weight: 500;
+}
+
+/* ── "On this page" outline — drop list markers ──────────────────────
+   The right-side TOC renders headings inside a <ul>. Different
+   browsers + extensions can put rogue markers on it; force every
+   list element underneath the outline to be unstyled. */
+.VPDocAsideOutline,
+.VPDocAsideOutline ul,
+.VPDocAsideOutline ol,
+.VPDocAsideOutline li {
+  list-style: none !important;
+  padding-left: 0;
+}
+.VPDocAsideOutline li::before,
+.VPDocAsideOutline li::marker {
+  content: "" !important;
+  display: none;
+}
+/* Lighter type + tighter line height for the outline links —
+   matches the cloud's right-rail aesthetic. */
+.VPDocAsideOutline .outline-link {
+  font-size: 12.5px;
+  line-height: 1.4;
+  padding-block: 4px;
+}
+
+/* ── Hide VitePress's own navbar widgets ──────────────────────────────
+   Our Layout.vue injects custom Guide/API toggle + theme + GitHub
+   buttons via the `nav-bar-content-after` slot, and a search
+   trigger in the sidebar via `sidebar-nav-before`. If we leave the
+   default theme's own search / appearance / social-link widgets
+   visible, we'd double up. */
+.VPNavBarSearch,
+.VPNavBarAppearance,
+.VPNavBarSocialLinks {
+  display: none !important;
+}
+
+/* ── Custom navbar right side ────────────────────────────────────────
+   Ports the cloud nav's docs-toggle + theme + github buttons into
+   the VitePress chrome. Class names follow `.tk-*` so they can't
+   collide with the default theme's classes. */
+.tk-nav-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+/* Guide / API segmented toggle. One pill container, two anchors,
+   active anchor gets a contrasting card background. Same shape
+   as the cloud's polot-nav__docs-toggle. */
+.tk-docs-toggle {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--tk-border);
+  background: var(--tk-subtle);
+  border-radius: 9999px;
+  padding: 2px;
+  gap: 2px;
+}
+.tk-docs-toggle a {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--tk-muted);
+  text-decoration: none;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+.tk-docs-toggle a:hover {
+  color: var(--tk-fg);
+}
+.tk-docs-toggle a[aria-current="page"] {
+  background: var(--tk-card);
+  color: var(--tk-fg);
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.dark .tk-docs-toggle a[aria-current="page"] {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Theme + GitHub icon buttons — identical shape. 32px square,
+   border, subtle hover. Sun/moon swap inside the theme button is
+   handled by v-show in Layout.vue. */
+.tk-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--tk-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--tk-muted);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+  text-decoration: none;
+}
+.tk-icon-btn:hover {
+  background: var(--tk-subtle);
+  border-color: color-mix(in srgb, var(--tk-border) 50%, var(--tk-fg));
+  color: var(--tk-fg);
+}
+.tk-icon-btn svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* ── Sidebar search trigger ───────────────────────────────────────────
+   Pill-shaped button at the top of the sidebar that opens the
+   local-search modal. Tinier + rounder + visually deeper than the
+   sidebar bg so it reads as a "form control" rather than another
+   nav link.
+
+   Search-specific bg tokens:
+   - Light: #ebebeb (sits darker than the #f5f5f5 sidebar bg).
+   - Dark : #050507 (sits darker than the #0b0b0c sidebar bg). */
+:root {
+  --tk-search-bg: #ebebeb;
+  --tk-search-bg-hover: #e3e3e3;
+}
+.dark {
+  --tk-search-bg: #050507;
+  --tk-search-bg-hover: #0a0a0c;
+}
+
+.tk-sidebar-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 12px;
+  /* Vertical breathing room so it isn't flush against the navbar. */
+  margin: 12px 0 18px;
+  border: 1px solid var(--tk-border);
+  /* Pill — fully rounded ends, matches the docs-toggle radius
+     so the two "interactive chrome" elements feel like a set. */
+  border-radius: 9999px;
+  background: var(--tk-search-bg);
+  color: var(--tk-muted);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 400;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+.tk-sidebar-search:hover {
+  background: var(--tk-search-bg-hover);
+  border-color: color-mix(in srgb, var(--tk-border) 50%, var(--tk-fg));
+  color: var(--tk-fg);
+}
+.tk-sidebar-search svg {
+  width: 13px;
+  height: 13px;
+  color: var(--tk-muted);
+  flex-shrink: 0;
+}
+.tk-sidebar-search__label {
+  flex: 1;
+  text-align: left;
+}
+.tk-sidebar-search__key {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
+  height: 18px;
+  border: 1px solid var(--tk-border);
+  border-radius: 9999px;
+  background: var(--tk-card);
+  font-family: var(--vp-font-family-base);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--tk-muted);
+}
+
+/* ── Hand-rolled homepage chrome ──────────────────────────────────────
+   Activated by `layout: page` on index.md. The standard `.vp-doc`
+   styles don't apply here, so this block carries everything the
+   homepage needs.                                                     */
+
+.tk-doc-home {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px 64px;
+}
+
+/* Hero block — eyebrow, big serif headline, sub, pill actions, with
+   a soft dotted grid behind the text. */
+.tk-hero {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--vp-c-divider);
+  margin: 0 -24px;
+  padding: 0 24px;
+}
+
+.tk-hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.045) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center;
+  /* Radial fade from the top so the grid feels like an atmosphere,
+     not a tiled pattern. */
+  -webkit-mask-image: radial-gradient(ellipse at top, black 35%, transparent 80%);
+  mask-image: radial-gradient(ellipse at top, black 35%, transparent 80%);
+  pointer-events: none;
+}
+.dark .tk-hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+
+.tk-hero-inner {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 80px 0 72px;
+  text-align: center;
+}
+
+.tk-eyebrow {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--vp-c-text-2);
+  margin: 0;
+}
+
+.tk-hero-title {
+  font-family: var(--tk-font-serif);
+  font-size: clamp(40px, 6vw, 56px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 14px 0 0;
+  color: var(--vp-c-text-1);
+}
+
+.tk-hero-sub {
+  max-width: 36ch;
+  margin: 18px auto 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--vp-c-text-2);
+}
+
+.tk-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 28px;
+}
+
+.tk-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--vp-c-text-1);
+  text-decoration: none;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+.tk-pill:hover {
+  background: var(--vp-c-bg-soft);
+  border-color: var(--vp-c-text-2);
+}
+.tk-pill--solid {
+  background: var(--vp-c-text-1);
+  color: var(--vp-c-bg);
+  border-color: var(--vp-c-text-1);
+}
+.tk-pill--solid:hover {
+  background: var(--vp-c-text-2);
+  border-color: var(--vp-c-text-2);
+  color: var(--vp-c-bg);
+}
+
+/* Section headings + sub-line under the hero. */
+.tk-section {
+  padding: 56px 0 0;
+}
+.tk-section h2 {
+  font-family: var(--tk-font-serif);
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--vp-c-text-1);
+}
+.tk-section-sub {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--vp-c-text-2);
+}
+
+/* Card grid — the meat of the homepage. Two columns on desktop,
+   one on mobile. Each card is the full link target; hover bumps
+   the shadow and flips the icon background. */
+.tk-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 24px;
+}
+@media (min-width: 760px) {
+  .tk-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.tk-card {
+  display: block;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+.tk-card:hover {
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.04),
+    0 8px 24px rgba(0, 0, 0, 0.06);
+  border-color: var(--vp-c-text-2);
+  transform: translateY(-1px);
+}
+.dark .tk-card:hover {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04),
+    0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.tk-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.tk-card-head h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--vp-c-text-1);
+}
+
+.tk-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+  flex-shrink: 0;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
+}
+.tk-card-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.tk-card:hover .tk-card-icon {
+  background: var(--vp-c-text-1);
+  color: var(--vp-c-bg);
+}
+
+.tk-card p {
+  margin: 12px 0 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--vp-c-text-2);
+}
+.tk-card p code {
+  font-size: 12px;
+  padding: 2px 6px;
+  background: var(--vp-c-bg-soft);
+  border-radius: 4px;
+}
+
+/* Homepage footer. The inner pages get VitePress's default footer
+   via themeConfig.footer; the home page uses `layout: page` which
+   skips that, so we hand-roll the same structure here. */
+.tk-footer {
+  margin-top: 72px;
+  padding: 28px 0 24px;
+  border-top: 1px solid var(--vp-c-divider);
+  font-size: 13px;
+  color: var(--vp-c-text-2);
+}
+.tk-footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.tk-footer-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.tk-footer-left strong {
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+}
+.tk-footer-dot {
+  color: var(--vp-c-text-3);
+}
+.tk-footer-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+}
+.tk-footer-right a {
+  color: var(--vp-c-text-2);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.tk-footer-right a:hover {
+  color: var(--vp-c-text-1);
+}
+.tk-footer-copy {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--vp-c-text-3);
+}
+
+/* ── Inner-page footer ────────────────────────────────────────────────
+   VitePress renders `themeConfig.footer` inside `.VPFooter` at the
+   bottom of every content page. Its default styling is whisper-quiet
+   — basically the visited-link grey — and it sits flush against the
+   prev/next nav above it. Lift it visually so it reads as a real
+   bottom bar, matching what the homepage hand-rolls. */
+.VPFooter {
+  border-top: 1px solid var(--vp-c-divider);
+  padding: 28px 32px;
+  background: var(--vp-c-bg);
+}
+.VPFooter .container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  font-size: 13px;
+  color: var(--vp-c-text-2);
+}
+.VPFooter .message,
+.VPFooter .copyright {
+  font-size: 13px;
+  color: var(--vp-c-text-2);
+}
+.VPFooter .copyright {
+  color: var(--vp-c-text-3);
+  font-size: 12px;
+}

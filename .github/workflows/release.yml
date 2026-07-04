@@ -1,0 +1,277 @@
+name: release
+
+# Tag-triggered. Push a tag like `v0.1.0` (or `v0.1.0-rc1`) and this
+# workflow builds Tokori for macOS / Windows / Linux in parallel,
+# creates a draft GitHub Release, and attaches every installer to it.
+# When the matrix completes, the maintainer reviews the draft, edits
+# the release notes, and clicks Publish.
+on:
+  push:
+    tags:
+      - "v*"
+  # Lets the maintainer run the build manually against a branch
+  # without cutting a tag — useful for debugging packaging issues, and
+  # (with `platforms: macos`) for building just the one leg that can't
+  # be built locally while assembling a release with
+  # scripts/release-local.mjs. Manual runs create no release — the
+  # installers land as workflow artifacts instead.
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: "Which platforms to build"
+        type: choice
+        options: [all, macos, linux, windows]
+        default: all
+
+# Cancel in-flight runs on the same ref so a quick retag doesn't
+# leave two builds fighting for the same draft release. Manual runs
+# key on the platform selection too, so `platforms: macos` and
+# `platforms: windows` dispatches can run side by side instead of
+# cancelling each other.
+concurrency:
+  group: release-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && inputs.platforms || 'tag' }}
+  cancel-in-progress: true
+
+jobs:
+  # Decides WHAT this run does before any runner-minutes burn:
+  #   • matrix — all three platforms on a tag push; on a manual run,
+  #     whatever the `platforms` input selected.
+  #   • skip — when a tag's release was already assembled by
+  #     scripts/release-local.mjs (its latest.json is attached),
+  #     publishing that draft creates the tag and re-triggers this
+  #     workflow — detect it and skip the whole build.
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      skip: ${{ steps.plan.outputs.skip }}
+    steps:
+      - id: plan
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          sel="${{ github.event_name == 'workflow_dispatch' && inputs.platforms || 'all' }}"
+          mac='{"platform":"macos-latest","args":"--target universal-apple-darwin"}'
+          lin='{"platform":"ubuntu-22.04","args":""}'
+          win='{"platform":"windows-latest","args":""}'
+          case "$sel" in
+            macos)   m="[$mac]" ;;
+            linux)   m="[$lin]" ;;
+            windows) m="[$win]" ;;
+            *)       m="[$mac,$lin,$win]" ;;
+          esac
+          echo "matrix=$m" >> "$GITHUB_OUTPUT"
+
+          skip=false
+          if [ "${{ startsWith(github.ref, 'refs/tags/') }}" = "true" ]; then
+            if gh release view "${{ github.ref_name }}" --repo "$GITHUB_REPOSITORY" \
+                 --json assets --jq '.assets[].name' 2>/dev/null | grep -qx "latest.json"; then
+              echo "release for ${{ github.ref_name }} is already assembled — skipping build"
+              skip=true
+            fi
+          fi
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
+
+  # Fail fast (~15 s) before burning three runner-builds: the tag, the
+  # three version manifests, and the changelog must agree. A v0.2.0 tag
+  # shipping binaries that still say 0.1.0 would publish a latest.json
+  # that breaks the auto-update chain — installed apps would see "no
+  # update" forever. Same script as the local `npm run release:check`.
+  verify:
+    needs: plan
+    if: needs.plan.outputs.skip != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Versions + changelog agree
+        run: node scripts/release-check.mjs ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '' }}
+      # `npm ci` refuses a package-lock.json that drifted out of sync
+      # with package.json — and it's the first real step of every matrix
+      # leg, so drift would fail all three builds at once. Catch it here
+      # in seconds instead. (`--dry-run` still runs the sync check.)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      # Must match the npm that wrote package-lock.json — see ci.yml.
+      - name: Pin npm to the lockfile's generation
+        run: npm i -g npm@11.18.0
+      - name: Lockfile in sync with package.json
+        run: npm ci --dry-run --no-audit --no-fund
+
+  build:
+    needs: [plan, verify]
+    if: needs.plan.outputs.skip != 'true'
+    permissions:
+      # tauri-action needs write access to create / update the GitHub
+      # Release draft and upload assets to it.
+      contents: write
+
+    strategy:
+      # Don't abort the whole matrix if one OS fails — partial bundles
+      # are still useful and the maintainer can re-run the failing leg.
+      fail-fast: false
+      matrix:
+        # Computed by the `plan` job: all three on a tag push, the
+        # `platforms` selection on a manual run.
+        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Toolchains.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      # Must match the npm that wrote package-lock.json — see ci.yml.
+      - name: Pin npm to the lockfile's generation
+        run: npm i -g npm@11.18.0
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          # Cross-compile to both architectures on macOS so the .dmg
+          # works on Intel and Apple Silicon out of the box.
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      # Cargo registry / build cache. Keyed on lockfile hash so a deps
+      # bump invalidates correctly. Saves ~3-5 min per matrix leg.
+      # `cache-directories` additionally carries ort's (ONNX Runtime)
+      # prebuilt-binary download cache: it lives OUTSIDE the cargo
+      # target dir, so without this a warm cargo cache says "already
+      # downloaded" while the runner's cache dir is empty — and the
+      # final link dies pointing into a directory that doesn't exist.
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: ./src-tauri -> target
+          key: ${{ matrix.platform }}
+          cache-directories: |
+            ~/Library/Caches/ort.pyke.io
+            ~/.cache/ort.pyke.io
+            ~/AppData/Local/ort.pyke.io
+
+      # Linux Tauri prerequisites. macOS / Windows runners already
+      # ship the toolchains we need.
+      - name: Install Linux build deps
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            libssl-dev \
+            rpm
+          # `rpm` provides rpmbuild — without it `bundle.targets: "all"`
+          # aborts the whole Linux build at the .rpm step (taking the
+          # .deb / .AppImage down with it, since tauri-action uploads
+          # only after every bundle succeeds). The GitHub ubuntu runner
+          # doesn't ship rpmbuild by default.
+
+      - name: Install npm deps
+        run: npm ci
+
+      # Tauri's official action: runs `tauri build` with the matrix
+      # args, then attaches the produced .dmg / .msi / .AppImage / .deb
+      # to a draft Release named after the tag. If a draft for this
+      # tag already exists, it appends to it — so re-runs across the
+      # matrix all land in the same release.
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          # ── Updater signature (ALL platforms) ───────────────────────
+          # Signs the update bundles + generates the `latest.json` the
+          # in-app updater reads. This is NOT OS code-signing — it's
+          # Tokori's own minisign key (the public half is committed in
+          # tauri.conf.json::plugins.updater.pubkey). Generated once via
+          # `npm run tauri signer generate`; the private half lives only
+          # here as a secret. If the secret is absent the build still
+          # succeeds — it just omits the `.sig` + `latest.json`, so a
+          # fork gets working installers without auto-update. See
+          # the maintainer release notes (launch/RELEASING.md).
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+
+          # ── macOS code-signing + notarisation (NOT yet enabled) ─────
+          # The .dmg ships unsigned (users do the right-click → Open
+          # dance documented in docs/guides/install.md). IMPORTANT: the
+          # env vars must be entirely ABSENT until the secrets exist —
+          # `APPLE_CERTIFICATE: ${{ secrets.MISSING }}` exports an empty
+          # string, and the bundler reads "set" as "please codesign",
+          # then dies importing the empty cert into the keychain. When
+          # the Apple Developer cert is ready, add back:
+          #   APPLE_CERTIFICATE (base64 .p12), APPLE_CERTIFICATE_PASSWORD,
+          #   APPLE_SIGNING_IDENTITY, APPLE_ID, APPLE_PASSWORD (app-
+          #   specific), APPLE_TEAM_ID
+          # Step-by-step in the maintainer release notes (launch/RELEASING.md).
+
+          # ── Windows Authenticode (NOT yet enabled) ──────────────────
+          # The .msi / .exe ship unsigned today — SmartScreen warns once
+          # ("More info → Run anyway"). When ready, the free route for
+          # this open-source repo is SignPath Foundation; Azure Artifact
+          # Signing (~$10/mo) is the paid alternative. Either way you set
+          # `bundle.windows.signCommand` in tauri.conf.json and supply the
+          # credentials here — e.g. for Azure via trusted-signing-cli,
+          # uncomment:
+          #   AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          #   AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          #   AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          # Full walkthrough in the maintainer release notes (launch/RELEASING.md) → "Windows".
+        with:
+          # On a TAG push (`v*`) these are set, so the action creates — or
+          # appends to — a draft GitHub Release named after the tag and
+          # attaches every installer to it. The maintainer edits the notes
+          # and clicks Publish. On first matrix leg it drafts the release;
+          # later legs append to the same draft.
+          #
+          # On a MANUAL run (Actions → release → Run workflow) `github.ref`
+          # is a branch, not a tag, so both resolve to empty — the action
+          # then only BUILDS and creates no release. The next step exposes
+          # the installers as downloadable artifacts instead, so you can test
+          # an .exe / .deb before cutting a tag. See
+          # the maintainer release notes (launch/RELEASING.md) → "Test a build before publishing".
+          tagName: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '' }}
+          releaseName: ${{ startsWith(github.ref, 'refs/tags/') && format('Tokori {0}', github.ref_name) || '' }}
+          releaseBody: |
+            See `CHANGELOG.md` for the full list of changes.
+
+            ### Install
+            - **macOS:** download the `.dmg`, drag Tokori to /Applications.
+            - **Windows:** download the `*-setup.exe` installer and run it. It's unsigned for now, so the first launch shows SmartScreen — click **More info → Run anyway**.
+            - **Linux — Debian/Ubuntu:** `sudo apt install ./tokori_*.deb`
+            - **Linux — Fedora/RHEL:** `sudo dnf install ./tokori-*.rpm`
+            - **Linux — Arch:** `yay -S tokori-bin` (AUR), or use the portable `.AppImage` (`chmod +x` and run).
+          releaseDraft: true
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          args: ${{ matrix.args }}
+
+      # ── Test builds ─────────────────────────────────────────────────────
+      # A manual run creates no Release (see above), so publish the installers
+      # as workflow artifacts you can download straight from the run's summary
+      # page. Grab `tokori-windows-latest` for the `.exe`, copy it to a Windows
+      # box, and try the install — it's the same byte-for-byte installer a
+      # tagged release ships, just without the updater `.sig`. Per-OS globs:
+      # only the patterns that exist on each runner upload, the rest are
+      # skipped. Artifacts auto-expire after 14 days.
+      - name: Upload installers as artifacts (manual test builds)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: tokori-${{ matrix.platform }}
+          if-no-files-found: warn
+          retention-days: 14
+          # The trailing `*` variants pick up the updater `.sig` files,
+          # and the macos/ dir holds the `.app.tar.gz` updater bundle —
+          # scripts/release-local.mjs --from-run needs all of them to
+          # assemble a complete latest.json.
+          path: |
+            src-tauri/target/release/bundle/nsis/*-setup.exe*
+            src-tauri/target/release/bundle/deb/*.deb*
+            src-tauri/target/release/bundle/rpm/*.rpm*
+            src-tauri/target/release/bundle/appimage/*.AppImage*
+            src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+            src-tauri/target/universal-apple-darwin/release/bundle/macos/*.app.tar.gz*

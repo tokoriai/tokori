@@ -1,0 +1,3748 @@
+{
+  "schema": "tokori-pack/v1",
+  "id": "free:german-a1",
+  "name": "German A1 vocabulary — Free",
+  "language": "de",
+  "description": "668 German A1 vocabulary items in one drillable collection plus thematic sub-decks (greetings, numbers, family, food, time). Source: Goethe-Institut A1 Wortliste via patsytau/anki_german_a1_vocab (CC BY-SA 4.0).",
+  "version": "1.0.0",
+  "license": "Vocabulary data: CC BY-SA 4.0 (patsytau, github.com/patsytau/anki_german_a1_vocab). Underlying word list courtesy of the Goethe-Institut A1 Wortliste. Sub-collection grouping by Tokori. Free for everyone.",
+  "collections": [
+    {
+      "id": "a1-day-one",
+      "name": "German · Day-one greetings",
+      "description": "Hallo, Tschüss, danke schön — everyday phrases not on the Goethe A1 list but you want them anyway.",
+      "words": [
+        {
+          "word": "Hallo",
+          "reading": null,
+          "gloss": "hello (informal)"
+        },
+        {
+          "word": "Guten Morgen",
+          "reading": null,
+          "gloss": "good morning"
+        },
+        {
+          "word": "Guten Tag",
+          "reading": null,
+          "gloss": "good day, hello (formal)"
+        },
+        {
+          "word": "Guten Abend",
+          "reading": null,
+          "gloss": "good evening"
+        },
+        {
+          "word": "Gute Nacht",
+          "reading": null,
+          "gloss": "good night"
+        },
+        {
+          "word": "Tschüss",
+          "reading": null,
+          "gloss": "bye (informal)"
+        },
+        {
+          "word": "Auf Wiedersehen",
+          "reading": null,
+          "gloss": "goodbye (formal)"
+        },
+        {
+          "word": "Bis später",
+          "reading": null,
+          "gloss": "see you later"
+        },
+        {
+          "word": "Bis morgen",
+          "reading": null,
+          "gloss": "see you tomorrow"
+        },
+        {
+          "word": "Wie geht es dir?",
+          "reading": null,
+          "gloss": "how are you? (informal)"
+        },
+        {
+          "word": "Wie geht es Ihnen?",
+          "reading": null,
+          "gloss": "how are you? (formal)"
+        },
+        {
+          "word": "Mir geht es gut",
+          "reading": null,
+          "gloss": "I'm doing well"
+        },
+        {
+          "word": "Danke schön",
+          "reading": null,
+          "gloss": "thank you very much"
+        },
+        {
+          "word": "Bitte schön",
+          "reading": null,
+          "gloss": "you're welcome / here you go"
+        },
+        {
+          "word": "Entschuldigung",
+          "reading": null,
+          "gloss": "excuse me, sorry"
+        },
+        {
+          "word": "Montag",
+          "reading": null,
+          "gloss": "Monday"
+        },
+        {
+          "word": "Dienstag",
+          "reading": null,
+          "gloss": "Tuesday"
+        },
+        {
+          "word": "Mittwoch",
+          "reading": null,
+          "gloss": "Wednesday"
+        },
+        {
+          "word": "Donnerstag",
+          "reading": null,
+          "gloss": "Thursday"
+        },
+        {
+          "word": "Freitag",
+          "reading": null,
+          "gloss": "Friday"
+        },
+        {
+          "word": "Samstag",
+          "reading": null,
+          "gloss": "Saturday"
+        },
+        {
+          "word": "Sonntag",
+          "reading": null,
+          "gloss": "Sunday"
+        }
+      ]
+    },
+    {
+      "id": "a1-all",
+      "name": "German A1 · all 668 words",
+      "description": "Every vocabulary item on the Goethe A1 word list.",
+      "words": [
+        {
+          "word": "(Kredit)-Karte",
+          "reading": null,
+          "gloss": "(credit) card"
+        },
+        {
+          "word": "(sich) anziehen",
+          "reading": null,
+          "gloss": "to get dressed"
+        },
+        {
+          "word": "(sich) duschen",
+          "reading": null,
+          "gloss": "to shower"
+        },
+        {
+          "word": "(sich) freuen",
+          "reading": null,
+          "gloss": "to look forward"
+        },
+        {
+          "word": "(sich) treffen",
+          "reading": null,
+          "gloss": "to meet"
+        },
+        {
+          "word": "(sich) vorstellen",
+          "reading": null,
+          "gloss": "to introduce"
+        },
+        {
+          "word": "(sich) waschen",
+          "reading": null,
+          "gloss": "to wash"
+        },
+        {
+          "word": "abfliegen",
+          "reading": null,
+          "gloss": "to depart (by air)"
+        },
+        {
+          "word": "an sein",
+          "reading": null,
+          "gloss": "to be (switched) on; to be on"
+        },
+        {
+          "word": "antworten",
+          "reading": null,
+          "gloss": "to answer"
+        },
+        {
+          "word": "arbeiten",
+          "reading": null,
+          "gloss": "to work"
+        },
+        {
+          "word": "arbeitslos",
+          "reading": null,
+          "gloss": "unemployed"
+        },
+        {
+          "word": "auch",
+          "reading": null,
+          "gloss": "also"
+        },
+        {
+          "word": "auf",
+          "reading": null,
+          "gloss": "on; until; in"
+        },
+        {
+          "word": "auf sein",
+          "reading": null,
+          "gloss": "to be open"
+        },
+        {
+          "word": "aufhören",
+          "reading": null,
+          "gloss": "to end"
+        },
+        {
+          "word": "aufstehen",
+          "reading": null,
+          "gloss": "to get up"
+        },
+        {
+          "word": "aus",
+          "reading": null,
+          "gloss": "from"
+        },
+        {
+          "word": "aus sein",
+          "reading": null,
+          "gloss": "to be (switched) off; to be out"
+        },
+        {
+          "word": "ausfüllen",
+          "reading": null,
+          "gloss": "to fill out"
+        },
+        {
+          "word": "ausländisch",
+          "reading": null,
+          "gloss": "foreign"
+        },
+        {
+          "word": "ausmachen",
+          "reading": null,
+          "gloss": "to switch off"
+        },
+        {
+          "word": "aussehen",
+          "reading": null,
+          "gloss": "to look"
+        },
+        {
+          "word": "aussteigen",
+          "reading": null,
+          "gloss": "to alight"
+        },
+        {
+          "word": "ausziehen",
+          "reading": null,
+          "gloss": "to take off"
+        },
+        {
+          "word": "automatisch",
+          "reading": null,
+          "gloss": "automatic"
+        },
+        {
+          "word": "baden",
+          "reading": null,
+          "gloss": "to bathe"
+        },
+        {
+          "word": "bald",
+          "reading": null,
+          "gloss": "soon"
+        },
+        {
+          "word": "bar",
+          "reading": null,
+          "gloss": "cash"
+        },
+        {
+          "word": "bedeuten",
+          "reading": null,
+          "gloss": "to mean"
+        },
+        {
+          "word": "beginnen",
+          "reading": null,
+          "gloss": "to begin"
+        },
+        {
+          "word": "bei",
+          "reading": null,
+          "gloss": "next to; at; for"
+        },
+        {
+          "word": "bei uns",
+          "reading": null,
+          "gloss": "here / where we are"
+        },
+        {
+          "word": "beide",
+          "reading": null,
+          "gloss": "both"
+        },
+        {
+          "word": "bekannt",
+          "reading": null,
+          "gloss": "well known"
+        },
+        {
+          "word": "bekommen",
+          "reading": null,
+          "gloss": "to receive; to have; to get"
+        },
+        {
+          "word": "benutzen",
+          "reading": null,
+          "gloss": "to use"
+        },
+        {
+          "word": "besetzt",
+          "reading": null,
+          "gloss": "busy; taken"
+        },
+        {
+          "word": "besichtigen",
+          "reading": null,
+          "gloss": "to visit"
+        },
+        {
+          "word": "besser",
+          "reading": null,
+          "gloss": "better"
+        },
+        {
+          "word": "best-",
+          "reading": null,
+          "gloss": "best"
+        },
+        {
+          "word": "bestellen",
+          "reading": null,
+          "gloss": "to order"
+        },
+        {
+          "word": "besuchen",
+          "reading": null,
+          "gloss": "to visit"
+        },
+        {
+          "word": "bezahlen",
+          "reading": null,
+          "gloss": "to pay"
+        },
+        {
+          "word": "billig",
+          "reading": null,
+          "gloss": "cheap"
+        },
+        {
+          "word": "bis",
+          "reading": null,
+          "gloss": "to (as far as); until"
+        },
+        {
+          "word": "bisschen",
+          "reading": null,
+          "gloss": "(a) little"
+        },
+        {
+          "word": "bitte",
+          "reading": null,
+          "gloss": "please"
+        },
+        {
+          "word": "bitten",
+          "reading": null,
+          "gloss": "to ask"
+        },
+        {
+          "word": "bitter",
+          "reading": null,
+          "gloss": "bitter"
+        },
+        {
+          "word": "bleiben",
+          "reading": null,
+          "gloss": "to stay"
+        },
+        {
+          "word": "böse",
+          "reading": null,
+          "gloss": "angry"
+        },
+        {
+          "word": "brauchen",
+          "reading": null,
+          "gloss": "to need"
+        },
+        {
+          "word": "breit",
+          "reading": null,
+          "gloss": "wide"
+        },
+        {
+          "word": "bringen",
+          "reading": null,
+          "gloss": "to bring; to take"
+        },
+        {
+          "word": "buchstabieren",
+          "reading": null,
+          "gloss": "to spell"
+        },
+        {
+          "word": "circa/ca.",
+          "reading": null,
+          "gloss": "approximately"
+        },
+        {
+          "word": "da",
+          "reading": null,
+          "gloss": "there; here"
+        },
+        {
+          "word": "daneben",
+          "reading": null,
+          "gloss": "next to it"
+        },
+        {
+          "word": "danke",
+          "reading": null,
+          "gloss": "thank you"
+        },
+        {
+          "word": "danken",
+          "reading": null,
+          "gloss": "to thank"
+        },
+        {
+          "word": "dann",
+          "reading": null,
+          "gloss": "then (afterwards)"
+        },
+        {
+          "word": "das",
+          "reading": null,
+          "gloss": "that; the"
+        },
+        {
+          "word": "das Apartment",
+          "reading": null,
+          "gloss": "apartment"
+        },
+        {
+          "word": "das Auge",
+          "reading": null,
+          "gloss": "eye"
+        },
+        {
+          "word": "das Ausland",
+          "reading": null,
+          "gloss": "abroad/overseas"
+        },
+        {
+          "word": "das Auto",
+          "reading": null,
+          "gloss": "car"
+        },
+        {
+          "word": "das Baby",
+          "reading": null,
+          "gloss": "baby"
+        },
+        {
+          "word": "das Bad",
+          "reading": null,
+          "gloss": "bathroom"
+        },
+        {
+          "word": "das Bein",
+          "reading": null,
+          "gloss": "leg"
+        },
+        {
+          "word": "das Beispiel",
+          "reading": null,
+          "gloss": "example"
+        },
+        {
+          "word": "das Bett",
+          "reading": null,
+          "gloss": "bed"
+        },
+        {
+          "word": "das Bier",
+          "reading": null,
+          "gloss": "beer"
+        },
+        {
+          "word": "das Bild",
+          "reading": null,
+          "gloss": "picture"
+        },
+        {
+          "word": "das Brot",
+          "reading": null,
+          "gloss": "bread; bread roll"
+        },
+        {
+          "word": "das Brötchen, –",
+          "reading": null,
+          "gloss": "bread roll"
+        },
+        {
+          "word": "das Buch, -ü, er",
+          "reading": null,
+          "gloss": "book"
+        },
+        {
+          "word": "das Café",
+          "reading": null,
+          "gloss": "cafe"
+        },
+        {
+          "word": "das Datum",
+          "reading": null,
+          "gloss": "date"
+        },
+        {
+          "word": "das Doppelzimmer",
+          "reading": null,
+          "gloss": "double room"
+        },
+        {
+          "word": "das Dorf, -ö, er",
+          "reading": null,
+          "gloss": "village"
+        },
+        {
+          "word": "das Ei",
+          "reading": null,
+          "gloss": "egg"
+        },
+        {
+          "word": "das Einzelzimmer",
+          "reading": null,
+          "gloss": "single room"
+        },
+        {
+          "word": "das Ende",
+          "reading": null,
+          "gloss": "end"
+        },
+        {
+          "word": "das Ergebnis",
+          "reading": null,
+          "gloss": "result"
+        },
+        {
+          "word": "das Essen",
+          "reading": null,
+          "gloss": "food"
+        },
+        {
+          "word": "das Fahrrad, -ä, er",
+          "reading": null,
+          "gloss": "bicycle"
+        },
+        {
+          "word": "das Fax",
+          "reading": null,
+          "gloss": "fax"
+        },
+        {
+          "word": "das Feuer",
+          "reading": null,
+          "gloss": "fire / lighter"
+        },
+        {
+          "word": "das Fieber",
+          "reading": null,
+          "gloss": "fever"
+        },
+        {
+          "word": "das Fleisch",
+          "reading": null,
+          "gloss": "meat"
+        },
+        {
+          "word": "das Flugzeug",
+          "reading": null,
+          "gloss": "aeroplane"
+        },
+        {
+          "word": "das Formular",
+          "reading": null,
+          "gloss": "form"
+        },
+        {
+          "word": "das Foto",
+          "reading": null,
+          "gloss": "photograph"
+        },
+        {
+          "word": "das Frühstück",
+          "reading": null,
+          "gloss": "breakfast"
+        },
+        {
+          "word": "das Geburtsjahr",
+          "reading": null,
+          "gloss": "birth year"
+        },
+        {
+          "word": "das Geld",
+          "reading": null,
+          "gloss": "money"
+        },
+        {
+          "word": "das Gemüse",
+          "reading": null,
+          "gloss": "vegetables"
+        },
+        {
+          "word": "das Gepäck",
+          "reading": null,
+          "gloss": "luggage"
+        },
+        {
+          "word": "das Geschäft",
+          "reading": null,
+          "gloss": "shop"
+        },
+        {
+          "word": "das Geschenk",
+          "reading": null,
+          "gloss": "present"
+        },
+        {
+          "word": "das Gespräch",
+          "reading": null,
+          "gloss": "conversation/talk/call"
+        },
+        {
+          "word": "das Getränk",
+          "reading": null,
+          "gloss": "drink"
+        },
+        {
+          "word": "das Gewicht",
+          "reading": null,
+          "gloss": "weight"
+        },
+        {
+          "word": "das Glas, -ä, er",
+          "reading": null,
+          "gloss": "glass; glasses"
+        },
+        {
+          "word": "das Gleis",
+          "reading": null,
+          "gloss": "platform"
+        },
+        {
+          "word": "das Glück",
+          "reading": null,
+          "gloss": "luck"
+        },
+        {
+          "word": "das Haar",
+          "reading": null,
+          "gloss": "hair"
+        },
+        {
+          "word": "das Hähnchen",
+          "reading": null,
+          "gloss": "chicken"
+        },
+        {
+          "word": "das Handy",
+          "reading": null,
+          "gloss": "mobile telephone"
+        },
+        {
+          "word": "das Haus, -ä, er",
+          "reading": null,
+          "gloss": "house / building; home"
+        },
+        {
+          "word": "das Hobby",
+          "reading": null,
+          "gloss": "hobby"
+        },
+        {
+          "word": "das Hotel",
+          "reading": null,
+          "gloss": "hotel"
+        },
+        {
+          "word": "das Internet",
+          "reading": null,
+          "gloss": "internet"
+        },
+        {
+          "word": "das Kind",
+          "reading": null,
+          "gloss": "child"
+        },
+        {
+          "word": "das Kino",
+          "reading": null,
+          "gloss": "cinema"
+        },
+        {
+          "word": "das Konto",
+          "reading": null,
+          "gloss": "account"
+        },
+        {
+          "word": "das Land, -ä, er",
+          "reading": null,
+          "gloss": "country"
+        },
+        {
+          "word": "das Leben",
+          "reading": null,
+          "gloss": "life"
+        },
+        {
+          "word": "das Licht",
+          "reading": null,
+          "gloss": "light"
+        },
+        {
+          "word": "das Lied",
+          "reading": null,
+          "gloss": "song"
+        },
+        {
+          "word": "das Lokal",
+          "reading": null,
+          "gloss": "pub"
+        },
+        {
+          "word": "das Mädchen, –",
+          "reading": null,
+          "gloss": "girl"
+        },
+        {
+          "word": "das Meer",
+          "reading": null,
+          "gloss": "sea"
+        },
+        {
+          "word": "das Obst",
+          "reading": null,
+          "gloss": "fruit"
+        },
+        {
+          "word": "das Öl",
+          "reading": null,
+          "gloss": "oil"
+        },
+        {
+          "word": "das Papier",
+          "reading": null,
+          "gloss": "paper"
+        },
+        {
+          "word": "das Praktikum",
+          "reading": null,
+          "gloss": "internship"
+        },
+        {
+          "word": "das Problem",
+          "reading": null,
+          "gloss": "problem"
+        },
+        {
+          "word": "das Reisebüro",
+          "reading": null,
+          "gloss": "travel agency"
+        },
+        {
+          "word": "das Restaurant",
+          "reading": null,
+          "gloss": "restaurant"
+        },
+        {
+          "word": "das Salz",
+          "reading": null,
+          "gloss": "salt"
+        },
+        {
+          "word": "das Schild",
+          "reading": null,
+          "gloss": "sign"
+        },
+        {
+          "word": "das Schwimmbad",
+          "reading": null,
+          "gloss": "swimming pool"
+        },
+        {
+          "word": "das Sofa",
+          "reading": null,
+          "gloss": "sofa"
+        },
+        {
+          "word": "das Studium",
+          "reading": null,
+          "gloss": "degree course"
+        },
+        {
+          "word": "das Taxi",
+          "reading": null,
+          "gloss": "taxi"
+        },
+        {
+          "word": "das Telefon",
+          "reading": null,
+          "gloss": "telephone"
+        },
+        {
+          "word": "das Thema",
+          "reading": null,
+          "gloss": "topic"
+        },
+        {
+          "word": "das Ticket",
+          "reading": null,
+          "gloss": "ticket"
+        },
+        {
+          "word": "das Wasser",
+          "reading": null,
+          "gloss": "water"
+        },
+        {
+          "word": "das Wetter",
+          "reading": null,
+          "gloss": "weather"
+        },
+        {
+          "word": "das Wiederhören",
+          "reading": null,
+          "gloss": "…"
+        },
+        {
+          "word": "das Wiedersehen",
+          "reading": null,
+          "gloss": "…"
+        },
+        {
+          "word": "das Wort, -ö, er/-e",
+          "reading": null,
+          "gloss": "word"
+        },
+        {
+          "word": "das Wörterbuch, -ü, er",
+          "reading": null,
+          "gloss": "dictionary"
+        },
+        {
+          "word": "das Zimmer, –",
+          "reading": null,
+          "gloss": "room"
+        },
+        {
+          "word": "dauern",
+          "reading": null,
+          "gloss": "to take (duration)"
+        },
+        {
+          "word": "dein-",
+          "reading": null,
+          "gloss": "your; yours"
+        },
+        {
+          "word": "denn",
+          "reading": null,
+          "gloss": "because"
+        },
+        {
+          "word": "der",
+          "reading": null,
+          "gloss": "the"
+        },
+        {
+          "word": "der Abflug",
+          "reading": null,
+          "gloss": "(flight) departure"
+        },
+        {
+          "word": "der Anschluss",
+          "reading": null,
+          "gloss": "connection"
+        },
+        {
+          "word": "der Apfel",
+          "reading": null,
+          "gloss": "apple"
+        },
+        {
+          "word": "der Appetit",
+          "reading": null,
+          "gloss": "…"
+        },
+        {
+          "word": "der Arbeitsplatz, -ä, e",
+          "reading": null,
+          "gloss": "workplace"
+        },
+        {
+          "word": "der Arm",
+          "reading": null,
+          "gloss": "arm"
+        },
+        {
+          "word": "der Arzt, -Ä, e",
+          "reading": null,
+          "gloss": "doctor"
+        },
+        {
+          "word": "der Aufzug, -ü, e",
+          "reading": null,
+          "gloss": "lift"
+        },
+        {
+          "word": "der Ausflug",
+          "reading": null,
+          "gloss": "excursion"
+        },
+        {
+          "word": "der Ausgang",
+          "reading": null,
+          "gloss": "exit"
+        },
+        {
+          "word": "der Ausländer",
+          "reading": null,
+          "gloss": "foreigner"
+        },
+        {
+          "word": "der Ausweis",
+          "reading": null,
+          "gloss": "identity card"
+        },
+        {
+          "word": "der Automat",
+          "reading": null,
+          "gloss": "machine"
+        },
+        {
+          "word": "der Bahnhof",
+          "reading": null,
+          "gloss": "train station"
+        },
+        {
+          "word": "der Bahnsteig",
+          "reading": null,
+          "gloss": "platform"
+        },
+        {
+          "word": "der Balkon",
+          "reading": null,
+          "gloss": "balcony"
+        },
+        {
+          "word": "der Bauch",
+          "reading": null,
+          "gloss": "stomach"
+        },
+        {
+          "word": "der Baum, -ä, e",
+          "reading": null,
+          "gloss": "tree"
+        },
+        {
+          "word": "der Beamte",
+          "reading": null,
+          "gloss": "official"
+        },
+        {
+          "word": "der Beruf",
+          "reading": null,
+          "gloss": "profession; occupation"
+        },
+        {
+          "word": "der Bleistift",
+          "reading": null,
+          "gloss": "pencil"
+        },
+        {
+          "word": "der Blick",
+          "reading": null,
+          "gloss": "view"
+        },
+        {
+          "word": "der Bogen",
+          "reading": null,
+          "gloss": "sheet"
+        },
+        {
+          "word": "der Brief",
+          "reading": null,
+          "gloss": "letter"
+        },
+        {
+          "word": "der Bruder",
+          "reading": null,
+          "gloss": "brother"
+        },
+        {
+          "word": "der Buchstabe",
+          "reading": null,
+          "gloss": "letter (character)"
+        },
+        {
+          "word": "der Bus",
+          "reading": null,
+          "gloss": "bus"
+        },
+        {
+          "word": "der Chef",
+          "reading": null,
+          "gloss": "boss"
+        },
+        {
+          "word": "der Computer, –",
+          "reading": null,
+          "gloss": "computer"
+        },
+        {
+          "word": "der Dank",
+          "reading": null,
+          "gloss": "thanks"
+        },
+        {
+          "word": "der Doktor",
+          "reading": null,
+          "gloss": "doctor"
+        },
+        {
+          "word": "der Drucker, –",
+          "reading": null,
+          "gloss": "printer"
+        },
+        {
+          "word": "der Durst",
+          "reading": null,
+          "gloss": "thirst"
+        },
+        {
+          "word": "der Ehemann, ä, er",
+          "reading": null,
+          "gloss": "husband"
+        },
+        {
+          "word": "der Eingang",
+          "reading": null,
+          "gloss": "entrance"
+        },
+        {
+          "word": "der Eintritt",
+          "reading": null,
+          "gloss": "entry"
+        },
+        {
+          "word": "der Empfänger, –",
+          "reading": null,
+          "gloss": "recipient"
+        },
+        {
+          "word": "der Erwachsene",
+          "reading": null,
+          "gloss": "adult"
+        },
+        {
+          "word": "der Fahrer",
+          "reading": null,
+          "gloss": "driver"
+        },
+        {
+          "word": "der Familienname",
+          "reading": null,
+          "gloss": "surname"
+        },
+        {
+          "word": "der Familienstand",
+          "reading": null,
+          "gloss": "family/marital status"
+        },
+        {
+          "word": "der Fehler, –",
+          "reading": null,
+          "gloss": "mistake"
+        },
+        {
+          "word": "der Feierabend",
+          "reading": null,
+          "gloss": "end of work/home time"
+        },
+        {
+          "word": "der Feiertag",
+          "reading": null,
+          "gloss": "bank holiday"
+        },
+        {
+          "word": "der Film",
+          "reading": null,
+          "gloss": "film"
+        },
+        {
+          "word": "der Fisch",
+          "reading": null,
+          "gloss": "fish"
+        },
+        {
+          "word": "der Flughafen",
+          "reading": null,
+          "gloss": "airport"
+        },
+        {
+          "word": "der Freund",
+          "reading": null,
+          "gloss": "friend"
+        },
+        {
+          "word": "der Fuß, -ü, e",
+          "reading": null,
+          "gloss": "foot"
+        },
+        {
+          "word": "der Fußball",
+          "reading": null,
+          "gloss": "football"
+        },
+        {
+          "word": "der Garten",
+          "reading": null,
+          "gloss": "garden"
+        },
+        {
+          "word": "der Gast, -ä, e",
+          "reading": null,
+          "gloss": "guest"
+        },
+        {
+          "word": "der Geburtsort",
+          "reading": null,
+          "gloss": "birthplace"
+        },
+        {
+          "word": "der Geburtstag",
+          "reading": null,
+          "gloss": "birthday"
+        },
+        {
+          "word": "der Glückwunsch",
+          "reading": null,
+          "gloss": "congratulations"
+        },
+        {
+          "word": "der Großvater",
+          "reading": null,
+          "gloss": "grandfather"
+        },
+        {
+          "word": "der Gruß, -ü, e",
+          "reading": null,
+          "gloss": "regards"
+        },
+        {
+          "word": "der Hausmann",
+          "reading": null,
+          "gloss": "househusband"
+        },
+        {
+          "word": "der Herd",
+          "reading": null,
+          "gloss": "stove"
+        },
+        {
+          "word": "der Herr",
+          "reading": null,
+          "gloss": "Mister"
+        },
+        {
+          "word": "der Hund",
+          "reading": null,
+          "gloss": "dog"
+        },
+        {
+          "word": "der Hunger",
+          "reading": null,
+          "gloss": "hunger"
+        },
+        {
+          "word": "der Job",
+          "reading": null,
+          "gloss": "job"
+        },
+        {
+          "word": "der Jugendliche",
+          "reading": null,
+          "gloss": "youth/young person"
+        },
+        {
+          "word": "der Junge",
+          "reading": null,
+          "gloss": "boy"
+        },
+        {
+          "word": "der Kaffee",
+          "reading": null,
+          "gloss": "coffee"
+        },
+        {
+          "word": "der Kindergarten",
+          "reading": null,
+          "gloss": "kindergarten"
+        },
+        {
+          "word": "der Kiosk",
+          "reading": null,
+          "gloss": "kiosk"
+        },
+        {
+          "word": "der Koffer, –",
+          "reading": null,
+          "gloss": "suitcase"
+        },
+        {
+          "word": "der Kollege",
+          "reading": null,
+          "gloss": "colleague"
+        },
+        {
+          "word": "der Kopf",
+          "reading": null,
+          "gloss": "head"
+        },
+        {
+          "word": "der Kuchen",
+          "reading": null,
+          "gloss": "cake"
+        },
+        {
+          "word": "der Kugelschreiber",
+          "reading": null,
+          "gloss": "ball-point pen"
+        },
+        {
+          "word": "der Kühlschrank",
+          "reading": null,
+          "gloss": "fridge"
+        },
+        {
+          "word": "der Kunde",
+          "reading": null,
+          "gloss": "customer"
+        },
+        {
+          "word": "der Kurs",
+          "reading": null,
+          "gloss": "course"
+        },
+        {
+          "word": "der Laden",
+          "reading": null,
+          "gloss": "shop"
+        },
+        {
+          "word": "der Lehrer, –",
+          "reading": null,
+          "gloss": "teacher"
+        },
+        {
+          "word": "der Lkw",
+          "reading": null,
+          "gloss": "HGV"
+        },
+        {
+          "word": "der Mann, -ä, er",
+          "reading": null,
+          "gloss": "man / husband"
+        },
+        {
+          "word": "der Mensch",
+          "reading": null,
+          "gloss": "people"
+        },
+        {
+          "word": "der Moment",
+          "reading": null,
+          "gloss": "moment"
+        },
+        {
+          "word": "der Mund",
+          "reading": null,
+          "gloss": "mouth"
+        },
+        {
+          "word": "der Name",
+          "reading": null,
+          "gloss": "name"
+        },
+        {
+          "word": "der Opa",
+          "reading": null,
+          "gloss": "grandfather"
+        },
+        {
+          "word": "der Ort",
+          "reading": null,
+          "gloss": "location / place"
+        },
+        {
+          "word": "der Partner",
+          "reading": null,
+          "gloss": "(male) partner"
+        },
+        {
+          "word": "der Pass, -ä, e",
+          "reading": null,
+          "gloss": "passport"
+        },
+        {
+          "word": "der Plan, -ä, e",
+          "reading": null,
+          "gloss": "map / plan"
+        },
+        {
+          "word": "der Platz, -ä, e",
+          "reading": null,
+          "gloss": "seat; square"
+        },
+        {
+          "word": "der Preis",
+          "reading": null,
+          "gloss": "price"
+        },
+        {
+          "word": "der Prospekt",
+          "reading": null,
+          "gloss": "brochure"
+        },
+        {
+          "word": "der Raum, -ä, e",
+          "reading": null,
+          "gloss": "room"
+        },
+        {
+          "word": "der Regen",
+          "reading": null,
+          "gloss": "rain"
+        },
+        {
+          "word": "der Reis",
+          "reading": null,
+          "gloss": "rice"
+        },
+        {
+          "word": "der Reiseführer",
+          "reading": null,
+          "gloss": "travel guide; tour guide"
+        },
+        {
+          "word": "der Saft",
+          "reading": null,
+          "gloss": "juice"
+        },
+        {
+          "word": "der Salat",
+          "reading": null,
+          "gloss": "salad"
+        },
+        {
+          "word": "der Satz, -ä, e",
+          "reading": null,
+          "gloss": "sentence"
+        },
+        {
+          "word": "der Schalter",
+          "reading": null,
+          "gloss": "counter"
+        },
+        {
+          "word": "der Schinken, –",
+          "reading": null,
+          "gloss": "ham"
+        },
+        {
+          "word": "der Schluss",
+          "reading": null,
+          "gloss": "…; end"
+        },
+        {
+          "word": "der Schlüssel, –",
+          "reading": null,
+          "gloss": "key"
+        },
+        {
+          "word": "der Schrank, -ä, e",
+          "reading": null,
+          "gloss": "cupboard"
+        },
+        {
+          "word": "der Schuh",
+          "reading": null,
+          "gloss": "shoe"
+        },
+        {
+          "word": "der Schüler, –",
+          "reading": null,
+          "gloss": "pupil"
+        },
+        {
+          "word": "der See",
+          "reading": null,
+          "gloss": "lake"
+        },
+        {
+          "word": "der Sohn, -ö, e",
+          "reading": null,
+          "gloss": "son"
+        },
+        {
+          "word": "der Sport",
+          "reading": null,
+          "gloss": "sport"
+        },
+        {
+          "word": "der Stock",
+          "reading": null,
+          "gloss": "floor (of a building)"
+        },
+        {
+          "word": "der Student",
+          "reading": null,
+          "gloss": "student"
+        },
+        {
+          "word": "der Tee",
+          "reading": null,
+          "gloss": "tea"
+        },
+        {
+          "word": "der Teil",
+          "reading": null,
+          "gloss": "part"
+        },
+        {
+          "word": "der Termin",
+          "reading": null,
+          "gloss": "appointment"
+        },
+        {
+          "word": "der Test",
+          "reading": null,
+          "gloss": "test"
+        },
+        {
+          "word": "der Text",
+          "reading": null,
+          "gloss": "text"
+        },
+        {
+          "word": "der Tisch",
+          "reading": null,
+          "gloss": "table"
+        },
+        {
+          "word": "der Unterricht",
+          "reading": null,
+          "gloss": "class"
+        },
+        {
+          "word": "der Urlaub",
+          "reading": null,
+          "gloss": "holiday"
+        },
+        {
+          "word": "der Vater",
+          "reading": null,
+          "gloss": "father"
+        },
+        {
+          "word": "der Verein",
+          "reading": null,
+          "gloss": "club"
+        },
+        {
+          "word": "der Verkäufer, –",
+          "reading": null,
+          "gloss": "salesperson"
+        },
+        {
+          "word": "der Vermieter",
+          "reading": null,
+          "gloss": "landlord"
+        },
+        {
+          "word": "der Verwandte",
+          "reading": null,
+          "gloss": "relative"
+        },
+        {
+          "word": "der Vorname",
+          "reading": null,
+          "gloss": "first name"
+        },
+        {
+          "word": "der Wein",
+          "reading": null,
+          "gloss": "wine"
+        },
+        {
+          "word": "der Wind",
+          "reading": null,
+          "gloss": "wind"
+        },
+        {
+          "word": "der Zoll",
+          "reading": null,
+          "gloss": "customs"
+        },
+        {
+          "word": "der Zug, -ü, e",
+          "reading": null,
+          "gloss": "train"
+        },
+        {
+          "word": "der/die Bekannte",
+          "reading": null,
+          "gloss": "acquaintance"
+        },
+        {
+          "word": "dich",
+          "reading": null,
+          "gloss": "you"
+        },
+        {
+          "word": "die",
+          "reading": null,
+          "gloss": "the"
+        },
+        {
+          "word": "die Ansage",
+          "reading": null,
+          "gloss": "announcement"
+        },
+        {
+          "word": "die Antwort",
+          "reading": null,
+          "gloss": "answer"
+        },
+        {
+          "word": "die Anzeige",
+          "reading": null,
+          "gloss": "advert"
+        },
+        {
+          "word": "die Arbeit",
+          "reading": null,
+          "gloss": "work"
+        },
+        {
+          "word": "die Aufgabe",
+          "reading": null,
+          "gloss": "task"
+        },
+        {
+          "word": "die Auskunft, -ü, e",
+          "reading": null,
+          "gloss": "information/details"
+        },
+        {
+          "word": "die Aussage",
+          "reading": null,
+          "gloss": "statement"
+        },
+        {
+          "word": "die Autobahn",
+          "reading": null,
+          "gloss": "motorway"
+        },
+        {
+          "word": "die Bäckerei",
+          "reading": null,
+          "gloss": "bakery"
+        },
+        {
+          "word": "die Bahn",
+          "reading": null,
+          "gloss": "train"
+        },
+        {
+          "word": "die Banane",
+          "reading": null,
+          "gloss": "banana"
+        },
+        {
+          "word": "die Bank",
+          "reading": null,
+          "gloss": "bank; bench"
+        },
+        {
+          "word": "die Birne",
+          "reading": null,
+          "gloss": "pear"
+        },
+        {
+          "word": "die Bitte",
+          "reading": null,
+          "gloss": "request"
+        },
+        {
+          "word": "die Blume",
+          "reading": null,
+          "gloss": "flower"
+        },
+        {
+          "word": "die Briefmarke",
+          "reading": null,
+          "gloss": "(postage) stamp"
+        },
+        {
+          "word": "die Butter",
+          "reading": null,
+          "gloss": "butter"
+        },
+        {
+          "word": "die CD",
+          "reading": null,
+          "gloss": "CD"
+        },
+        {
+          "word": "die Dame",
+          "reading": null,
+          "gloss": "lady"
+        },
+        {
+          "word": "die Disco",
+          "reading": null,
+          "gloss": "disco"
+        },
+        {
+          "word": "die Durchsage",
+          "reading": null,
+          "gloss": "announcement"
+        },
+        {
+          "word": "die Dusche",
+          "reading": null,
+          "gloss": "shower"
+        },
+        {
+          "word": "die E-Mail",
+          "reading": null,
+          "gloss": "email"
+        },
+        {
+          "word": "die Ecke",
+          "reading": null,
+          "gloss": "corner"
+        },
+        {
+          "word": "die Ehefrau",
+          "reading": null,
+          "gloss": "wife"
+        },
+        {
+          "word": "die Einladung",
+          "reading": null,
+          "gloss": "invitation"
+        },
+        {
+          "word": "die Eltern (pl.)",
+          "reading": null,
+          "gloss": "parents"
+        },
+        {
+          "word": "die Entschuldigung",
+          "reading": null,
+          "gloss": "…"
+        },
+        {
+          "word": "die Fahrkarte",
+          "reading": null,
+          "gloss": "(transport) ticket"
+        },
+        {
+          "word": "die Familie",
+          "reading": null,
+          "gloss": "family"
+        },
+        {
+          "word": "die Farbe",
+          "reading": null,
+          "gloss": "colour"
+        },
+        {
+          "word": "die Firma",
+          "reading": null,
+          "gloss": "company"
+        },
+        {
+          "word": "die Flasche",
+          "reading": null,
+          "gloss": "bottle"
+        },
+        {
+          "word": "die Frage",
+          "reading": null,
+          "gloss": "question"
+        },
+        {
+          "word": "die Frau",
+          "reading": null,
+          "gloss": "Ms; woman"
+        },
+        {
+          "word": "die Frauen",
+          "reading": null,
+          "gloss": "women"
+        },
+        {
+          "word": "die Freizeit",
+          "reading": null,
+          "gloss": "free time"
+        },
+        {
+          "word": "die Freundin",
+          "reading": null,
+          "gloss": "friend / girlfriend"
+        },
+        {
+          "word": "die Führung",
+          "reading": null,
+          "gloss": "tour"
+        },
+        {
+          "word": "die Geschwister (pl.)",
+          "reading": null,
+          "gloss": "siblings"
+        },
+        {
+          "word": "die Größe",
+          "reading": null,
+          "gloss": "size"
+        },
+        {
+          "word": "die Großeltern (pl.)",
+          "reading": null,
+          "gloss": "grandparents"
+        },
+        {
+          "word": "die Großmutter",
+          "reading": null,
+          "gloss": "grandmother"
+        },
+        {
+          "word": "die Gruppe",
+          "reading": null,
+          "gloss": "group"
+        },
+        {
+          "word": "die Halbpension",
+          "reading": null,
+          "gloss": "half-board (dining)"
+        },
+        {
+          "word": "die Halle",
+          "reading": null,
+          "gloss": "hall"
+        },
+        {
+          "word": "die Haltestelle, -en,",
+          "reading": null,
+          "gloss": "(public transport) stop"
+        },
+        {
+          "word": "die Hand, -ä, e",
+          "reading": null,
+          "gloss": "hand"
+        },
+        {
+          "word": "die Hausaufgabe",
+          "reading": null,
+          "gloss": "homework"
+        },
+        {
+          "word": "die Hausfrau",
+          "reading": null,
+          "gloss": "housewife"
+        },
+        {
+          "word": "die Heimat",
+          "reading": null,
+          "gloss": "home"
+        },
+        {
+          "word": "die Hilfe",
+          "reading": null,
+          "gloss": "help"
+        },
+        {
+          "word": "die Hochzeit",
+          "reading": null,
+          "gloss": "marriage"
+        },
+        {
+          "word": "die Information",
+          "reading": null,
+          "gloss": "information point; information"
+        },
+        {
+          "word": "die Jacke",
+          "reading": null,
+          "gloss": "jacket"
+        },
+        {
+          "word": "die Karte",
+          "reading": null,
+          "gloss": "card; menu"
+        },
+        {
+          "word": "die Kartoffel",
+          "reading": null,
+          "gloss": "potato"
+        },
+        {
+          "word": "die Kasse",
+          "reading": null,
+          "gloss": "till"
+        },
+        {
+          "word": "die Klasse",
+          "reading": null,
+          "gloss": "class"
+        },
+        {
+          "word": "die Kleidung",
+          "reading": null,
+          "gloss": "clothes"
+        },
+        {
+          "word": "die Küche",
+          "reading": null,
+          "gloss": "kitchen"
+        },
+        {
+          "word": "die Lebensmittel (pl.)",
+          "reading": null,
+          "gloss": "food"
+        },
+        {
+          "word": "die Leute (pl.)",
+          "reading": null,
+          "gloss": "people"
+        },
+        {
+          "word": "die Lösung",
+          "reading": null,
+          "gloss": "solution"
+        },
+        {
+          "word": "die Maschine",
+          "reading": null,
+          "gloss": "machine"
+        },
+        {
+          "word": "die Miete",
+          "reading": null,
+          "gloss": "rent"
+        },
+        {
+          "word": "die Milch",
+          "reading": null,
+          "gloss": "milk"
+        },
+        {
+          "word": "die Mitte",
+          "reading": null,
+          "gloss": "middle"
+        },
+        {
+          "word": "die Möbel (pl.)",
+          "reading": null,
+          "gloss": "furniture"
+        },
+        {
+          "word": "die Mutter",
+          "reading": null,
+          "gloss": "mother"
+        },
+        {
+          "word": "die Nummer",
+          "reading": null,
+          "gloss": "number"
+        },
+        {
+          "word": "die Oma",
+          "reading": null,
+          "gloss": "grandmother"
+        },
+        {
+          "word": "die Ordnung",
+          "reading": null,
+          "gloss": "…"
+        },
+        {
+          "word": "die Papiere (pl.)",
+          "reading": null,
+          "gloss": "papers"
+        },
+        {
+          "word": "die Partnerin",
+          "reading": null,
+          "gloss": "(female) partner"
+        },
+        {
+          "word": "die Party",
+          "reading": null,
+          "gloss": "party"
+        },
+        {
+          "word": "die Pause",
+          "reading": null,
+          "gloss": "break"
+        },
+        {
+          "word": "die Polizei",
+          "reading": null,
+          "gloss": "police"
+        },
+        {
+          "word": "die Pommes frites (pl.)",
+          "reading": null,
+          "gloss": "chips"
+        },
+        {
+          "word": "die Post",
+          "reading": null,
+          "gloss": "post office; post / mail"
+        },
+        {
+          "word": "die Postleitzahl",
+          "reading": null,
+          "gloss": "postcode"
+        },
+        {
+          "word": "die Praxis",
+          "reading": null,
+          "gloss": "practice"
+        },
+        {
+          "word": "die Prüfung",
+          "reading": null,
+          "gloss": "examination"
+        },
+        {
+          "word": "die Rechnung",
+          "reading": null,
+          "gloss": "bill"
+        },
+        {
+          "word": "die Reise",
+          "reading": null,
+          "gloss": "journey / trip"
+        },
+        {
+          "word": "die Reparatur",
+          "reading": null,
+          "gloss": "repair"
+        },
+        {
+          "word": "die Rezeption",
+          "reading": null,
+          "gloss": "reception"
+        },
+        {
+          "word": "die S-Bahn",
+          "reading": null,
+          "gloss": "commuter train"
+        },
+        {
+          "word": "die Schule",
+          "reading": null,
+          "gloss": "school"
+        },
+        {
+          "word": "die Schwester",
+          "reading": null,
+          "gloss": "sister"
+        },
+        {
+          "word": "die Sehenswürdigkeit",
+          "reading": null,
+          "gloss": "sights/attractions"
+        },
+        {
+          "word": "die Sonne",
+          "reading": null,
+          "gloss": "sun"
+        },
+        {
+          "word": "die Speisekarte",
+          "reading": null,
+          "gloss": "menu"
+        },
+        {
+          "word": "die Sprache",
+          "reading": null,
+          "gloss": "language"
+        },
+        {
+          "word": "die Stadt, -ä, e",
+          "reading": null,
+          "gloss": "town / city"
+        },
+        {
+          "word": "die Stelle",
+          "reading": null,
+          "gloss": "job / position"
+        },
+        {
+          "word": "die Straße",
+          "reading": null,
+          "gloss": "street"
+        },
+        {
+          "word": "die Straßenbahn",
+          "reading": null,
+          "gloss": "tram"
+        },
+        {
+          "word": "die Stunde",
+          "reading": null,
+          "gloss": "hour"
+        },
+        {
+          "word": "die Tasche",
+          "reading": null,
+          "gloss": "bag"
+        },
+        {
+          "word": "die Tochter",
+          "reading": null,
+          "gloss": "daughter"
+        },
+        {
+          "word": "die Toilette",
+          "reading": null,
+          "gloss": "toilet"
+        },
+        {
+          "word": "die Tomate",
+          "reading": null,
+          "gloss": "tomato"
+        },
+        {
+          "word": "die Treppe",
+          "reading": null,
+          "gloss": "stairs"
+        },
+        {
+          "word": "die Uhr",
+          "reading": null,
+          "gloss": "o'clock / am / pm"
+        },
+        {
+          "word": "die Unterschrift",
+          "reading": null,
+          "gloss": "signature"
+        },
+        {
+          "word": "die Vorsicht",
+          "reading": null,
+          "gloss": "…; attention"
+        },
+        {
+          "word": "die Vorwahl",
+          "reading": null,
+          "gloss": "area code"
+        },
+        {
+          "word": "die Welt",
+          "reading": null,
+          "gloss": "world"
+        },
+        {
+          "word": "die Wohnung",
+          "reading": null,
+          "gloss": "flat"
+        },
+        {
+          "word": "die Zeit",
+          "reading": null,
+          "gloss": "time"
+        },
+        {
+          "word": "die Zeitung",
+          "reading": null,
+          "gloss": "newspaper"
+        },
+        {
+          "word": "die Zigarette",
+          "reading": null,
+          "gloss": "cigarette"
+        },
+        {
+          "word": "dies-",
+          "reading": null,
+          "gloss": "this"
+        },
+        {
+          "word": "dir",
+          "reading": null,
+          "gloss": "you"
+        },
+        {
+          "word": "dort",
+          "reading": null,
+          "gloss": "there"
+        },
+        {
+          "word": "dorther",
+          "reading": null,
+          "gloss": "from there"
+        },
+        {
+          "word": "dorthin",
+          "reading": null,
+          "gloss": "there (to that place, in that direction)"
+        },
+        {
+          "word": "draußen",
+          "reading": null,
+          "gloss": "outside"
+        },
+        {
+          "word": "drucken",
+          "reading": null,
+          "gloss": "to print"
+        },
+        {
+          "word": "drücken",
+          "reading": null,
+          "gloss": "to press"
+        },
+        {
+          "word": "durch",
+          "reading": null,
+          "gloss": "through"
+        },
+        {
+          "word": "dürfen",
+          "reading": null,
+          "gloss": "to be allowed"
+        },
+        {
+          "word": "eilig",
+          "reading": null,
+          "gloss": "…"
+        },
+        {
+          "word": "ein-",
+          "reading": null,
+          "gloss": "one / a; someone"
+        },
+        {
+          "word": "einfach",
+          "reading": null,
+          "gloss": "simple; a single (ticket)"
+        },
+        {
+          "word": "einkaufen",
+          "reading": null,
+          "gloss": "to go shopping"
+        },
+        {
+          "word": "einladen",
+          "reading": null,
+          "gloss": "to invite / treat"
+        },
+        {
+          "word": "einmal",
+          "reading": null,
+          "gloss": "once"
+        },
+        {
+          "word": "einsteigen",
+          "reading": null,
+          "gloss": "to get on (board)"
+        },
+        {
+          "word": "empfehlen",
+          "reading": null,
+          "gloss": "to recommend"
+        },
+        {
+          "word": "enden",
+          "reading": null,
+          "gloss": "to end"
+        },
+        {
+          "word": "entschuldigen",
+          "reading": null,
+          "gloss": "to excuse"
+        },
+        {
+          "word": "er",
+          "reading": null,
+          "gloss": "he"
+        },
+        {
+          "word": "erklären",
+          "reading": null,
+          "gloss": "to explain"
+        },
+        {
+          "word": "erlauben",
+          "reading": null,
+          "gloss": "allow"
+        },
+        {
+          "word": "erzählen",
+          "reading": null,
+          "gloss": "to tell"
+        },
+        {
+          "word": "es",
+          "reading": null,
+          "gloss": "it"
+        },
+        {
+          "word": "es gibt",
+          "reading": null,
+          "gloss": "there is/are"
+        },
+        {
+          "word": "essen",
+          "reading": null,
+          "gloss": "to eat"
+        },
+        {
+          "word": "euer",
+          "reading": null,
+          "gloss": "your"
+        },
+        {
+          "word": "fahren",
+          "reading": null,
+          "gloss": "to travel"
+        },
+        {
+          "word": "falsch",
+          "reading": null,
+          "gloss": "wrong / incorrect"
+        },
+        {
+          "word": "fehlen",
+          "reading": null,
+          "gloss": "to be absent; to be missing"
+        },
+        {
+          "word": "feiern",
+          "reading": null,
+          "gloss": "to celebrate"
+        },
+        {
+          "word": "fernsehen",
+          "reading": null,
+          "gloss": "to watch TV"
+        },
+        {
+          "word": "fertig",
+          "reading": null,
+          "gloss": "finished / ready / done"
+        },
+        {
+          "word": "finden",
+          "reading": null,
+          "gloss": "to find"
+        },
+        {
+          "word": "fliegen",
+          "reading": null,
+          "gloss": "to fly"
+        },
+        {
+          "word": "fragen",
+          "reading": null,
+          "gloss": "to ask"
+        },
+        {
+          "word": "frei",
+          "reading": null,
+          "gloss": "free"
+        },
+        {
+          "word": "fremd",
+          "reading": null,
+          "gloss": "foreign"
+        },
+        {
+          "word": "früher",
+          "reading": null,
+          "gloss": "earlier / in the past"
+        },
+        {
+          "word": "frühstücken",
+          "reading": null,
+          "gloss": "to have breakfast"
+        },
+        {
+          "word": "für",
+          "reading": null,
+          "gloss": "for"
+        },
+        {
+          "word": "geben",
+          "reading": null,
+          "gloss": "to give"
+        },
+        {
+          "word": "geboren",
+          "reading": null,
+          "gloss": "born"
+        },
+        {
+          "word": "gefallen",
+          "reading": null,
+          "gloss": "to like"
+        },
+        {
+          "word": "gegen",
+          "reading": null,
+          "gloss": "into; against"
+        },
+        {
+          "word": "gehen",
+          "reading": null,
+          "gloss": "to work/function; to go; to be okay"
+        },
+        {
+          "word": "gehören",
+          "reading": null,
+          "gloss": "to belong"
+        },
+        {
+          "word": "geöffnet",
+          "reading": null,
+          "gloss": "open"
+        },
+        {
+          "word": "gerade",
+          "reading": null,
+          "gloss": "now"
+        },
+        {
+          "word": "geradeaus",
+          "reading": null,
+          "gloss": "straight on"
+        },
+        {
+          "word": "gern(e)",
+          "reading": null,
+          "gloss": "…"
+        },
+        {
+          "word": "geschlossen",
+          "reading": null,
+          "gloss": "closed"
+        },
+        {
+          "word": "gestern",
+          "reading": null,
+          "gloss": "yesterday"
+        },
+        {
+          "word": "gestorben",
+          "reading": null,
+          "gloss": "died"
+        },
+        {
+          "word": "gewinnen",
+          "reading": null,
+          "gloss": "to win"
+        },
+        {
+          "word": "glauben",
+          "reading": null,
+          "gloss": "to believe; to think"
+        },
+        {
+          "word": "gleich",
+          "reading": null,
+          "gloss": "same; now"
+        },
+        {
+          "word": "glücklich",
+          "reading": null,
+          "gloss": "happily"
+        },
+        {
+          "word": "Grad (Celsius)",
+          "reading": null,
+          "gloss": "degrees"
+        },
+        {
+          "word": "gratulieren",
+          "reading": null,
+          "gloss": "to congratulate"
+        },
+        {
+          "word": "grillen",
+          "reading": null,
+          "gloss": "to (have a) barbecue"
+        },
+        {
+          "word": "groß",
+          "reading": null,
+          "gloss": "tall; large"
+        },
+        {
+          "word": "gültig",
+          "reading": null,
+          "gloss": "valid"
+        },
+        {
+          "word": "günstig",
+          "reading": null,
+          "gloss": "cheap"
+        },
+        {
+          "word": "gut",
+          "reading": null,
+          "gloss": "good; …"
+        },
+        {
+          "word": "haben",
+          "reading": null,
+          "gloss": "to have"
+        },
+        {
+          "word": "hallo",
+          "reading": null,
+          "gloss": "hello"
+        },
+        {
+          "word": "halten",
+          "reading": null,
+          "gloss": "to stop"
+        },
+        {
+          "word": "heiraten",
+          "reading": null,
+          "gloss": "to marry"
+        },
+        {
+          "word": "heißen",
+          "reading": null,
+          "gloss": "to be called"
+        },
+        {
+          "word": "helfen",
+          "reading": null,
+          "gloss": "to help"
+        },
+        {
+          "word": "hell",
+          "reading": null,
+          "gloss": "light"
+        },
+        {
+          "word": "herzlich",
+          "reading": null,
+          "gloss": "…"
+        },
+        {
+          "word": "heute",
+          "reading": null,
+          "gloss": "today"
+        },
+        {
+          "word": "hier",
+          "reading": null,
+          "gloss": "here"
+        },
+        {
+          "word": "hinten",
+          "reading": null,
+          "gloss": "at/in the back"
+        },
+        {
+          "word": "hoch",
+          "reading": null,
+          "gloss": "high"
+        },
+        {
+          "word": "holen",
+          "reading": null,
+          "gloss": "to fetch"
+        },
+        {
+          "word": "hören",
+          "reading": null,
+          "gloss": "to listen; to hear"
+        },
+        {
+          "word": "ich",
+          "reading": null,
+          "gloss": "I"
+        },
+        {
+          "word": "ihm/ihr",
+          "reading": null,
+          "gloss": "him/her"
+        },
+        {
+          "word": "ihn",
+          "reading": null,
+          "gloss": "him"
+        },
+        {
+          "word": "immer",
+          "reading": null,
+          "gloss": "always"
+        },
+        {
+          "word": "in",
+          "reading": null,
+          "gloss": "in; to"
+        },
+        {
+          "word": "international",
+          "reading": null,
+          "gloss": "international"
+        },
+        {
+          "word": "ja",
+          "reading": null,
+          "gloss": "yes"
+        },
+        {
+          "word": "jed-",
+          "reading": null,
+          "gloss": "every"
+        },
+        {
+          "word": "jetzt",
+          "reading": null,
+          "gloss": "now"
+        },
+        {
+          "word": "jung",
+          "reading": null,
+          "gloss": "young"
+        },
+        {
+          "word": "kaputt",
+          "reading": null,
+          "gloss": "…; broken"
+        },
+        {
+          "word": "kaufen",
+          "reading": null,
+          "gloss": "to buy"
+        },
+        {
+          "word": "kein",
+          "reading": null,
+          "gloss": "no/none"
+        },
+        {
+          "word": "kennen",
+          "reading": null,
+          "gloss": "to know"
+        },
+        {
+          "word": "kennenlernen",
+          "reading": null,
+          "gloss": "to get to know"
+        },
+        {
+          "word": "klar",
+          "reading": null,
+          "gloss": "of course / naturally"
+        },
+        {
+          "word": "klein",
+          "reading": null,
+          "gloss": "small"
+        },
+        {
+          "word": "kochen",
+          "reading": null,
+          "gloss": "to cook"
+        },
+        {
+          "word": "kommen",
+          "reading": null,
+          "gloss": "to come"
+        },
+        {
+          "word": "können",
+          "reading": null,
+          "gloss": "to be able to"
+        },
+        {
+          "word": "kosten",
+          "reading": null,
+          "gloss": "to cost"
+        },
+        {
+          "word": "krank",
+          "reading": null,
+          "gloss": "ill"
+        },
+        {
+          "word": "kriegen",
+          "reading": null,
+          "gloss": "to get"
+        },
+        {
+          "word": "kulturell",
+          "reading": null,
+          "gloss": "cultural"
+        },
+        {
+          "word": "kulturell interessiert",
+          "reading": null,
+          "gloss": "interested in culture"
+        },
+        {
+          "word": "kurz",
+          "reading": null,
+          "gloss": "short"
+        },
+        {
+          "word": "lachen",
+          "reading": null,
+          "gloss": "to laugh"
+        },
+        {
+          "word": "lang",
+          "reading": null,
+          "gloss": "long"
+        },
+        {
+          "word": "lange",
+          "reading": null,
+          "gloss": "long"
+        },
+        {
+          "word": "langsam",
+          "reading": null,
+          "gloss": "slow"
+        },
+        {
+          "word": "laufen",
+          "reading": null,
+          "gloss": "to walk/run"
+        },
+        {
+          "word": "laut",
+          "reading": null,
+          "gloss": "loud"
+        },
+        {
+          "word": "leben",
+          "reading": null,
+          "gloss": "to live"
+        },
+        {
+          "word": "ledig",
+          "reading": null,
+          "gloss": "single"
+        },
+        {
+          "word": "legen",
+          "reading": null,
+          "gloss": "to put"
+        },
+        {
+          "word": "leicht",
+          "reading": null,
+          "gloss": "light (weight); easy"
+        },
+        {
+          "word": "leider",
+          "reading": null,
+          "gloss": "unfortunately"
+        },
+        {
+          "word": "leise",
+          "reading": null,
+          "gloss": "quiet"
+        },
+        {
+          "word": "lernen",
+          "reading": null,
+          "gloss": "to learn"
+        },
+        {
+          "word": "lesen",
+          "reading": null,
+          "gloss": "to read"
+        },
+        {
+          "word": "letzt-",
+          "reading": null,
+          "gloss": "last"
+        },
+        {
+          "word": "lieb-",
+          "reading": null,
+          "gloss": "dear"
+        },
+        {
+          "word": "lieben",
+          "reading": null,
+          "gloss": "to love"
+        },
+        {
+          "word": "lieber",
+          "reading": null,
+          "gloss": "to prefer"
+        },
+        {
+          "word": "Lieblings-",
+          "reading": null,
+          "gloss": "favourite"
+        },
+        {
+          "word": "liegen",
+          "reading": null,
+          "gloss": "to lie; to lie / be located"
+        },
+        {
+          "word": "links",
+          "reading": null,
+          "gloss": "left"
+        },
+        {
+          "word": "lustig",
+          "reading": null,
+          "gloss": "funny"
+        },
+        {
+          "word": "machen",
+          "reading": null,
+          "gloss": "to do; to make; to come to; …"
+        },
+        {
+          "word": "man",
+          "reading": null,
+          "gloss": "one / impersonal ‘you’"
+        },
+        {
+          "word": "männlich",
+          "reading": null,
+          "gloss": "male"
+        },
+        {
+          "word": "mehr",
+          "reading": null,
+          "gloss": "more"
+        },
+        {
+          "word": "mein",
+          "reading": null,
+          "gloss": "my"
+        },
+        {
+          "word": "meist-",
+          "reading": null,
+          "gloss": "most"
+        },
+        {
+          "word": "mieten",
+          "reading": null,
+          "gloss": "to rent"
+        },
+        {
+          "word": "mit",
+          "reading": null,
+          "gloss": "with"
+        },
+        {
+          "word": "mitbringen",
+          "reading": null,
+          "gloss": "to bring with one / to get (sth. for sb.)"
+        },
+        {
+          "word": "mitkommen",
+          "reading": null,
+          "gloss": "to come with"
+        },
+        {
+          "word": "mitmachen",
+          "reading": null,
+          "gloss": "to join in"
+        },
+        {
+          "word": "mitnehmen",
+          "reading": null,
+          "gloss": "to take with"
+        },
+        {
+          "word": "möchten",
+          "reading": null,
+          "gloss": "would like to"
+        },
+        {
+          "word": "mögen",
+          "reading": null,
+          "gloss": "to like"
+        },
+        {
+          "word": "möglich",
+          "reading": null,
+          "gloss": "possible"
+        },
+        {
+          "word": "morgen",
+          "reading": null,
+          "gloss": "tomorrow"
+        },
+        {
+          "word": "müde",
+          "reading": null,
+          "gloss": "tired"
+        },
+        {
+          "word": "müssen",
+          "reading": null,
+          "gloss": "to have to"
+        },
+        {
+          "word": "nach",
+          "reading": null,
+          "gloss": "to (somewhere); after / past (time)"
+        },
+        {
+          "word": "nächst-",
+          "reading": null,
+          "gloss": "next"
+        },
+        {
+          "word": "nehmen",
+          "reading": null,
+          "gloss": "to have (food/drink); to take"
+        },
+        {
+          "word": "nein",
+          "reading": null,
+          "gloss": "no"
+        },
+        {
+          "word": "neu",
+          "reading": null,
+          "gloss": "new"
+        },
+        {
+          "word": "nicht",
+          "reading": null,
+          "gloss": "not; no"
+        },
+        {
+          "word": "nichts",
+          "reading": null,
+          "gloss": "…; nothing"
+        },
+        {
+          "word": "nie",
+          "reading": null,
+          "gloss": "never"
+        },
+        {
+          "word": "noch",
+          "reading": null,
+          "gloss": "still; another"
+        },
+        {
+          "word": "noch einmal",
+          "reading": null,
+          "gloss": "again"
+        },
+        {
+          "word": "normal",
+          "reading": null,
+          "gloss": "normal"
+        },
+        {
+          "word": "nur",
+          "reading": null,
+          "gloss": "only"
+        },
+        {
+          "word": "oben",
+          "reading": null,
+          "gloss": "upstairs"
+        },
+        {
+          "word": "oder",
+          "reading": null,
+          "gloss": "or"
+        },
+        {
+          "word": "öffnen",
+          "reading": null,
+          "gloss": "to open"
+        },
+        {
+          "word": "oft",
+          "reading": null,
+          "gloss": "often"
+        },
+        {
+          "word": "ohne",
+          "reading": null,
+          "gloss": "without"
+        },
+        {
+          "word": "pünktlich",
+          "reading": null,
+          "gloss": "sharp; punctual"
+        },
+        {
+          "word": "Rad fahren",
+          "reading": null,
+          "gloss": "to cycle"
+        },
+        {
+          "word": "rauchen",
+          "reading": null,
+          "gloss": "to smoke"
+        },
+        {
+          "word": "rechts",
+          "reading": null,
+          "gloss": "right"
+        },
+        {
+          "word": "regnen",
+          "reading": null,
+          "gloss": "to rain"
+        },
+        {
+          "word": "reisen",
+          "reading": null,
+          "gloss": "to travel"
+        },
+        {
+          "word": "reparieren",
+          "reading": null,
+          "gloss": "to repair"
+        },
+        {
+          "word": "richtig",
+          "reading": null,
+          "gloss": "correct; right / correct"
+        },
+        {
+          "word": "riechen",
+          "reading": null,
+          "gloss": "to smell"
+        },
+        {
+          "word": "ruhig",
+          "reading": null,
+          "gloss": "quiet"
+        },
+        {
+          "word": "sagen",
+          "reading": null,
+          "gloss": "to say / tell"
+        },
+        {
+          "word": "scheinen",
+          "reading": null,
+          "gloss": "to shine"
+        },
+        {
+          "word": "schicken",
+          "reading": null,
+          "gloss": "to send"
+        },
+        {
+          "word": "schlafen",
+          "reading": null,
+          "gloss": "to sleep"
+        },
+        {
+          "word": "schlecht",
+          "reading": null,
+          "gloss": "sick; bad"
+        },
+        {
+          "word": "schließen",
+          "reading": null,
+          "gloss": "to close"
+        },
+        {
+          "word": "schmecken",
+          "reading": null,
+          "gloss": "to taste"
+        },
+        {
+          "word": "schnell",
+          "reading": null,
+          "gloss": "quick / fast"
+        },
+        {
+          "word": "schon",
+          "reading": null,
+          "gloss": "already"
+        },
+        {
+          "word": "schön",
+          "reading": null,
+          "gloss": "lovely; beautiful"
+        },
+        {
+          "word": "schreiben",
+          "reading": null,
+          "gloss": "to write"
+        },
+        {
+          "word": "schwer",
+          "reading": null,
+          "gloss": "heavy; difficult"
+        },
+        {
+          "word": "schwimmen",
+          "reading": null,
+          "gloss": "to swim"
+        },
+        {
+          "word": "sehen",
+          "reading": null,
+          "gloss": "to see"
+        },
+        {
+          "word": "sehr",
+          "reading": null,
+          "gloss": "very"
+        },
+        {
+          "word": "sein",
+          "reading": null,
+          "gloss": "his; to be"
+        },
+        {
+          "word": "seit",
+          "reading": null,
+          "gloss": "for (an amount of time)"
+        },
+        {
+          "word": "selbstständig",
+          "reading": null,
+          "gloss": "independent"
+        },
+        {
+          "word": "sich",
+          "reading": null,
+          "gloss": "yourself"
+        },
+        {
+          "word": "sich ausziehen",
+          "reading": null,
+          "gloss": "to get undressed"
+        },
+        {
+          "word": "sich kümmern",
+          "reading": null,
+          "gloss": "to look after"
+        },
+        {
+          "word": "sie",
+          "reading": null,
+          "gloss": "she"
+        },
+        {
+          "word": "Sie",
+          "reading": null,
+          "gloss": "you (polite)"
+        },
+        {
+          "word": "sitzen",
+          "reading": null,
+          "gloss": "to sit"
+        },
+        {
+          "word": "so",
+          "reading": null,
+          "gloss": "like this; so; as"
+        },
+        {
+          "word": "sofort",
+          "reading": null,
+          "gloss": "immediately"
+        },
+        {
+          "word": "sollen",
+          "reading": null,
+          "gloss": "should"
+        },
+        {
+          "word": "spät",
+          "reading": null,
+          "gloss": "late"
+        },
+        {
+          "word": "später",
+          "reading": null,
+          "gloss": "later"
+        },
+        {
+          "word": "spielen",
+          "reading": null,
+          "gloss": "to play"
+        },
+        {
+          "word": "sprechen",
+          "reading": null,
+          "gloss": "to speak"
+        },
+        {
+          "word": "stehen",
+          "reading": null,
+          "gloss": "to be (written); to be (located)"
+        },
+        {
+          "word": "stellen",
+          "reading": null,
+          "gloss": "to put"
+        },
+        {
+          "word": "studieren",
+          "reading": null,
+          "gloss": "to study"
+        },
+        {
+          "word": "suchen",
+          "reading": null,
+          "gloss": "to look / search for"
+        },
+        {
+          "word": "tanzen",
+          "reading": null,
+          "gloss": "to dance"
+        },
+        {
+          "word": "telefonieren",
+          "reading": null,
+          "gloss": "to telephone"
+        },
+        {
+          "word": "teuer",
+          "reading": null,
+          "gloss": "expensive"
+        },
+        {
+          "word": "tot",
+          "reading": null,
+          "gloss": "dead"
+        },
+        {
+          "word": "trinken",
+          "reading": null,
+          "gloss": "to drink"
+        },
+        {
+          "word": "tschüss",
+          "reading": null,
+          "gloss": "..."
+        },
+        {
+          "word": "tun",
+          "reading": null,
+          "gloss": "to do"
+        },
+        {
+          "word": "über",
+          "reading": null,
+          "gloss": "across; above; over"
+        },
+        {
+          "word": "übernachten",
+          "reading": null,
+          "gloss": "to stay overnight"
+        },
+        {
+          "word": "überweisen",
+          "reading": null,
+          "gloss": "to transfer"
+        },
+        {
+          "word": "um",
+          "reading": null,
+          "gloss": "at; around"
+        },
+        {
+          "word": "umziehen",
+          "reading": null,
+          "gloss": "to move (residence)"
+        },
+        {
+          "word": "und",
+          "reading": null,
+          "gloss": "and"
+        },
+        {
+          "word": "unser-",
+          "reading": null,
+          "gloss": "our"
+        },
+        {
+          "word": "unten",
+          "reading": null,
+          "gloss": "at the bottom"
+        },
+        {
+          "word": "unter",
+          "reading": null,
+          "gloss": "below"
+        },
+        {
+          "word": "unterschreiben",
+          "reading": null,
+          "gloss": "to sign"
+        },
+        {
+          "word": "verboten",
+          "reading": null,
+          "gloss": "forbidden"
+        },
+        {
+          "word": "verdienen",
+          "reading": null,
+          "gloss": "to earn"
+        },
+        {
+          "word": "verheiratet",
+          "reading": null,
+          "gloss": "married"
+        },
+        {
+          "word": "verkaufen",
+          "reading": null,
+          "gloss": "to sell"
+        },
+        {
+          "word": "vermieten",
+          "reading": null,
+          "gloss": "to rent out"
+        },
+        {
+          "word": "verstehen",
+          "reading": null,
+          "gloss": "to understand"
+        },
+        {
+          "word": "viel",
+          "reading": null,
+          "gloss": "a lot"
+        },
+        {
+          "word": "vielleicht",
+          "reading": null,
+          "gloss": "perhaps / may(be)"
+        },
+        {
+          "word": "von",
+          "reading": null,
+          "gloss": "of (possessive “s\"); from"
+        },
+        {
+          "word": "vor",
+          "reading": null,
+          "gloss": "ago; in front of"
+        },
+        {
+          "word": "wandern",
+          "reading": null,
+          "gloss": "to hike"
+        },
+        {
+          "word": "wann",
+          "reading": null,
+          "gloss": "when"
+        },
+        {
+          "word": "warten",
+          "reading": null,
+          "gloss": "to wait"
+        },
+        {
+          "word": "warum",
+          "reading": null,
+          "gloss": "why"
+        },
+        {
+          "word": "was",
+          "reading": null,
+          "gloss": "what"
+        },
+        {
+          "word": "was für ein",
+          "reading": null,
+          "gloss": "what kind of"
+        },
+        {
+          "word": "weg sein",
+          "reading": null,
+          "gloss": "to be gone"
+        },
+        {
+          "word": "weh tun",
+          "reading": null,
+          "gloss": "to hurt"
+        },
+        {
+          "word": "weiblich",
+          "reading": null,
+          "gloss": "female"
+        },
+        {
+          "word": "weit",
+          "reading": null,
+          "gloss": "far"
+        },
+        {
+          "word": "weiter",
+          "reading": null,
+          "gloss": "further"
+        },
+        {
+          "word": "welch-",
+          "reading": null,
+          "gloss": "which"
+        },
+        {
+          "word": "wenig",
+          "reading": null,
+          "gloss": "little / not very much; little"
+        },
+        {
+          "word": "wer",
+          "reading": null,
+          "gloss": "who"
+        },
+        {
+          "word": "werden",
+          "reading": null,
+          "gloss": "to become"
+        },
+        {
+          "word": "wichtig",
+          "reading": null,
+          "gloss": "important"
+        },
+        {
+          "word": "wie",
+          "reading": null,
+          "gloss": "what; like; as; how; …"
+        },
+        {
+          "word": "wie viel",
+          "reading": null,
+          "gloss": "how much"
+        },
+        {
+          "word": "wiederholen",
+          "reading": null,
+          "gloss": "to repeat"
+        },
+        {
+          "word": "willkommen",
+          "reading": null,
+          "gloss": "…"
+        },
+        {
+          "word": "wir",
+          "reading": null,
+          "gloss": "we"
+        },
+        {
+          "word": "wissen",
+          "reading": null,
+          "gloss": "to know"
+        },
+        {
+          "word": "wo",
+          "reading": null,
+          "gloss": "where"
+        },
+        {
+          "word": "woher",
+          "reading": null,
+          "gloss": "from where"
+        },
+        {
+          "word": "wohin",
+          "reading": null,
+          "gloss": "to where"
+        },
+        {
+          "word": "wohnen",
+          "reading": null,
+          "gloss": "to live"
+        },
+        {
+          "word": "wollen",
+          "reading": null,
+          "gloss": "to want"
+        },
+        {
+          "word": "wunderbar",
+          "reading": null,
+          "gloss": "wonderful"
+        },
+        {
+          "word": "zahlen",
+          "reading": null,
+          "gloss": "to pay"
+        },
+        {
+          "word": "zu",
+          "reading": null,
+          "gloss": "to; by; at"
+        },
+        {
+          "word": "zu sein",
+          "reading": null,
+          "gloss": "to be closed"
+        },
+        {
+          "word": "zufrieden",
+          "reading": null,
+          "gloss": "happy"
+        },
+        {
+          "word": "zum Beispiel/z. B.",
+          "reading": null,
+          "gloss": "for example"
+        },
+        {
+          "word": "zurück",
+          "reading": null,
+          "gloss": "return; back"
+        },
+        {
+          "word": "zurzeit",
+          "reading": null,
+          "gloss": "at the moment"
+        },
+        {
+          "word": "zusammen",
+          "reading": null,
+          "gloss": "together"
+        },
+        {
+          "word": "zwischen",
+          "reading": null,
+          "gloss": "between"
+        }
+      ]
+    },
+    {
+      "id": "a1-greetings",
+      "name": "German A1 · Greetings & courtesy",
+      "description": "Hellos, please, thank-you, sorry.",
+      "words": [
+        {
+          "word": "bitte",
+          "reading": null,
+          "gloss": "please"
+        },
+        {
+          "word": "danke",
+          "reading": null,
+          "gloss": "thank you"
+        },
+        {
+          "word": "die Bitte",
+          "reading": null,
+          "gloss": "request"
+        },
+        {
+          "word": "die Entschuldigung",
+          "reading": null,
+          "gloss": "…"
+        },
+        {
+          "word": "hallo",
+          "reading": null,
+          "gloss": "hello"
+        },
+        {
+          "word": "ja",
+          "reading": null,
+          "gloss": "yes"
+        },
+        {
+          "word": "nein",
+          "reading": null,
+          "gloss": "no"
+        },
+        {
+          "word": "tschüss",
+          "reading": null,
+          "gloss": "..."
+        }
+      ]
+    },
+    {
+      "id": "a1-pronouns",
+      "name": "German A1 · Pronouns & people",
+      "description": "I / you / we / them and the people who fill those slots.",
+      "words": [
+        {
+          "word": "das Kind",
+          "reading": null,
+          "gloss": "child"
+        },
+        {
+          "word": "der Bruder",
+          "reading": null,
+          "gloss": "brother"
+        },
+        {
+          "word": "der Freund",
+          "reading": null,
+          "gloss": "friend"
+        },
+        {
+          "word": "der Junge",
+          "reading": null,
+          "gloss": "boy"
+        },
+        {
+          "word": "der Vater",
+          "reading": null,
+          "gloss": "father"
+        },
+        {
+          "word": "die Eltern (pl.)",
+          "reading": null,
+          "gloss": "parents"
+        },
+        {
+          "word": "die Familie",
+          "reading": null,
+          "gloss": "family"
+        },
+        {
+          "word": "die Frau",
+          "reading": null,
+          "gloss": "Ms; woman"
+        },
+        {
+          "word": "die Freundin",
+          "reading": null,
+          "gloss": "friend / girlfriend"
+        },
+        {
+          "word": "die Mutter",
+          "reading": null,
+          "gloss": "mother"
+        },
+        {
+          "word": "die Schwester",
+          "reading": null,
+          "gloss": "sister"
+        },
+        {
+          "word": "die Tochter",
+          "reading": null,
+          "gloss": "daughter"
+        },
+        {
+          "word": "er",
+          "reading": null,
+          "gloss": "he"
+        },
+        {
+          "word": "ich",
+          "reading": null,
+          "gloss": "I"
+        },
+        {
+          "word": "sie",
+          "reading": null,
+          "gloss": "she"
+        },
+        {
+          "word": "Sie",
+          "reading": null,
+          "gloss": "you (polite)"
+        },
+        {
+          "word": "wir",
+          "reading": null,
+          "gloss": "we"
+        }
+      ]
+    },
+    {
+      "id": "a1-time",
+      "name": "German A1 · Time & days",
+      "description": "Mornings, weekdays, seasons.",
+      "words": [
+        {
+          "word": "die Stunde",
+          "reading": null,
+          "gloss": "hour"
+        },
+        {
+          "word": "die Uhr",
+          "reading": null,
+          "gloss": "o'clock / am / pm"
+        },
+        {
+          "word": "gestern",
+          "reading": null,
+          "gloss": "yesterday"
+        },
+        {
+          "word": "heute",
+          "reading": null,
+          "gloss": "today"
+        },
+        {
+          "word": "morgen",
+          "reading": null,
+          "gloss": "tomorrow"
+        }
+      ]
+    },
+    {
+      "id": "a1-food",
+      "name": "German A1 · Food & drink",
+      "description": "Markt and Mensa essentials.",
+      "words": [
+        {
+          "word": "das Bier",
+          "reading": null,
+          "gloss": "beer"
+        },
+        {
+          "word": "das Brot",
+          "reading": null,
+          "gloss": "bread; bread roll"
+        },
+        {
+          "word": "das Ei",
+          "reading": null,
+          "gloss": "egg"
+        },
+        {
+          "word": "das Essen",
+          "reading": null,
+          "gloss": "food"
+        },
+        {
+          "word": "das Fleisch",
+          "reading": null,
+          "gloss": "meat"
+        },
+        {
+          "word": "das Frühstück",
+          "reading": null,
+          "gloss": "breakfast"
+        },
+        {
+          "word": "das Wasser",
+          "reading": null,
+          "gloss": "water"
+        },
+        {
+          "word": "der Apfel",
+          "reading": null,
+          "gloss": "apple"
+        },
+        {
+          "word": "der Fisch",
+          "reading": null,
+          "gloss": "fish"
+        },
+        {
+          "word": "der Kaffee",
+          "reading": null,
+          "gloss": "coffee"
+        },
+        {
+          "word": "der Saft",
+          "reading": null,
+          "gloss": "juice"
+        },
+        {
+          "word": "der Salat",
+          "reading": null,
+          "gloss": "salad"
+        },
+        {
+          "word": "der Tee",
+          "reading": null,
+          "gloss": "tea"
+        },
+        {
+          "word": "der Wein",
+          "reading": null,
+          "gloss": "wine"
+        },
+        {
+          "word": "die Butter",
+          "reading": null,
+          "gloss": "butter"
+        },
+        {
+          "word": "die Kartoffel",
+          "reading": null,
+          "gloss": "potato"
+        },
+        {
+          "word": "die Milch",
+          "reading": null,
+          "gloss": "milk"
+        },
+        {
+          "word": "die Tomate",
+          "reading": null,
+          "gloss": "tomato"
+        },
+        {
+          "word": "essen",
+          "reading": null,
+          "gloss": "to eat"
+        }
+      ]
+    }
+  ]
+}

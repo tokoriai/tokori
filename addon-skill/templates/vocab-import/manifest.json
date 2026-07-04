@@ -1,0 +1,11 @@
+{
+  "id": "markdown-vocab-list",
+  "name": "Markdown vocab list",
+  "version": "1.0.0",
+  "description": "Import vocabulary from 'word (reading) — meaning' text lines.",
+  "kind": "vocab-import",
+  "entry": "entry.js",
+  "author": "Tokori",
+  "license": "MIT",
+  "minAppVersion": "0.1.0"
+}

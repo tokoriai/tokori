@@ -1,0 +1,93 @@
+name: aur
+
+# Publishes the `tokori-bin` package to the Arch User Repository.
+#
+# Fires when a GitHub Release is **published** (not on tag push) — by
+# then the maintainer has reviewed the draft and the release `.deb` is
+# live at a stable `releases/download/<tag>/` URL the PKGBUILD can point
+# at and checksum. A manual `workflow_dispatch` (pass the tag) re-runs
+# it for a given release.
+#
+# No-ops on forks / before setup: every real step is gated on the
+# `AUR_SSH_PRIVATE_KEY` secret, so the job goes green and does nothing
+# when the key isn't configured. Setup lives in packaging/aur/README.md.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to publish to the AUR (e.g. v0.2.0)"
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Job-level `if:` can't read secrets, so gate per-step off this
+      # output instead. Passing the secret through `env` keeps it out of
+      # the command line (and the logs mask it regardless).
+      - name: Gate on AUR secret
+        id: gate
+        env:
+          KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+        run: |
+          if [ -n "$KEY" ]; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "AUR_SSH_PRIVATE_KEY not set — skipping AUR publish."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Resolve tag + version
+        id: ver
+        if: steps.gate.outputs.ok == 'true'
+        env:
+          TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.release.tag_name }}
+        run: |
+          tag="$TAG"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "ver=${tag#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Download release .deb + checksum it
+        id: deb
+        if: steps.gate.outputs.ok == 'true'
+        env:
+          TAG: ${{ steps.ver.outputs.tag }}
+          VER: ${{ steps.ver.outputs.ver }}
+          REPO: ${{ github.repository }}
+        run: |
+          deb="tokori_${VER}_amd64.deb"
+          url="https://github.com/${REPO}/releases/download/${TAG}/${deb}"
+          echo "Fetching $url"
+          curl -fsSL --retry 5 --retry-delay 10 -o "$deb" "$url"
+          echo "sha=$(sha256sum "$deb" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Render PKGBUILD from template
+        if: steps.gate.outputs.ok == 'true'
+        env:
+          VER: ${{ steps.ver.outputs.ver }}
+          SHA: ${{ steps.deb.outputs.sha }}
+        run: |
+          mkdir -p aur-build
+          sed -e "s/__VERSION__/${VER}/g" -e "s/__SHA256__/${SHA}/g" \
+            packaging/aur/PKGBUILD.template > aur-build/PKGBUILD
+          echo "── rendered PKGBUILD ──"
+          cat aur-build/PKGBUILD
+
+      # Builds .SRCINFO in an Arch container and pushes to the AUR over
+      # SSH. We pre-fill the checksum above, so updpkgsums stays off.
+      - name: Publish to the AUR
+        if: steps.gate.outputs.ok == 'true'
+        uses: KSXGitHub/github-actions-deploy-aur@v2.7.2
+        with:
+          pkgname: tokori-bin
+          pkgbuild: aur-build/PKGBUILD
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: "tokori-bin ${{ steps.ver.outputs.tag }}"
+          updpkgsums: false
+          ssh_keyscan_types: rsa,ed25519

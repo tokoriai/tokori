@@ -1,0 +1,29 @@
+{
+  "name": "tokori-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "description": "MCP server exposing the local Tokori API to MCP-aware clients (coding agents, AI editors).",
+  "type": "module",
+  "bin": {
+    "tokori-mcp": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "tsc -p tsconfig.json --watch",
+    "build:skill": "cd .. && zip -j mcp-server/tokori-skill.zip mcp-server/SKILL.md"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.8.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

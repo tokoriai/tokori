@@ -1,0 +1,5 @@
+[env]
+# WebKitGTK's DMA-BUF renderer fails on NVIDIA-only Linux hosts with
+# "Could not create GBM EGL display: EGL_NOT_INITIALIZED". Forcing the
+# legacy renderer keeps `tauri dev` working without a wrapper script.
+WEBKIT_DISABLE_DMABUF_RENDERER = "1"
