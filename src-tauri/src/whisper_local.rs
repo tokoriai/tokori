@@ -227,7 +227,9 @@ async fn download_model(
             );
         }
     }
-    file.flush().await.map_err(|e| format!("flush model file: {e}"))?;
+    file.flush()
+        .await
+        .map_err(|e| format!("flush model file: {e}"))?;
     drop(file);
     tokio::fs::rename(&tmp, dest)
         .await

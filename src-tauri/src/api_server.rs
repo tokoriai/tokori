@@ -6,6 +6,15 @@
 //! `{ data: [...], next_cursor?: string }`; errors share
 //! `{ error: { code, message, request_id } }`.
 
+// This file's uniform error type is an axum `Response`: every handler and
+// helper returns `Result<T, Response>` so failures compose through `?` into a
+// single JSON error body. `Response` is large, so `result_large_err` fires on
+// the sync helpers (async fns hide the Result behind a Future, escaping the
+// lint). Boxing only those would break `?` and clash with the file-wide
+// convention — and since the error type is always `Response`, the lint has
+// nothing useful to flag.
+#![allow(clippy::result_large_err)]
+
 use std::{
     collections::HashMap,
     net::SocketAddr,
@@ -1400,7 +1409,10 @@ fn default_media_unit(kind: &str) -> &'static str {
 /// Mirrors `isMinutesUnit` (src/lib/library-units.ts): when the unit
 /// itself is time, playback position maps directly onto units.
 fn is_minutes_unit(label: &str) -> bool {
-    matches!(label.trim().to_lowercase().as_str(), "min" | "mins" | "minute" | "minutes")
+    matches!(
+        label.trim().to_lowercase().as_str(),
+        "min" | "mins" | "minute" | "minutes"
+    )
 }
 
 fn internal_media_error(context: &str, e: sqlx::Error) -> Response {
@@ -1547,18 +1559,19 @@ async fn create_media(
             "title cannot be empty.",
         ));
     }
-    let url = body
-        .url
-        .as_deref()
-        .map(str::trim)
-        .filter(|u| !u.is_empty());
+    let url = body.url.as_deref().map(str::trim).filter(|u| !u.is_empty());
     let key = url.map(require_media_key).transpose()?;
     if let Some(key) = key.as_deref() {
         if let Some(existing) = find_media_by_key(&state.pool, Some(ws_id), key).await? {
             return Ok((StatusCode::OK, Json(existing)));
         }
     }
-    let kind = match body.kind.as_deref().map(str::trim).filter(|k| !k.is_empty()) {
+    let kind = match body
+        .kind
+        .as_deref()
+        .map(str::trim)
+        .filter(|k| !k.is_empty())
+    {
         Some(k) => {
             validate_media_kind(k)?;
             k.to_string()
@@ -1570,7 +1583,12 @@ async fn create_media(
             _ => "video".to_string(),
         },
     };
-    let status = match body.status.as_deref().map(str::trim).filter(|s| !s.is_empty()) {
+    let status = match body
+        .status
+        .as_deref()
+        .map(str::trim)
+        .filter(|s| !s.is_empty())
+    {
         Some(s) => {
             validate_media_status(s)?;
             s.to_string()
@@ -1593,7 +1611,12 @@ async fn create_media(
     .bind(ws_id)
     .bind(&kind)
     .bind(title)
-    .bind(body.author.as_deref().map(str::trim).filter(|a| !a.is_empty()))
+    .bind(
+        body.author
+            .as_deref()
+            .map(str::trim)
+            .filter(|a| !a.is_empty()),
+    )
     .bind(url)
     .bind(body.total_units.filter(|t| *t > 0))
     .bind(&unit_label)
@@ -1854,7 +1877,9 @@ async fn report_media_progress(
     .map_err(|e| internal_media_error("report_media_progress", e))?;
 
     let updated = fetch_media_item(&state.pool, item.id).await?;
-    Ok(Json(serde_json::json!({ "matched": true, "item": updated })))
+    Ok(Json(
+        serde_json::json!({ "matched": true, "item": updated }),
+    ))
 }
 
 #[derive(Deserialize)]
@@ -1883,7 +1908,12 @@ async fn ocr_frame(
             "image_b64 is required.",
         ));
     }
-    let lang = body.lang.as_deref().map(str::trim).filter(|l| !l.is_empty()).unwrap_or("en");
+    let lang = body
+        .lang
+        .as_deref()
+        .map(str::trim)
+        .filter(|l| !l.is_empty())
+        .unwrap_or("en");
     let lines = crate::ocr::ocr_plain(&state.app, body.image_b64, lang)
         .await
         .map_err(|e| {

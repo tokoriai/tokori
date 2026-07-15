@@ -210,16 +210,40 @@ mod tests {
     #[test]
     fn key_vectors_match_the_ts_twin() {
         let vectors: &[(&str, &str)] = &[
-            ("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "yt:dQw4w9WgXcQ"),
+            (
+                "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                "yt:dQw4w9WgXcQ",
+            ),
             ("https://youtu.be/dQw4w9WgXcQ?t=42", "yt:dQw4w9WgXcQ"),
-            ("https://m.youtube.com/watch?v=dQw4w9WgXcQ&list=PLxyz", "yt:dQw4w9WgXcQ"),
-            ("https://music.youtube.com/watch?v=dQw4w9WgXcQ", "yt:dQw4w9WgXcQ"),
+            (
+                "https://m.youtube.com/watch?v=dQw4w9WgXcQ&list=PLxyz",
+                "yt:dQw4w9WgXcQ",
+            ),
+            (
+                "https://music.youtube.com/watch?v=dQw4w9WgXcQ",
+                "yt:dQw4w9WgXcQ",
+            ),
             ("youtube.com/shorts/dQw4w9WgXcQ/", "yt:dQw4w9WgXcQ"),
-            ("https://www.youtube.com/live/dQw4w9WgXcQ?feature=share", "yt:dQw4w9WgXcQ"),
-            ("https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ", "yt:dQw4w9WgXcQ"),
-            ("https://www.youtube.com/playlist?list=PLabcDEF123", "yt:pl:PLabcDEF123"),
-            ("https://www.youtube.com/@somechannel/videos", "web:youtube.com/@somechannel/videos"),
-            ("https://www.netflix.com/watch/81091393?trackId=14170286", "nf:81091393"),
+            (
+                "https://www.youtube.com/live/dQw4w9WgXcQ?feature=share",
+                "yt:dQw4w9WgXcQ",
+            ),
+            (
+                "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
+                "yt:dQw4w9WgXcQ",
+            ),
+            (
+                "https://www.youtube.com/playlist?list=PLabcDEF123",
+                "yt:pl:PLabcDEF123",
+            ),
+            (
+                "https://www.youtube.com/@somechannel/videos",
+                "web:youtube.com/@somechannel/videos",
+            ),
+            (
+                "https://www.netflix.com/watch/81091393?trackId=14170286",
+                "nf:81091393",
+            ),
             ("https://www.netflix.com/title/80057281", "nf:80057281"),
             (
                 "https://open.spotify.com/episode/4rOoJ6Egrf8K2IrywzwOMk",
@@ -233,13 +257,28 @@ mod tests {
                 "https://podcasts.apple.com/us/podcast/some-show/id123456789?i=1000634",
                 "ap:123456789:1000634",
             ),
-            ("https://podcasts.apple.com/de/podcast/some-show/id123456789", "ap:123456789"),
+            (
+                "https://podcasts.apple.com/de/podcast/some-show/id123456789",
+                "ap:123456789",
+            ),
             ("https://vimeo.com/76979871", "vimeo:76979871"),
-            ("https://www.bilibili.com/video/BV1GJ411x7h7?p=2", "bili:BV1GJ411x7h7"),
-            ("https://example.com/shows/my-show/", "web:example.com/shows/my-show"),
+            (
+                "https://www.bilibili.com/video/BV1GJ411x7h7?p=2",
+                "bili:BV1GJ411x7h7",
+            ),
+            (
+                "https://example.com/shows/my-show/",
+                "web:example.com/shows/my-show",
+            ),
             ("example.com/a?q=1#frag", "web:example.com/a"),
-            ("localhost:8096/web/index.html", "web:localhost:8096/web/index.html"),
-            ("HTTPS://WWW.EXAMPLE.COM/Mixed/Case", "web:example.com/Mixed/Case"),
+            (
+                "localhost:8096/web/index.html",
+                "web:localhost:8096/web/index.html",
+            ),
+            (
+                "HTTPS://WWW.EXAMPLE.COM/Mixed/Case",
+                "web:example.com/Mixed/Case",
+            ),
         ];
         for (url, key) in vectors {
             assert_eq!(
@@ -252,7 +291,14 @@ mod tests {
 
     #[test]
     fn non_web_inputs_are_rejected() {
-        for junk in ["", "   ", "My Great Show", "mailto:x@y.example", "file:///tmp/x.mp4", "spotify:episode:abc"] {
+        for junk in [
+            "",
+            "   ",
+            "My Great Show",
+            "mailto:x@y.example",
+            "file:///tmp/x.mp4",
+            "spotify:episode:abc",
+        ] {
             assert_eq!(canonical_media_key(junk), None, "input: {junk}");
         }
     }
