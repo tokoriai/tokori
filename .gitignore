@@ -36,6 +36,10 @@ packs/yan-yin-sprachpraxis.json
 # disk for the maintainer; not part of the public open-source repo.
 launch/
 
+# Demo video scripts + raw footage. Maintainer marketing assets, not
+# part of the public repo.
+/video/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -103,7 +103,12 @@ export function studentLevelFor(args: {
   immersionHours: number;
   goalLevelId: string | null;
 }): string {
-  const known = args.vocab.filter((v) => v.status === "mastered").length;
+  // Status-only approximation of the app-wide "words known" (studied
+  // and not lapsing) — this module has no review log to replay, and a
+  // coarse prompt-level estimate doesn't need leech precision.
+  const known = args.vocab.filter(
+    (v) => v.status === "mastered" || v.status === "review",
+  ).length;
   const lvl = computeLevel(args.lang, known, args.immersionHours, args.goalLevelId);
   return lvl.current.id;
 }

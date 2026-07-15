@@ -84,6 +84,7 @@ import {
 } from "@/lib/vocab-import/registry";
 import { useHasDictionary } from "@/lib/dict-availability";
 import { computeStreak } from "@/lib/streak";
+import { currentGrowthBuckets } from "@/lib/vocab-growth";
 import { buildStudySessionQueue, useStudyConfig } from "@/lib/study-config";
 import { computeLevel, scaleFor, scaleLabel } from "@/lib/level";
 import type { LanguageCode } from "@/lib/languages";
@@ -1034,7 +1035,13 @@ function RecentActivitiesWidget({ ctx }: { ctx: WidgetContext }) {
 function useDashboardStats(ctx: WidgetContext) {
   const { profile } = useProfile();
   return useMemo(() => {
-    const wordsKnown = ctx.vocab.filter((v) => v.status === "mastered").length;
+    // Same replay engine as the vocab-growth chart, so the "Words
+    // known" KPI and the level estimate agree with the chart's Known
+    // series when both are on the board.
+    const wordsKnown = currentGrowthBuckets({
+      vocab: ctx.vocab,
+      reviews: ctx.reviews,
+    }).known;
     const seconds = ctx.sessions.reduce(
       (sum, s) => sum + (s.durationSecs ?? 0),
       0,
@@ -1056,6 +1063,7 @@ function useDashboardStats(ctx: WidgetContext) {
     return { wordsKnown, hours, streak, level };
   }, [
     ctx.vocab,
+    ctx.reviews,
     ctx.sessions,
     ctx.workspace.targetLang,
     profile.goalLevel,
@@ -1106,7 +1114,7 @@ registerWidget({
 registerWidget({
   id: "kpi-words",
   title: "Words known",
-  description: "Vocabulary count promoted to mastered via SRS.",
+  description: "Words the SRS counts as known — the growth chart's Known line.",
   category: "stats",
   defaultSize: 1,
   Component: KpiWordsWidget,

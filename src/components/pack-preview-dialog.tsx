@@ -18,7 +18,7 @@
  *                          downloadPack endpoint.
  */
 
-import { BookOpen, Loader2, Package } from "lucide-react";
+import { BookOpen, Loader2, MonitorPlay, Package } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -124,10 +124,20 @@ function FullPreview({ pack }: { pack: Pack }) {
       )}
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        <StatTile label="Words" value={summary.collectionWordCount + summary.textbookVocabCount} />
+        <StatTile
+          label="Words"
+          value={
+            summary.collectionWordCount +
+            summary.textbookVocabCount +
+            summary.mediaVocabCount
+          }
+        />
         <StatTile label="Collections" value={summary.collectionCount} />
         <StatTile label="Textbooks" value={summary.textbookCount} />
         <StatTile label="Chapters" value={summary.textbookChapterCount} />
+        {summary.mediaCount > 0 && (
+          <StatTile label="To watch" value={summary.mediaCount} />
+        )}
       </div>
 
       {pack.textbooks && pack.textbooks.length > 0 && (
@@ -164,6 +174,42 @@ function FullPreview({ pack }: { pack: Pack }) {
               </ol>
             </div>
           ))}
+        </div>
+      )}
+
+      {pack.media && pack.media.length > 0 && (
+        <div className="rounded-md border border-border bg-card px-3 py-2.5">
+          <div className="flex items-baseline justify-between gap-2">
+            <h4 className="text-[13px] font-medium">
+              <MonitorPlay className="mr-1.5 inline size-3.5 text-muted-foreground" />
+              To watch
+            </h4>
+            <span className="text-[11px] text-muted-foreground">
+              lands in Immersion's Up next
+            </span>
+          </div>
+          <ul className="mt-2 space-y-1.5 text-[11.5px] text-muted-foreground">
+            {pack.media.map((m) => (
+              <li key={m.id} className="min-w-0">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="shrink-0 rounded border border-border bg-muted/40 px-1 py-px text-[9.5px] uppercase tracking-wider">
+                    {m.kind}
+                  </span>
+                  <span className="truncate font-medium text-foreground/85">
+                    {m.title}
+                  </span>
+                  {m.author && (
+                    <span className="shrink-0 truncate">— {m.author}</span>
+                  )}
+                </div>
+                {m.notes && (
+                  <p className="mt-0.5 truncate pl-0.5 text-[11px] text-muted-foreground/80">
+                    {m.notes}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 

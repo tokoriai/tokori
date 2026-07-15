@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   ArrowUp,
   AudioWaveform,
+  BookMarked,
   BookOpenText,
   ChevronDown,
   Check,
@@ -39,9 +40,21 @@ import { useCloud } from "@/lib/cloud-context";
 import {
   findWhisperProvider,
   isBrowserSTTAvailable,
+  LOCAL_WHISPER_SAMPLE_RATE,
+  MAX_DICTATION_MS,
+  resolveSttEngine,
+  startPcmRecording,
   startRecording,
+  transcribeLocalWhisper,
   transcribeWhisper,
 } from "@/lib/stt";
+import {
+  activeLocalWhisperModel,
+  useLocalWhisperReady,
+} from "@/lib/whisper-local";
+import { MicWaveform, useElapsed } from "@/components/mic-waveform";
+import { consumeVoiceAsk, onVoiceAskPending } from "@/lib/ask-intent";
+import { useTTS } from "@/lib/tts-context";
 import {
   ChatActionsProvider,
   useChatActions,
@@ -314,6 +327,9 @@ export function ChatView({
   const { showPinyin, togglePinyin, showTranslations, toggleTranslations } =
     useDisplay();
   const { profile } = useProfile();
+  // Only used to read voice-ask answers aloud (send's speakReply path);
+  // per-message playback stays inside each bubble's SpeakButton.
+  const tts = useTTS();
   const [chat, setChat] = useState<Chat | null>(null);
   const [messages, setMessages] = useState<StoredMessage[]>([]);
   // Input lives inside <Composer> now (see the comment on Composer below).
@@ -412,7 +428,10 @@ export function ChatView({
     if (next.length) setAttachments((prev) => [...prev, ...next]);
   }
 
-  async function send(textOverride?: string) {
+  async function send(
+    textOverride?: string,
+    opts: { speakReply?: boolean } = {},
+  ) {
     const text = (textOverride ?? "").trim();
     if (!text || !chat || !workspace) return;
 
@@ -554,6 +573,14 @@ export function ChatView({
           content: finalText,
         });
         setMessages((prev) => [...prev, assistantMsg]);
+
+        // Voice-ask flow: read the answer back out loud. Same text prep
+        // as the bubble's SpeakButton — no thinking blocks, no markdown
+        // asterisks, no hidden ((translations)).
+        if (opts.speakReply) {
+          const spoken = plainTextOf(splitThinking(finalText).reply).trim();
+          if (spoken) void tts.speak(spoken, workspace.targetLang);
+        }
 
         // Background AI-titler — runs once per new chat after the first reply.
         if (isFirstMessage && isPlaceholderTitle && chat) {
@@ -745,6 +772,22 @@ export function ChatView({
     [workspace],
   );
 
+  // Voice-ask bridge — a question spoken into the voice-ask popup is
+  // parked in ask-intent by the shell (which also flips the tab here).
+  // Consume it once the chat row is loaded and nothing is mid-stream;
+  // until then it stays parked and the effect re-fires as busy /
+  // streamActive flip.
+  useEffect(() => {
+    function tryConsume() {
+      if (!chat || busy || streamActive) return;
+      const ask = consumeVoiceAsk();
+      if (ask) void send(ask.text, { speakReply: ask.speak });
+    }
+    tryConsume();
+    return onVoiceAskPending(tryConsume);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chat?.id, busy, streamActive]);
+
   // Guard moved down from the top of the component so every hook above
   // runs unconditionally. Nothing between the old position and here
   // dereferences `workspace` (the helper fns carry their own guards), and
@@ -897,6 +940,7 @@ export function ChatView({
                     key={chat.id}
                     chatId={chat.id}
                     initial={initial}
+                    targetLang={workspace.targetLang}
                     scrollToBottom={scrollToBottom}
                   />
                 )}
@@ -1606,13 +1650,18 @@ function Composer({
   //
   // Two engines, picked via Settings → Voice → Dictation:
   //   - Browser (Web Speech API) — instant, but missing on Linux's
-  //     WebKitGTK webview. Streams interim + final results.
+  //     WebKitGTK webview. Streams interim + final results straight
+  //     into the textarea.
   //   - Whisper — record with MediaRecorder, POST the blob to the
   //     active openai-kind provider's /v1/audio/transcriptions
-  //     endpoint when the user stops the mic. Slower (no interim
-  //     results) but works anywhere a key works, including Linux.
+  //     endpoint when the user accepts. Slower (no interim results)
+  //     but works anywhere a key works, including Linux.
   //
-  // "auto" prefers browser when available, falls back to whisper.
+  // While either engine captures, a recording strip (pulsing dot +
+  // clock + live waveform + discard/accept) renders inside the card.
+  // Whisper also hides the textarea for the take — nothing lands in it
+  // until transcription returns; browser dictation keeps it visible
+  // since text streams in live.
   const { profile: sttProfile } = useProfile();
   const { providers: allProviders } = useProviderConfigs();
   type RecognitionLike = {
@@ -1627,69 +1676,73 @@ function Composer({
   };
   const recognitionRef = useRef<RecognitionLike | null>(null);
   const recorderRef = useRef<Awaited<ReturnType<typeof startRecording>> | null>(null);
+  const pcmRecorderRef = useRef<Awaited<
+    ReturnType<typeof startPcmRecording>
+  > | null>(null);
+  // Model id the current local take started with — pinned at start so
+  // a Settings change mid-take can't retarget the transcription.
+  const localModelRef = useRef<string | null>(null);
   const [listening, setListening] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
+  // Which engine the CURRENT take started with. The settings-derived
+  // `engine` below can flip mid-recording (provider edited in another
+  // tab); the strip / textarea layout must not flip with it.
+  const [dictMode, setDictMode] = useState<
+    "browser" | "whisper" | "local" | null
+  >(null);
+  // Waveform tap + clock for the strip. Whisper reuses the recorder's
+  // own stream; browser STT hides its capture inside SpeechRecognition,
+  // so we open a parallel viz-only stream and own its lifecycle.
+  const [recStream, setRecStream] = useState<MediaStream | null>(null);
+  const [recStartedAt, setRecStartedAt] = useState<number | null>(null);
+  const vizOwnedRef = useRef<MediaStream | null>(null);
+  const inputBeforeRef = useRef("");
+  const discardRef = useRef(false);
+  // "Stop AND send" (Ctrl+Enter) for the browser engine, whose stop is
+  // asynchronous — onend reads this to know whether to fire the draft.
+  const fireAfterRef = useRef(false);
+  const autoStopRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const elapsed = useElapsed(recStartedAt);
   const browserAvailable = isBrowserSTTAvailable();
   const whisperProvider = findWhisperProvider(allProviders);
-
-  /** Resolve the engine the user would actually use given their setting
-   *  + what's available right now. */
-  function resolveEngine(): "browser" | "whisper" | "none" {
-    const choice = sttProfile.sttKind;
-    if (choice === "browser") return browserAvailable ? "browser" : "none";
-    if (choice === "whisper") return whisperProvider ? "whisper" : "none";
-    // auto
-    if (browserAvailable) return "browser";
-    if (whisperProvider) return "whisper";
-    return "none";
-  }
-  const engine = resolveEngine();
+  const localWhisperReady = useLocalWhisperReady();
+  const engine = resolveSttEngine(
+    sttProfile.sttKind,
+    browserAvailable,
+    whisperProvider,
+    localWhisperReady,
+  );
   // The mic button is hidden entirely when no engine is available — that
   // also means the existing "live voice" button is the only voice path
   // on truly bare setups, which matches our previous behaviour.
   const sttAvailable = engine !== "none";
 
-  async function toggleSTT() {
+  function stopVizStream() {
+    vizOwnedRef.current?.getTracks().forEach((t) => t.stop());
+    vizOwnedRef.current = null;
+  }
+
+  function clearAutoStop() {
+    if (autoStopRef.current != null) clearTimeout(autoStopRef.current);
+    autoStopRef.current = null;
+  }
+
+  function resetRecordingUi() {
+    clearAutoStop();
+    stopVizStream();
+    setRecStream(null);
+    setRecStartedAt(null);
+    setDictMode(null);
+  }
+
+  async function startDictation() {
     if (!sttAvailable) {
       toast.error(
-        "No speech-to-text engine available. Open Settings → Voice and pick Whisper, or set up an OpenAI/Groq provider.",
+        "No speech-to-text engine available. Open Settings → Voice to download a local Whisper model, or set up an OpenAI/Groq provider.",
       );
       return;
     }
-    if (listening) {
-      // Stop whichever engine is currently capturing.
-      recognitionRef.current?.stop();
-      const rec = recorderRef.current;
-      if (rec && whisperProvider) {
-        recorderRef.current = null;
-        setListening(false);
-        setTranscribing(true);
-        try {
-          const blob = await rec.stop();
-          // A microscopic blob (sub-1KB) is almost always silence —
-          // skip the upload, the provider will charge anyway.
-          if (blob.size < 1024) {
-            toast("Nothing recorded.");
-            return;
-          }
-          const result = await transcribeWhisper(blob, whisperProvider, {
-            lang: sttLang ? bcp47(sttLang) : undefined,
-          });
-          if (result.text) {
-            setInput((prev) =>
-              prev ? `${prev.trim()} ${result.text}`.trim() : result.text,
-            );
-          }
-        } catch (err) {
-          toast.error(
-            err instanceof Error ? err.message : `Transcription failed: ${String(err)}`,
-          );
-        } finally {
-          setTranscribing(false);
-        }
-      }
-      return;
-    }
+    if (listening || transcribing) return;
     if (engine === "browser") {
       const Ctor = (window as unknown as {
         SpeechRecognition?: new () => RecognitionLike;
@@ -1701,6 +1754,10 @@ function Composer({
       rec.lang = sttLang ? bcp47(sttLang) : "en-US";
       rec.interimResults = true;
       rec.continuous = true;
+      // Snapshot for the strip's discard button — recognition results
+      // merge into the draft live, so cancel must restore, not trim.
+      inputBeforeRef.current = input;
+      discardRef.current = false;
       let committed = "";
       rec.onresult = (event) => {
         const results = event.results as unknown as {
@@ -1726,13 +1783,79 @@ function Composer({
         }
       };
       rec.onend = () => {
-        setInput((prev) => prev.replace(/\s*​\[…\][^\n]*$/, "").trim());
+        // Read the merged draft synchronously off the DOM node — the
+        // controlled value equals the latest render's state here.
+        const raw = inputRef.current?.value ?? "";
+        const cleaned = raw.replace(/\s*​\[…\][^\n]*$/, "").trim();
+        const fire = fireAfterRef.current && !discardRef.current;
+        fireAfterRef.current = false;
+        if (discardRef.current) {
+          setInput(inputBeforeRef.current);
+        } else if (fire && cleaned && !busy && !outOfTokens) {
+          setInput("");
+          onSend(cleaned);
+        } else {
+          setInput(cleaned);
+        }
         setListening(false);
         recognitionRef.current = null;
+        resetRecordingUi();
+        inputRef.current?.focus();
       };
       recognitionRef.current = rec;
       setListening(true);
+      setDictMode("browser");
+      setRecStartedAt(Date.now());
       rec.start();
+      // The mic click parked DOM focus on the button — hand it back to
+      // the field so Enter (finish) / Esc (discard) work immediately.
+      inputRef.current?.focus();
+      // Parallel viz-only tap for the waveform — SpeechRecognition owns
+      // its capture and exposes no stream. Best effort: a denied tap
+      // just leaves the strip waveless.
+      try {
+        const viz = await navigator.mediaDevices.getUserMedia({ audio: true });
+        if (!recognitionRef.current) {
+          // Dictation ended before the tap resolved — don't leave an
+          // orphaned capture indicator in the OS tray.
+          viz.getTracks().forEach((t) => t.stop());
+          return;
+        }
+        vizOwnedRef.current = viz;
+        setRecStream(viz);
+      } catch {
+        /* waveform-less strip */
+      }
+      return;
+    }
+    if (engine === "local") {
+      try {
+        const model = await activeLocalWhisperModel();
+        if (!model) {
+          toast.error(
+            "No local Whisper model downloaded — grab one under Settings → Voice → Dictation.",
+          );
+          return;
+        }
+        localModelRef.current = model;
+        const handle = await startPcmRecording();
+        pcmRecorderRef.current = handle;
+        setListening(true);
+        setDictMode("local");
+        setRecStream(handle.stream);
+        setRecStartedAt(Date.now());
+        autoStopRef.current = setTimeout(() => {
+          toast.info("Recording hit the 5-minute cap — transcribing what's there.");
+          void finishDictation();
+        }, MAX_DICTATION_MS);
+        inputRef.current?.focus();
+      } catch (err) {
+        toast.error(
+          err instanceof Error
+            ? `Couldn't start mic: ${err.message}`
+            : `Couldn't start mic: ${String(err)}`,
+        );
+      }
       return;
     }
     // engine === "whisper"
@@ -1740,12 +1863,143 @@ function Composer({
       const handle = await startRecording();
       recorderRef.current = handle;
       setListening(true);
+      setDictMode("whisper");
+      setRecStream(handle.stream);
+      setRecStartedAt(Date.now());
+      // Runaway guard — a forgotten mic auto-accepts at the cap
+      // instead of uploading half an hour of desk noise.
+      autoStopRef.current = setTimeout(() => {
+        toast.info("Recording hit the 5-minute cap — transcribing what's there.");
+        void finishDictation();
+      }, MAX_DICTATION_MS);
+      inputRef.current?.focus();
     } catch (err) {
       toast.error(
         err instanceof Error
           ? `Couldn't start mic: ${err.message}`
           : `Couldn't start mic: ${String(err)}`,
       );
+    }
+  }
+
+  /** Merge a finished transcript into the draft — or fire it straight
+   *  away as a message when the take was stopped with "send". */
+  function deliverTranscript(text: string, sendNow: boolean) {
+    if (!text) return;
+    const prev = (inputRef.current?.value ?? "").trim();
+    const merged = prev ? `${prev} ${text}`.trim() : text;
+    if (sendNow && merged && !busy && !outOfTokens) {
+      setInput("");
+      onSend(merged);
+    } else {
+      setInput(merged);
+    }
+  }
+
+  /** Stop capturing and keep the result: browser commits whatever's
+   *  already merged into the draft; whisper/local transcribe + append.
+   *  `send: true` fires the finished text as a message immediately —
+   *  the Ctrl+Enter "stop and send" path. */
+  async function finishDictation(opts: { send?: boolean } = {}) {
+    if (recognitionRef.current) {
+      fireAfterRef.current = !!opts.send;
+      recognitionRef.current.stop(); // onend commits (and maybe fires)
+      return;
+    }
+    const pcmRec = pcmRecorderRef.current;
+    if (pcmRec) {
+      pcmRecorderRef.current = null;
+      setListening(false);
+      clearAutoStop();
+      // Freeze the waveform on its last frame while whisper.cpp runs.
+      setRecStream(null);
+      setTranscribing(true);
+      try {
+        const pcm = await pcmRec.stop();
+        // Under half a second of audio is a misclick, not a take.
+        if (pcm.length < LOCAL_WHISPER_SAMPLE_RATE / 2) {
+          toast("Nothing recorded.");
+          return;
+        }
+        const model =
+          localModelRef.current ?? (await activeLocalWhisperModel());
+        if (!model) {
+          toast.error("No local Whisper model downloaded — recording discarded.");
+          return;
+        }
+        const result = await transcribeLocalWhisper(pcm, {
+          model,
+          lang: sttLang ? bcp47(sttLang) : undefined,
+        });
+        deliverTranscript(result.text, !!opts.send);
+      } catch (err) {
+        toast.error(
+          err instanceof Error ? err.message : `Transcription failed: ${String(err)}`,
+        );
+      } finally {
+        setTranscribing(false);
+        setRecStartedAt(null);
+        setDictMode(null);
+        inputRef.current?.focus();
+      }
+      return;
+    }
+    const rec = recorderRef.current;
+    if (!rec) return;
+    recorderRef.current = null;
+    setListening(false);
+    clearAutoStop();
+    // Freeze the waveform on its last frame while the upload runs.
+    setRecStream(null);
+    if (!whisperProvider) {
+      // Provider vanished mid-take (deleted in Settings) — nothing to
+      // transcribe with; drop the take rather than hang the strip.
+      rec.cancel();
+      resetRecordingUi();
+      toast.error("Whisper provider disappeared — recording discarded.");
+      return;
+    }
+    setTranscribing(true);
+    try {
+      const blob = await rec.stop();
+      // A microscopic blob (sub-1KB) is almost always silence —
+      // skip the upload, the provider will charge anyway.
+      if (blob.size < 1024) {
+        toast("Nothing recorded.");
+        return;
+      }
+      const result = await transcribeWhisper(blob, whisperProvider, {
+        lang: sttLang ? bcp47(sttLang) : undefined,
+      });
+      deliverTranscript(result.text, !!opts.send);
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : `Transcription failed: ${String(err)}`,
+      );
+    } finally {
+      setTranscribing(false);
+      setRecStartedAt(null);
+      setDictMode(null);
+      inputRef.current?.focus();
+    }
+  }
+
+  /** Throw the take away — whisper/local discard the audio, browser
+   *  restores the pre-dictation draft. */
+  function cancelDictation() {
+    if (recognitionRef.current) {
+      discardRef.current = true;
+      recognitionRef.current.stop(); // onend restores the snapshot
+      return;
+    }
+    const rec = recorderRef.current ?? pcmRecorderRef.current;
+    if (rec) {
+      recorderRef.current = null;
+      pcmRecorderRef.current = null;
+      rec.cancel();
+      setListening(false);
+      resetRecordingUi();
+      inputRef.current?.focus();
     }
   }
 
@@ -1756,10 +2010,38 @@ function Composer({
     return () => {
       recognitionRef.current?.stop();
       recorderRef.current?.cancel();
+      pcmRecorderRef.current?.cancel();
+      vizOwnedRef.current?.getTracks().forEach((t) => t.stop());
+      if (autoStopRef.current != null) clearTimeout(autoStopRef.current);
     };
   }, []);
 
+  // Dictation hotkeys, window-level so they work without composer
+  // focus: Ctrl/Cmd+M toggles the mic (start a take / stop + review),
+  // Ctrl/Cmd+Enter while a take runs stops it AND sends the result.
+  // Handlers that already consumed the key (textarea, strip) call
+  // preventDefault first — the defaultPrevented guard avoids a double
+  // fire. Re-subscribed every render so the closures stay fresh.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.defaultPrevented) return;
+      if (!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
+      if (e.key.toLowerCase() === "m") {
+        e.preventDefault();
+        void (listening ? finishDictation() : startDictation());
+      } else if (e.key === "Enter" && listening) {
+        e.preventDefault();
+        void finishDictation({ send: true });
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
+
   function commit() {
+    // Mid-dictation the draft can hold a live interim tail (browser) or
+    // be about to receive the transcript (whisper) — never send those.
+    if (listening || transcribing) return;
     const t = input.trim();
     if (!t || busy || outOfTokens) return;
     onSend(t);
@@ -1792,19 +2074,110 @@ function Composer({
           "ring-2 ring-foreground/15 animate-pulse [animation-duration:1.6s]",
       )}
     >
+      {/* Recording strip — the voice animation lives INSIDE the box.
+          Pulsing dot + clock + flowing waveform + discard/accept. For
+          whisper/local takes it stands in for the textarea (nothing
+          lands there until transcription returns); browser dictation
+          keeps the textarea visible below since text streams in live.
+          The waveform freezes on its last frame through the
+          "Transcribing…" phase. */}
+      {(listening || transcribing) && (
+        <div
+          className="flex items-center gap-2.5 px-3 pt-2.5 pb-1 animate-in fade-in duration-200"
+          onKeyDown={(e) => {
+            if (e.key === "Escape") {
+              e.preventDefault();
+              cancelDictation();
+            } else if (e.key === "Enter") {
+              e.preventDefault();
+              void finishDictation({ send: e.ctrlKey || e.metaKey });
+            }
+          }}
+        >
+          {transcribing ? (
+            <>
+              <Loader2 className="size-3.5 shrink-0 animate-spin text-muted-foreground" />
+              <span className="shrink-0 text-[12px] text-muted-foreground">
+                Transcribing…
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="relative flex size-2 shrink-0" aria-hidden>
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive/60" />
+                <span className="relative inline-flex size-2 rounded-full bg-destructive" />
+              </span>
+              <span className="w-9 shrink-0 font-mono text-[11.5px] tabular-nums text-muted-foreground">
+                {elapsed}
+              </span>
+            </>
+          )}
+          <MicWaveform
+            stream={recStream}
+            className={cn(
+              "h-7 min-w-0 flex-1",
+              transcribing ? "text-muted-foreground/50" : "text-foreground/70",
+            )}
+          />
+          {!transcribing && (
+            <>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                onClick={cancelDictation}
+                title="Discard recording (Esc)"
+                aria-label="Discard recording"
+              >
+                <X className="size-4" />
+              </Button>
+              <Button
+                type="button"
+                size="icon-sm"
+                onClick={() => void finishDictation()}
+                className="rounded-full"
+                title={
+                  (dictMode === "browser"
+                    ? "Stop dictation"
+                    : "Stop & transcribe") + " (Enter) — Ctrl+Enter sends too"
+                }
+                aria-label="Stop recording"
+              >
+                <Check className="size-4" />
+              </Button>
+            </>
+          )}
+        </div>
+      )}
       <textarea
         ref={inputRef}
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={(e) => {
+          if (e.key === "Escape" && listening) {
+            e.preventDefault();
+            cancelDictation();
+            return;
+          }
           if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
+            if (listening) {
+              // Mid-dictation Enter ends the take (review); with
+              // Ctrl/Cmd held it also fires the message right away.
+              void finishDictation({ send: e.ctrlKey || e.metaKey });
+              return;
+            }
             commit();
           }
         }}
-        placeholder={placeholder}
+        placeholder={listening ? "Listening…" : placeholder}
         rows={1}
-        className="resize-none bg-transparent px-4 pt-3.5 pb-1 text-[14.5px] leading-relaxed outline-none placeholder:text-muted-foreground"
+        className={cn(
+          "resize-none bg-transparent px-4 pt-3.5 pb-1 text-[14.5px] leading-relaxed outline-none placeholder:text-muted-foreground",
+          // Whisper/local takes have nothing to show until the
+          // transcript lands — the strip stands in for the field.
+          dictMode != null && dictMode !== "browser" && "hidden",
+        )}
         // Intentionally NOT disabled while busy — typing while the AI generates is expected.
         // The send button below stays disabled until streaming finishes.
       />
@@ -1819,38 +2192,6 @@ function Composer({
           >
             <Paperclip className="size-4" />
           </Button>
-          {sttAvailable && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => void toggleSTT()}
-              title={
-                transcribing
-                  ? "Transcribing audio…"
-                  : listening
-                    ? engine === "whisper"
-                      ? "Stop & transcribe"
-                      : "Stop dictation"
-                    : engine === "whisper"
-                      ? "Record + transcribe (Whisper)"
-                      : "Dictate (browser speech recognition)"
-              }
-              className={cn(
-                listening &&
-                  "text-destructive animate-pulse [animation-duration:1.4s]",
-                transcribing && "text-muted-foreground",
-              )}
-              aria-pressed={listening}
-              disabled={transcribing}
-            >
-              {transcribing ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Mic className="size-4" />
-              )}
-            </Button>
-          )}
           {/* PN + EN now live in the ChatTopBar so they're sticky to
               the top of the chat window even while you scroll
               messages — the composer toolbar got crowded and these
@@ -1902,11 +2243,49 @@ function Composer({
           )}
         </div>
         <div className="flex items-center gap-1.5">
-          {/* Live voice mode — sits to the LEFT of Send so the
-              cluster reads "speak / send". Visually distinct from
-              the dictation Mic in the toolbar: this one launches a
-              full bidirectional voice session, the Mic just
-              transcribes. */}
+          {/* Voice cluster, left of Send: Mic = dictation (speech →
+              text into this field, with the floating pill while the
+              take runs); AudioWaveform = full bidirectional live voice
+              session. The mic stays visible even with no engine
+              configured — clicking it explains what to set up. */}
+          <Button
+            type="button"
+            size="icon-sm"
+            variant="outline"
+            onClick={() =>
+              void (listening ? finishDictation() : startDictation())
+            }
+            disabled={transcribing}
+            className={cn(
+              "rounded-full",
+              listening &&
+                "border-destructive/50 text-destructive animate-pulse [animation-duration:1.4s]",
+            )}
+            title={
+              transcribing
+                ? "Transcribing audio…"
+                : listening
+                  ? (dictMode === "browser"
+                      ? "Stop dictation"
+                      : "Stop & transcribe") +
+                    " (Ctrl+M · Ctrl+Enter sends too)"
+                  : engine === "whisper"
+                    ? "Dictate — record + transcribe (Whisper) · Ctrl+M"
+                    : engine === "local"
+                      ? "Dictate — local Whisper, on-device · Ctrl+M"
+                      : engine === "browser"
+                        ? "Dictate (browser speech recognition) · Ctrl+M"
+                        : "Dictate — needs a speech-to-text engine (click for details)"
+            }
+            aria-pressed={listening}
+            aria-label="Dictate"
+          >
+            {transcribing ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Mic className="size-4" />
+            )}
+          </Button>
           <Button
             type="button"
             size="icon-sm"
@@ -2340,23 +2719,30 @@ function ToolResultCard({ result }: { result: ToolResult }) {
 function StreamingBubble({
   chatId,
   initial,
+  targetLang,
   scrollToBottom,
 }: {
   chatId: number;
   initial: string;
+  targetLang: string;
   scrollToBottom: () => void;
 }) {
   const text = useStreamPartial(chatId) ?? "";
   const split = splitThinking(text);
+  const { showTranslations } = useDisplay();
   // While streaming, hide tool blocks — including the *unterminated*
   // one currently being emitted (plain stripToolBlocks only removes
   // complete fences, so the JSON used to leak char-by-char until the
   // closing fence arrived). The pulse below stands in for it; once the
   // response ends, tool calls run and result cards replace them.
+  // ```vocab blocks hide the same way (their table renders when the
+  // message lands); ```passage fences drop their markers so the text
+  // reads inline while it streams.
   const {
     text: cleanReply,
     toolPending,
     pendingToolName,
+    vocabPending,
   } = sanitizeStreamingReply(split.reply ?? "");
   // Follow the stream to the bottom as text arrives.
   useEffect(() => {
@@ -2372,7 +2758,19 @@ function StreamingBubble({
         )}
         {(cleanReply || !split.thinkOpen) && (
           <div className="text-[15px] leading-relaxed text-foreground/95">
-            {cleanReply && <StreamingText text={cleanReply} />}
+            {cleanReply && (
+              <StreamingText
+                text={cleanReply}
+                lang={targetLang}
+                revealTranslations={showTranslations}
+              />
+            )}
+          </div>
+        )}
+        {vocabPending && (
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-3 py-1 text-[12px] text-muted-foreground">
+            <BookMarked className="size-3 animate-pulse text-foreground/60" />
+            <span className="animate-pulse">Building a vocabulary list…</span>
           </div>
         )}
         {toolPending && (
@@ -2529,6 +2927,7 @@ async function buildSystemPrompt(
     `Right: ${target} sentence. ((English translation.))`,
     `Wrong: ${target} sentence. English translation.   ← unblurred`,
     `Vocab lists: when you give the student a set of words to learn, output a fenced \`\`\`vocab block (not prose, not a markdown table) — one word per line as "word | reading | meaning". reading = the ${target} pronunciation (pinyin/furigana; leave empty for languages without one); meaning = a short, direct ${native} translation — no example, no explanation. The app renders it as a table with one-tap save / add-to-list buttons. Always show these meanings and readings plainly; never wrap them in (( )).`,
+    `Reading passages: when the student asks you to WRITE a text — a story, dialogue, article, or passage about a topic — put the passage itself in a fenced \`\`\`passage block: first line "# <short ${target} title>", then the passage in ${target} only (no translations inside the block). The app renders it as a reading card with listen + save-to-Reader buttons. Anything you want to say about the passage (questions, vocabulary, a ((translation)) of it) goes OUTSIDE the block.`,
   );
 
   lines.push("", TOOL_SYSTEM_INSTRUCTIONS);

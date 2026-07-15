@@ -185,11 +185,34 @@ pub async fn ocr_image(
     lang: String,
     on_event: Channel<OcrEvent>,
 ) -> Result<Vec<String>, String> {
+    ocr_with_events(&app, image_b64, &lang, &on_event).await
+}
+
+/// Channel-free OCR for non-IPC callers — the local HTTP api_server's
+/// `/v1/ocr` (Companion extension burned-in-subtitle capture) can't
+/// hold a Tauri IPC channel. Progress events go to a sink; lazy model
+/// downloads and the warm engine cache behave exactly as in the
+/// command path.
+pub async fn ocr_plain(
+    app: &tauri::AppHandle,
+    image_b64: String,
+    lang: &str,
+) -> Result<Vec<String>, String> {
+    let sink: Channel<OcrEvent> = Channel::new(|_| Ok(()));
+    ocr_with_events(app, image_b64, lang, &sink).await
+}
+
+async fn ocr_with_events(
+    app: &tauri::AppHandle,
+    image_b64: String,
+    lang: &str,
+    on_event: &Channel<OcrEvent>,
+) -> Result<Vec<String>, String> {
     let bytes = base64::engine::general_purpose::STANDARD
         .decode(image_b64.as_bytes())
         .map_err(|e| format!("decode base64: {e}"))?;
 
-    let engine = engine_for(&app, &lang, &on_event).await?;
+    let engine = engine_for(app, lang, on_event).await?;
 
     let _ = on_event.send(OcrEvent::Recognizing);
     // Per-block return so the caller can filter by script (e.g. "Chinese

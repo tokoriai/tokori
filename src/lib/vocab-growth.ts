@@ -38,7 +38,7 @@
  */
 
 import type { VocabEntry, VocabReview, VocabStatus } from "./db";
-import type { Grade } from "./fsrs";
+import { DEFAULT_SRS_CONFIG, type Grade } from "./fsrs";
 
 export type GrowthBucketKey = "known" | "due" | "learning" | "leeches";
 
@@ -67,8 +67,9 @@ export type GrowthInput = {
   /** How many days of history to render, ending today. */
   days: number;
   /** Lapses at which a card flips into the Leeches bucket. Defaults
-   *  to FSRS's standard 8. Pass the user's actual workspace value
-   *  for an exact match with the scheduler. */
+   *  to the scheduler's `DEFAULT_SRS_CONFIG.leechThreshold` so chart
+   *  and headline stats can't drift apart. Pass the user's actual
+   *  workspace value for an exact match with a customised scheduler. */
   leechThreshold?: number;
   /** Injectable clock for deterministic tests. Defaults to `Date.now()`. */
   now?: number;
@@ -81,7 +82,25 @@ type ReplayState = {
 };
 
 const DAY_MS = 86_400_000;
-const DEFAULT_LEECH_THRESHOLD = 8;
+const DEFAULT_LEECH_THRESHOLD = DEFAULT_SRS_CONFIG.leechThreshold;
+
+export type GrowthBuckets = Record<GrowthBucketKey, number>;
+
+/** Today's bucket counts — the growth chart's final data point without
+ *  the day-by-day series. Every headline "words known" stat (Statistics
+ *  KPI, dashboard KPI, milestones, learning journey) must read `known`
+ *  from here so the number always equals the chart's Known series. */
+export function currentGrowthBuckets(
+  input: Omit<GrowthInput, "days">,
+): GrowthBuckets {
+  const today = computeVocabGrowth({ ...input, days: 1 }).pop();
+  return {
+    known: today?.known ?? 0,
+    due: today?.due ?? 0,
+    learning: today?.learning ?? 0,
+    leeches: today?.leeches ?? 0,
+  };
+}
 
 export function computeVocabGrowth(input: GrowthInput): GrowthRow[] {
   const { vocab, reviews, days } = input;

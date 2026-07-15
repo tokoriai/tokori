@@ -207,15 +207,18 @@ const TOOL_FENCE = "```polyglot-tool";
  *  are kept: when the preceding text has an odd number of ``` fences,
  *  the trailing one is a closer, not a potential tool-block opener. */
 function trimPartialFenceTail(s: string): string {
-  const max = Math.min(TOOL_FENCE.length - 1, s.length);
-  for (let take = max; take >= 1; take--) {
-    if (!TOOL_FENCE.startsWith(s.slice(-take))) continue;
-    const before = s.slice(0, s.length - take);
-    const fencesBefore = (before.match(/```/g) ?? []).length;
-    if (fencesBefore % 2 !== 0) return s;
-    return before.trimEnd();
-  }
-  return s;
+  // Any partial fence opener — backticks plus up to a language tag —
+  // is hidden while its characters stream in (tool, vocab, passage …
+  // fences all get special handling once the newline lands; letting
+  // the backticks flash first would visibly reset the typer). Tails
+  // that *close* an open ordinary code block are kept: when the
+  // preceding text has an odd number of ``` fences, the trailing one
+  // is a closer, not an opener.
+  const m = s.match(/\n?`{1,3}[a-zA-Z-]{0,15}$/);
+  if (!m) return s;
+  const before = s.slice(0, s.length - m[0].length);
+  const fencesBefore = (before.match(/```/g) ?? []).length;
+  return fencesBefore % 2 === 0 ? before.trimEnd() : s;
 }
 
 /** Streaming-safe variant of `stripToolBlocks`. While tokens arrive a
@@ -232,6 +235,9 @@ export function sanitizeStreamingReply(content: string): {
   toolPending: boolean;
   /** Name of the first pending tool, null until it has streamed in. */
   pendingToolName: string | null;
+  /** A ```vocab block is streaming/complete — the bubble shows a
+   *  "building vocabulary list" pulse; the table renders on finalize. */
+  vocabPending: boolean;
 } {
   const fenceIdx = content.indexOf(TOOL_FENCE);
   let pendingToolName: string | null = null;
@@ -244,8 +250,41 @@ export function sanitizeStreamingReply(content: string): {
   let text = stripToolBlocks(content);
   const openIdx = text.indexOf(TOOL_FENCE);
   if (openIdx !== -1) text = text.slice(0, openIdx).trimEnd();
+
+  // ```vocab blocks: a pipe table reads terribly as raw streaming
+  // text, so hide it — complete AND unterminated — behind a pulse; the
+  // real table renders when the message lands.
+  let vocabPending = false;
+  text = text.replace(/```vocab[^\n]*\n[\s\S]*?```/g, () => {
+    vocabPending = true;
+    return "";
+  });
+  const vocabIdx = text.indexOf("```vocab");
+  if (vocabIdx !== -1) {
+    vocabPending = true;
+    text = text.slice(0, vocabIdx).trimEnd();
+  }
+
+  // ```passage blocks: the opposite call — people read along while the
+  // tutor writes, so KEEP the content and drop only the fence markers.
+  // The finished message re-renders it as the passage card. Both
+  // branches leave the already-streamed prefix byte-identical, which
+  // the imperative typer depends on.
+  text = text.replace(
+    /```passage[^\n]*\n([\s\S]*?)```/g,
+    (_, inner: string) => inner.trimEnd() + "\n",
+  );
+  const passageIdx = text.indexOf("```passage");
+  if (passageIdx !== -1) {
+    const nl = text.indexOf("\n", passageIdx);
+    text =
+      nl === -1
+        ? text.slice(0, passageIdx)
+        : text.slice(0, passageIdx) + text.slice(nl + 1);
+  }
+
   text = trimPartialFenceTail(text);
-  return { text, toolPending: fenceIdx !== -1, pendingToolName };
+  return { text, toolPending: fenceIdx !== -1, pendingToolName, vocabPending };
 }
 
 /** Present-progressive label for the pulse shown while a tool block is
@@ -300,6 +339,25 @@ export function appendToolResults(content: string, results: ToolResult[]): strin
 
 const CJK_TARGETS = new Set(["zh", "ja", "ko"]);
 
+/** Script gap big enough for the paren-translation heuristics — see
+ *  the block comment above. Exported for the streaming renderer, which
+ *  applies the same rescue live (retro-blurring an already-typed
+ *  single-paren span the moment it closes). */
+export function isCjkTarget(lang: string): boolean {
+  return CJK_TARGETS.has(lang);
+}
+
+/** Does a parenthesized span read like an inline translation (rather
+ *  than a citation or a legit parenthetical)? Shared verdict between
+ *  `enforceTranslationBlur` (post-stream rewrite) and the streaming
+ *  typer's live blur. */
+export function looksLikeInlineTranslation(inside: string): boolean {
+  const trimmed = inside.trim();
+  if (trimmed.length < 4) return false;
+  if (CITATION_LEAD.test(trimmed)) return false;
+  return isMostlyLatin(trimmed);
+}
+
 function isMostlyLatin(s: string): boolean {
   let latin = 0;
   let total = 0;
@@ -339,12 +397,8 @@ export function enforceTranslationBlur(text: string, targetLang: string): string
       // Single-paren span, NOT preceded by `(` (avoid `((…)`) and NOT
       // followed by `)` (avoid `(…))`). Inside has no parens.
       /(?<!\()\(([^()]{4,})\)(?!\))/g,
-      (full, inside: string) => {
-        const trimmed = inside.trim();
-        if (CITATION_LEAD.test(trimmed)) return full;
-        if (!isMostlyLatin(trimmed)) return full;
-        return `((${inside}))`;
-      },
+      (full, inside: string) =>
+        looksLikeInlineTranslation(inside) ? `((${inside}))` : full,
     );
   }
   return parts.join("");

@@ -5,8 +5,8 @@
  * habits drawn from the recommended-mix matrix in
  * `docs/guides/study-guide.md`.
  *
- * Pure function. Inputs are workspace data (vocab list, sessions
- * list) + persisted settings (target level, deadline, manual
+ * Pure function. Inputs are workspace data (vocab list, review log,
+ * sessions list) + persisted settings (target level, deadline, manual
  * overrides). Output is a `LearningJourney` snapshot that the
  * dashboard widget, the Journey tab, and the AI Coach read from.
  *
@@ -23,13 +23,14 @@
  * (just call with current inputs) keeps the truth in one place.
  */
 
-import type { StudySession, VocabEntry, Workspace } from "./db";
+import type { StudySession, VocabEntry, VocabReview, Workspace } from "./db";
 import {
   hoursPerLevel,
   levelsForScale,
   type LevelInfo,
   type ScaleKind,
 } from "./level";
+import { currentGrowthBuckets } from "./vocab-growth";
 
 export type MilestoneStatus = "completed" | "in-progress" | "locked";
 
@@ -43,7 +44,8 @@ export type JourneyMilestone = {
   /** Short descriptor of the level ("Pre-intermediate"). Pulled from
    *  `LevelInfo.label`. */
   description: string;
-  /** Vocab the user needs at `mastered` to clear this milestone. */
+  /** Words known needed to clear this milestone (growth-chart
+   *  definition: studied and not lapsing). */
   vocabTarget: number;
   /** Recommended immersion hours by this milestone. Cumulative —
    *  starts at 0 for the first level and grows by `HOURS_PER_LEVEL`
@@ -107,8 +109,13 @@ export type LearningJourney = {
 
 export type ComputeJourneyInput = {
   workspace: Workspace;
-  /** All vocab rows for the workspace. Used to count `mastered`. */
+  /** All vocab rows for the workspace. Combined with `reviews` to
+   *  count words known. */
   vocab: VocabEntry[];
+  /** Workspace-wide review log. Feeds the same replay engine as the
+   *  vocab-growth chart so `currentVocab` matches every other "words
+   *  known" stat in the app. */
+  reviews: VocabReview[];
   /** All sessions for the workspace. Used to sum hours. */
   sessions: StudySession[];
   /** Resolved scale for the workspace (consult `scaleFor(lang)` if
@@ -137,7 +144,10 @@ export function computeLearningJourney(
     ? [...input.customLevels].sort((a, b) => a.minVocab - b.minVocab)
     : levelsForScale(input.scale);
 
-  const currentVocab = input.vocab.filter((v) => v.status === "mastered").length;
+  const currentVocab = currentGrowthBuckets({
+    vocab: input.vocab,
+    reviews: input.reviews,
+  }).known;
   const currentHours =
     input.sessions.reduce((acc, s) => acc + (s.durationSecs ?? 0), 0) / 3600;
 

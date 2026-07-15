@@ -8,6 +8,7 @@ import {
   type ChatMarkdownProps,
 } from "@/components/chat-markdown";
 import { ScopedErrorBoundary } from "@/components/error-boundary";
+import { PassageCard } from "@/components/passage-card";
 import { Tokenized } from "@/components/tokenized";
 import { VocabTable } from "@/components/vocab-table";
 import { AnalyzerSourceProvider } from "@/lib/analyzer-source-context";
@@ -93,6 +94,11 @@ function CodeBlock({ children }: { children: ReactNode }) {
   // reading + meaning, with save / add-to-list actions) rather than code.
   if (lang === "vocab") {
     return <VocabTable raw={text} />;
+  }
+  // A ```passage block is a generated reading text — serif card with
+  // click-to-define words, TTS, and an Add-to-Reader action.
+  if (lang === "passage") {
+    return <PassageCard raw={text} />;
   }
   const isCsv = lang === "csv" || lang === "tsv";
 

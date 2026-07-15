@@ -1,8 +1,10 @@
 mod api_server;
 mod commands;
+mod media_url;
 mod ocr;
 mod providers;
 mod tunnel;
+mod whisper_local;
 
 use std::sync::{Arc, Mutex as StdMutex};
 
@@ -16,10 +18,13 @@ use tauri_plugin_window_state::StateFlags;
 use crate::api_server::ApiServer;
 use crate::commands::{
     anki_invoke, chat_send, dict_fetch_cedict, dict_fetch_lang, edge_tts, hanzi_stroke,
-    list_addons, ollama_list_models, provider_list_models, provider_test, read_addon_entry,
-    reveal_addons_dir, tokenize_zh,
+    list_addons, media_probe, ollama_list_models, provider_list_models, provider_test,
+    read_addon_entry, reveal_addons_dir, tokenize_zh,
 };
 use crate::ocr::{ocr_image, ocr_image_layout, read_image_file};
+use crate::whisper_local::{
+    whisper_local_delete, whisper_local_download, whisper_local_models, whisper_local_transcribe,
+};
 
 /// Wrapped in an `Arc` and stuffed into Tauri state so the start/stop
 /// commands can reach it. The struct itself owns its shutdown channel and
@@ -104,7 +109,32 @@ async fn api_server_status(state: tauri::State<'_, ApiServerState>) -> Result<bo
 /// `isLoopbackRedirect` regex (`^[A-Za-z0-9_-]{16,128}$`) accepts it
 /// and short enough to fit in any URL parser.
 #[tauri::command]
-async fn oauth_begin(state: tauri::State<'_, ApiServerState>) -> Result<serde_json::Value, String> {
+async fn oauth_begin(
+    app: tauri::AppHandle,
+    state: tauri::State<'_, ApiServerState>,
+) -> Result<serde_json::Value, String> {
+    // The OAuth dance bounces the browser back to the local API server's
+    // loopback callback (`http://127.0.0.1:53210/oauth/callback`). That
+    // route only answers while the server is listening — and on a fresh
+    // install the "start on launch" marker (~/.tokori/api-autostart)
+    // doesn't exist, so `setup()` never brought it up. Without this the
+    // browser lands on a dead port and the sign-in silently times out
+    // after 60s. Bring it up on demand before we hand out the redirect;
+    // `start` short-circuits with `AlreadyRunning` when it's already up,
+    // so this is a cheap no-op on the common path and race-free if two
+    // sign-ins overlap. We deliberately don't write the autostart marker
+    // — this is a session-scoped listener for the sign-in, not an opt-in
+    // to the always-on MCP bridge.
+    let db_path = app
+        .path()
+        .app_config_dir()
+        .map_err(|e| format!("can't resolve app config dir: {e}"))?
+        .join("tokori.db");
+    match state.0.start(&db_path, app.clone()).await {
+        Ok(_) | Err(api_server::ApiError::AlreadyRunning) => {}
+        Err(e) => return Err(format!("couldn't start local API server: {e}")),
+    }
+
     use rand::RngCore;
     let mut bytes = [0u8; 16];
     rand::thread_rng().fill_bytes(&mut bytes);
@@ -222,6 +252,10 @@ struct GlobalSearchState {
     /// The currently-registered global shortcut, if any. Tracked so we
     /// can unregister it before re-registering with a new value.
     current_shortcut: StdMutex<Option<String>>,
+    /// Global shortcut for the voice-ask popup — registered/unregistered
+    /// independently of the search shortcut. Either one being active
+    /// keeps the tray + close-to-tray behaviour alive.
+    voice_shortcut: StdMutex<Option<String>>,
     /// The active tray icon id, if one has been built. Tracked so we
     /// can drop it when the user disables the feature.
     tray_id: StdMutex<Option<TrayIconId>>,
@@ -328,13 +362,120 @@ fn show_spotlight(app: &AppHandle) -> tauri::Result<()> {
     Ok(())
 }
 
+/// Linux-only: auto-grant WebKit permission requests (microphone,
+/// media devices) on a webview window. WebKit2GTK 4.1's
+/// `permission-request` signal has no default listener, and an
+/// unanswered request resolves to *deny* — getUserMedia rejects with
+/// "The request is not allowed by the user agent…" without the user
+/// ever seeing a prompt. The main window gets this in setup(); every
+/// runtime-created window that touches the mic (the voice-ask popup)
+/// must get it too, at creation time.
+#[cfg(target_os = "linux")]
+fn grant_webview_media_permissions(window: &tauri::WebviewWindow) {
+    use webkit2gtk::{PermissionRequestExt, WebViewExt};
+    let _ = window.with_webview(|webview| {
+        // `webview.inner()` is `&webkit2gtk::WebView` on Linux. The
+        // closure leaks via the signal handler — fine, the webview
+        // lives as long as the app.
+        webview.inner().connect_permission_request(|_w, req| {
+            req.allow();
+            true
+        });
+    });
+}
+
+#[cfg(not(target_os = "linux"))]
+fn grant_webview_media_permissions(_window: &tauri::WebviewWindow) {}
+
+fn show_voice_ask(app: &AppHandle) -> tauri::Result<()> {
+    // Same created-or-reused + focus-dance pattern as show_spotlight —
+    // see the walkthrough there for why the staircase of set_focus
+    // retries exists (Linux WMs with focus-stealing prevention drop
+    // activation requests that arrive from a global-shortcut hot-path).
+    let exists = app.get_webview_window("voiceask").is_some();
+    if exists {
+        if let Some(w) = app.get_webview_window("voiceask") {
+            w.show()?;
+            w.set_focus()?;
+        }
+    } else {
+        // Frontend reads `?voiceask=1` from window.location and renders
+        // the minimal VoiceAskApp instead of the full shell. Sized once
+        // at creation to fit the whole pill — runtime resizes are
+        // dropped on Linux compositors for transparent frameless
+        // always-on-top windows.
+        const W: f64 = 560.0;
+        const H: f64 = 180.0;
+        let mut builder = WebviewWindowBuilder::new(
+            app,
+            "voiceask",
+            WebviewUrl::App("index.html?voiceask=1".into()),
+        )
+        .title("Tokori Voice Ask")
+        .inner_size(W, H)
+        .resizable(false)
+        .decorations(false)
+        .transparent(true)
+        .always_on_top(true)
+        .skip_taskbar(true)
+        .visible(true)
+        .focused(true);
+        // Wispr-Flow-style placement: a slim pill floating bottom-center
+        // of the primary monitor, clear of taskbar/dock. The card inside
+        // anchors to the window's bottom edge (items-end), so the
+        // transparent slack sits above it. Falls back to plain centering
+        // when the monitor can't be resolved (odd Wayland setups).
+        if let Ok(Some(monitor)) = app.primary_monitor() {
+            let scale = monitor.scale_factor();
+            let msize = monitor.size().to_logical::<f64>(scale);
+            let mpos = monitor.position().to_logical::<f64>(scale);
+            let x = mpos.x + (msize.width - W) / 2.0;
+            let y = mpos.y + msize.height - H - 48.0;
+            builder = builder.position(x, y);
+        } else {
+            builder = builder.center();
+        }
+        let window = builder.build()?;
+        // Without this, getUserMedia in the popup dies with
+        // NotAllowedError on Linux — see the helper's docs.
+        grant_webview_media_permissions(&window);
+    }
+    let app_clone = app.clone();
+    tauri::async_runtime::spawn(async move {
+        for delay_ms in [40u64, 120, 280, 500] {
+            tokio::time::sleep(std::time::Duration::from_millis(delay_ms)).await;
+            let app_inner = app_clone.clone();
+            let _ = app_clone.run_on_main_thread(move || {
+                if let Some(w) = app_inner.get_webview_window("voiceask") {
+                    let _ = w.set_focus();
+                }
+            });
+        }
+        // VoiceAskApp listens for this to reset state + start recording.
+        let _ = app_clone.emit("tokori:voiceask-shown", ());
+    });
+    Ok(())
+}
+
 fn build_tray(app: &AppHandle) -> tauri::Result<()> {
     let state: tauri::State<GlobalSearchState> = app.state();
-    {
-        let tray_id = state.tray_id.lock().unwrap();
-        if tray_id.is_some() {
-            return Ok(());
-        }
+    // Hold the tray_id lock across the ENTIRE check-and-build, not just the
+    // check. `applyGlobalSearchOnBoot` and `applyVoiceAskOnBoot` fire
+    // back-to-back at boot (shell.tsx) and arrive as two concurrent async
+    // commands on separate runtime threads; when both features are enabled
+    // both reach `sync_tray_state` → here. A check-then-release-then-build
+    // guard lets both callers observe `None`, release, and each build a
+    // second `TrayIconBuilder` under the same TRAY_ID — which on Linux
+    // double-registers the StatusNotifierItem D-Bus object ("An object is
+    // already exported…") and paints a duplicate tray icon. Holding the
+    // guard serialises them: the loser blocks until the winner stores the
+    // id, then sees `is_some()` and bails. Safe to hold across `.build()`
+    // because this fn is synchronous (no await point) and the main thread
+    // never locks `tray_id`, so the GTK dispatch inside `.build()` cannot
+    // deadlock against us.
+    let mut tray_id = state.tray_id.lock().unwrap();
+    if tray_id.is_some() {
+        return Ok(());
     }
     let show_item = MenuItem::with_id(app, "tray-show", "Show Tokori", true, None::<&str>)?;
     let search_item = MenuItem::with_id(
@@ -344,8 +485,9 @@ fn build_tray(app: &AppHandle) -> tauri::Result<()> {
         true,
         None::<&str>,
     )?;
+    let voice_item = MenuItem::with_id(app, "tray-voice", "Ask by voice", true, None::<&str>)?;
     let quit_item = MenuItem::with_id(app, "tray-quit", "Quit", true, None::<&str>)?;
-    let menu = Menu::with_items(app, &[&show_item, &search_item, &quit_item])?;
+    let menu = Menu::with_items(app, &[&show_item, &search_item, &voice_item, &quit_item])?;
 
     let icon = app
         .default_window_icon()
@@ -361,6 +503,11 @@ fn build_tray(app: &AppHandle) -> tauri::Result<()> {
             "tray-search" => {
                 if let Err(e) = show_spotlight(app) {
                     log::warn!("show_spotlight failed: {e}");
+                }
+            }
+            "tray-voice" => {
+                if let Err(e) = show_voice_ask(app) {
+                    log::warn!("show_voice_ask failed: {e}");
                 }
             }
             "tray-quit" => {
@@ -382,7 +529,7 @@ fn build_tray(app: &AppHandle) -> tauri::Result<()> {
         })
         .build(app)?;
 
-    let mut tray_id = state.tray_id.lock().unwrap();
+    // `tray_id` is the guard acquired at the top of this fn — still held.
     *tray_id = Some(tray.id().clone());
     Ok(())
 }
@@ -469,6 +616,23 @@ fn build_app_menu(app: &AppHandle) -> tauri::Result<tauri::menu::Menu<tauri::Wry
         .build()
 }
 
+/// Recompute the tray + close-to-tray state from which global-shortcut
+/// features are currently on. Either feature alone needs the app to
+/// keep running in the tray after the main window closes; only when
+/// BOTH are off does closing the window quit again.
+fn sync_tray_state(app: &AppHandle) -> Result<(), String> {
+    let state: tauri::State<GlobalSearchState> = app.state();
+    let any_enabled = state.current_shortcut.lock().unwrap().is_some()
+        || state.voice_shortcut.lock().unwrap().is_some();
+    *state.close_to_tray.lock().unwrap() = any_enabled;
+    if any_enabled {
+        build_tray(app).map_err(|e| format!("build tray: {e}"))
+    } else {
+        destroy_tray(app);
+        Ok(())
+    }
+}
+
 #[tauri::command]
 async fn set_global_search_enabled(
     app: AppHandle,
@@ -500,20 +664,75 @@ async fn set_global_search_enabled(
             let mut current = state.current_shortcut.lock().unwrap();
             *current = Some(s);
         }
+    } else if let Some(w) = app.get_webview_window("spotlight") {
+        let _ = w.close();
+    }
+    sync_tray_state(&app)
+}
+
+#[tauri::command]
+async fn set_voice_ask_enabled(
+    app: AppHandle,
+    enabled: bool,
+    shortcut: Option<String>,
+) -> Result<(), String> {
+    let state: tauri::State<GlobalSearchState> = app.state();
+    {
+        let mut current = state.voice_shortcut.lock().unwrap();
+        if let Some(prev) = current.take() {
+            let _ = app.global_shortcut().unregister(prev.as_str());
+        }
+    }
+
+    if enabled {
+        let s = shortcut.unwrap_or_else(|| "CmdOrCtrl+Shift+Space".to_string());
+        app.global_shortcut()
+            .on_shortcut(s.as_str(), |handle, _shortcut, event| {
+                if event.state() == ShortcutState::Pressed {
+                    if let Err(e) = show_voice_ask(handle) {
+                        log::warn!("show_voice_ask failed: {e}");
+                    }
+                }
+            })
+            .map_err(|e| format!("register shortcut: {e}"))?;
         {
-            let mut close = state.close_to_tray.lock().unwrap();
-            *close = true;
+            let mut current = state.voice_shortcut.lock().unwrap();
+            *current = Some(s);
         }
-        build_tray(&app).map_err(|e| format!("build tray: {e}"))?;
-    } else {
-        {
-            let mut close = state.close_to_tray.lock().unwrap();
-            *close = false;
-        }
-        destroy_tray(&app);
-        if let Some(w) = app.get_webview_window("spotlight") {
-            let _ = w.close();
-        }
+    } else if let Some(w) = app.get_webview_window("voiceask") {
+        let _ = w.close();
+    }
+    sync_tray_state(&app)
+}
+
+/// Payload for `tokori:voice-ask` — the transcript handed from the
+/// voice-ask popup to the main window's chat.
+#[derive(Clone, serde::Serialize)]
+struct VoiceAskPayload {
+    text: String,
+    speak: bool,
+}
+
+#[tauri::command]
+async fn focus_main_with_ask(app: AppHandle, question: String, speak: bool) -> Result<(), String> {
+    if let Some(w) = app.get_webview_window("voiceask") {
+        let _ = w.hide();
+    }
+    focus_main_window(&app);
+    let _ = app.emit(
+        "tokori:voice-ask",
+        VoiceAskPayload {
+            text: question,
+            speak,
+        },
+    );
+    Ok(())
+}
+
+#[tauri::command]
+async fn hide_voice_ask(app: AppHandle) -> Result<(), String> {
+    if let Some(w) = app.get_webview_window("voiceask") {
+        w.hide().map_err(|e| e.to_string())?;
     }
     Ok(())
 }
@@ -2203,6 +2422,7 @@ pub fn run() {
     tauri::Builder::default()
         .manage(ApiServerState(Arc::new(ApiServer::new())))
         .manage(GlobalSearchState::default())
+        .manage(whisper_local::LocalWhisperState::default())
         .manage(tunnel::TunnelState::new())
         .setup(|app| {
             if cfg!(debug_assertions) {
@@ -2397,31 +2617,17 @@ pub fn run() {
             }
 
             // Linux-only: tell the WebView to grant microphone / media
-            // permission requests automatically. Without this the
-            // `permission-request` signal on WebKit2GTK 4.1 has no listener
-            // and the request resolves to the platform default — which is
-            // *deny*. The symptom is `getUserMedia` rejecting with
-            // `NotAllowedError: "The request is not allowed by the user
-            // agent or the platform in the current context, possibly
-            // because the user denied permission."` — even though the user
-            // never saw a prompt to deny in the first place. Granting
-            // unconditionally is fine here: this is a desktop app, not a
-            // browser sandbox. The user already trusted Tokori with disk
-            // and network when they installed it.
+            // permission requests automatically. Granting unconditionally
+            // is fine here: this is a desktop app, not a browser sandbox —
+            // the user already trusted Tokori with disk and network when
+            // they installed it. Runtime-created windows that use the mic
+            // (the voice-ask popup) get the same treatment at creation;
+            // see grant_webview_media_permissions for the full story.
             #[cfg(target_os = "linux")]
             {
                 use tauri::Manager;
-                use webkit2gtk::{PermissionRequestExt, WebViewExt};
                 if let Some(window) = app.get_webview_window("main") {
-                    let _ = window.with_webview(|webview| {
-                        // `webview.inner()` is `&webkit2gtk::WebView` on Linux.
-                        // The closure leaks via signal handler, but that's fine —
-                        // the webview lives for the lifetime of the app.
-                        webview.inner().connect_permission_request(|_w, req| {
-                            req.allow();
-                            true
-                        });
-                    });
+                    grant_webview_media_permissions(&window);
                 }
             }
 
@@ -2493,7 +2699,7 @@ pub fn run() {
         .plugin(
             tauri_plugin_window_state::Builder::default()
                 .with_state_flags(StateFlags::all().difference(StateFlags::DECORATIONS))
-                .with_denylist(&["spotlight"])
+                .with_denylist(&["spotlight", "voiceask"])
                 .build(),
         )
         // Menu-bar items (macOS — the only platform where setup()
@@ -2521,9 +2727,9 @@ pub fn run() {
         .on_window_event(|window, event| {
             if let WindowEvent::CloseRequested { api, .. } = event {
                 let label = window.label();
-                if label == "spotlight" {
-                    // The spotlight is always meant to live across the session;
-                    // X just dismisses it.
+                if label == "spotlight" || label == "voiceask" {
+                    // Both popups are meant to live across the session;
+                    // X just dismisses them.
                     api.prevent_close();
                     let _ = window.hide();
                     return;
@@ -2555,6 +2761,7 @@ pub fn run() {
             anki_invoke,
             tokenize_zh,
             hanzi_stroke,
+            media_probe,
             api_server_start,
             api_server_stop,
             api_server_status,
@@ -2571,9 +2778,16 @@ pub fn run() {
             ocr_image,
             ocr_image_layout,
             read_image_file,
+            whisper_local_models,
+            whisper_local_download,
+            whisper_local_delete,
+            whisper_local_transcribe,
             set_global_search_enabled,
+            set_voice_ask_enabled,
             focus_main_with_query,
+            focus_main_with_ask,
             hide_spotlight,
+            hide_voice_ask,
             list_addons,
             reveal_addons_dir,
             read_addon_entry,

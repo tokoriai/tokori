@@ -3,7 +3,6 @@ import {
   startOfToday,
   studyTotals,
   summarizeReviews,
-  vocabStatusCounts,
   wordsAddedSince,
 } from "@/lib/study-stats";
 import { longestStreak } from "@/lib/streak";
@@ -78,31 +77,6 @@ function mkReview(over: Partial<VocabReview>): VocabReview {
     ...over,
   };
 }
-
-describe("study-stats — vocabStatusCounts", () => {
-  it("counts by status, total, and active", () => {
-    const counts = vocabStatusCounts([
-      mkVocab({ status: "mastered" }),
-      mkVocab({ status: "mastered" }),
-      mkVocab({ status: "learning" }),
-      mkVocab({ status: "review", isActive: false }),
-      mkVocab({ status: "new" }),
-    ]);
-    expect(counts.mastered).toBe(2);
-    expect(counts.learning).toBe(1);
-    expect(counts.review).toBe(1);
-    expect(counts.new).toBe(1);
-    expect(counts.total).toBe(5);
-    expect(counts.active).toBe(4); // one review row is library-only
-  });
-
-  it("is all-zero for an empty list", () => {
-    const counts = vocabStatusCounts([]);
-    expect(counts.total).toBe(0);
-    expect(counts.mastered).toBe(0);
-    expect(counts.active).toBe(0);
-  });
-});
 
 describe("study-stats — summarizeReviews", () => {
   it("computes retention as the non-again share", () => {

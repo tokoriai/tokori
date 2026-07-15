@@ -244,6 +244,82 @@ export async function searchDict(
   return r.data;
 }
 
+export type MediaItem = {
+  id: number;
+  workspace_id: number;
+  kind: string;
+  title: string;
+  author: string | null;
+  source: string | null;
+  total_units: number | null;
+  unit_label: string;
+  completed_units: number;
+  total_seconds: number;
+  status: string;
+  cover_url: string | null;
+  notes: string | null;
+  created_at: number;
+  updated_at: number;
+};
+
+export async function listMedia(
+  workspaceId: number,
+  opts: { status?: string; kind?: string; limit?: number } = {},
+): Promise<MediaItem[]> {
+  const params = new URLSearchParams();
+  if (opts.status) params.set("status", opts.status);
+  if (opts.kind) params.set("kind", opts.kind);
+  if (opts.limit) params.set("limit", String(opts.limit));
+  const qs = params.toString();
+  const r = (await request(
+    "GET",
+    `/v1/workspaces/${workspaceId}/media${qs ? `?${qs}` : ""}`,
+  )) as Page<MediaItem>;
+  return r.data;
+}
+
+export async function addMedia(
+  workspaceId: number,
+  body: {
+    title: string;
+    url?: string;
+    kind?: "video" | "series" | "podcast";
+    author?: string;
+    total_units?: number;
+    unit_label?: string;
+    status?: string;
+    notes?: string;
+  },
+): Promise<MediaItem> {
+  // Idempotent on the canonical URL: re-adding a link returns the
+  // existing row instead of creating a duplicate.
+  return (await request(
+    "POST",
+    `/v1/workspaces/${workspaceId}/media`,
+    body,
+  )) as MediaItem;
+}
+
+export async function updateMedia(
+  mediaId: number,
+  patch: {
+    title?: string;
+    author?: string;
+    source?: string;
+    kind?: "video" | "series" | "podcast";
+    status?: string;
+    total_units?: number;
+    unit_label?: string;
+    completed_units?: number;
+    total_seconds?: number;
+    notes?: string;
+    delta_units?: number;
+    delta_seconds?: number;
+  },
+): Promise<MediaItem> {
+  return (await request("PATCH", `/v1/media/${mediaId}`, patch)) as MediaItem;
+}
+
 export async function health(): Promise<{ status: string; service: string; version: string }> {
   return (await request("GET", "/v1/health")) as {
     status: string;

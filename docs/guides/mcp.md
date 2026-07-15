@@ -117,6 +117,9 @@ system prompt or project-instructions file.
 | `create_collection`        | Create an empty collection.                                               |
 | `add_words_to_collection`  | Append words (by id, or upsert + link) to an existing collection.         |
 | `import_collection`        | One-shot: create a new collection AND populate it with a batch of words.  |
+| `list_media`               | The Immersion watch library (videos / series / podcasts) with progress.   |
+| `add_media`                | Queue media on the watch library; idempotent on the canonical URL.        |
+| `update_media`             | Patch a media item — status moves, metadata, `delta_units` progress bumps.|
 | `health`                   | `{ status, service, version }` — verify the app is running.               |
 
 Every tool maps 1-to-1 to a route in the local HTTP API

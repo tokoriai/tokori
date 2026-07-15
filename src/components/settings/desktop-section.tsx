@@ -1,14 +1,15 @@
-// Desktop / Global Search settings.
+// Desktop settings — global shortcut features.
 //
-// Optional power-user feature: when enabled, Tokori stays in the
-// system tray after the main window is closed and registers an OS-
-// level shortcut (default Ctrl/Cmd+Shift+F) that pops a small
-// spotlight popup from anywhere — useful for quick dictionary
-// look-ups while you're in a browser, IDE, or any other app.
+// Two optional power-user features, each backed by an OS-level
+// shortcut. Enabling either keeps Tokori in the system tray after the
+// main window is closed (so the shortcut stays alive):
+//   • Global search (default Ctrl/Cmd+Shift+F) — spotlight popup for
+//     quick dictionary look-ups from any app.
+//   • Voice ask (default Ctrl/Cmd+Shift+Space) — voice popup: speak a
+//     question, it lands in your open Tokori conversation.
 //
-// The toggle + chosen shortcut persist in the settings table; on app
-// boot, a top-level effect (DesktopSync) re-applies them so the
-// feature survives a relaunch.
+// Toggles + chosen shortcuts persist in the settings table; on app
+// boot, shell.tsx re-applies them so the features survive a relaunch.
 
 import { useEffect, useRef, useState } from "react";
 import { Keyboard, Loader2, Power, RotateCcw, Sparkles } from "lucide-react";
@@ -19,28 +20,103 @@ import { Label } from "@/components/ui/label";
 import { getSetting, setSetting } from "@/lib/db";
 import {
   DEFAULT_GLOBAL_SHORTCUT,
+  DEFAULT_VOICE_ASK_SHORTCUT,
   GLOBAL_SEARCH_ENABLED_KEY,
   GLOBAL_SEARCH_SHORTCUT_KEY,
+  VOICE_ASK_ENABLED_KEY,
+  VOICE_ASK_SHORTCUT_KEY,
 } from "@/lib/global-search";
 import { cn } from "@/lib/utils";
 
 export function DesktopSection() {
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="font-serif text-2xl tracking-tight">Desktop</h2>
+        <p className="mt-1 text-[13.5px] text-muted-foreground">
+          OS-level integrations — keep Tokori in the system tray and
+          summon quick popups with global shortcuts.
+        </p>
+      </div>
+
+      <ShortcutFeatureCard
+        title="Global search"
+        blurb="When on, Tokori minimises to the system tray instead of quitting, and the chosen shortcut opens a spotlight popup from anywhere on your desktop."
+        command="set_global_search_enabled"
+        enabledKey={GLOBAL_SEARCH_ENABLED_KEY}
+        shortcutKey={GLOBAL_SEARCH_SHORTCUT_KEY}
+        defaultShortcut={DEFAULT_GLOBAL_SHORTCUT}
+        successLabel="Global search"
+        hint={
+          <>
+            Avoid Ctrl+F unless you're OK losing browser "find on page"
+            while Tokori is running.
+          </>
+        }
+      />
+
+      <ShortcutFeatureCard
+        title="Voice ask"
+        blurb="Summon a small voice prompt from anywhere: speak your question, press Enter, and it lands in your open Tokori conversation — with the tutor's answer read aloud if you like."
+        command="set_voice_ask_enabled"
+        enabledKey={VOICE_ASK_ENABLED_KEY}
+        shortcutKey={VOICE_ASK_SHORTCUT_KEY}
+        defaultShortcut={DEFAULT_VOICE_ASK_SHORTCUT}
+        successLabel="Voice ask"
+        hint={
+          <>
+            Uses your dictation engine from Settings → Voice — on Linux
+            that means a Whisper-capable OpenAI or Groq key, since the
+            webview has no built-in speech recognition.
+          </>
+        }
+      />
+    </div>
+  );
+}
+
+// ─── Shortcut feature card ───────────────────────────────────────────────
+//
+// One card per global-shortcut feature: enable/disable button + a
+// ShortcutRecorder wired to a Tauri command and a settings-table pair.
+// Kept generic so global search and voice ask stay pixel-identical.
+
+function ShortcutFeatureCard({
+  title,
+  blurb,
+  command,
+  enabledKey,
+  shortcutKey,
+  defaultShortcut,
+  successLabel,
+  hint,
+}: {
+  title: string;
+  blurb: string;
+  /** Tauri command taking { enabled, shortcut }. */
+  command: string;
+  enabledKey: string;
+  shortcutKey: string;
+  defaultShortcut: string;
+  successLabel: string;
+  hint?: React.ReactNode;
+}) {
   const [enabled, setEnabled] = useState(false);
-  const [shortcut, setShortcut] = useState(DEFAULT_GLOBAL_SHORTCUT);
+  const [shortcut, setShortcut] = useState(defaultShortcut);
   const [busy, setBusy] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     void (async () => {
       const [e, s] = await Promise.all([
-        getSetting(GLOBAL_SEARCH_ENABLED_KEY),
-        getSetting(GLOBAL_SEARCH_SHORTCUT_KEY),
+        getSetting(enabledKey),
+        getSetting(shortcutKey),
       ]);
       setEnabled(e === "1");
       if (s) setShortcut(s);
       setLoaded(true);
     })();
-  }, []);
+  }, [enabledKey, shortcutKey]);
 
   async function applyAndPersist(nextEnabled: boolean, nextShortcut: string) {
     if (!isTauri()) {
@@ -49,25 +125,25 @@ export function DesktopSection() {
     }
     setBusy(true);
     try {
-      await invoke("set_global_search_enabled", {
+      await invoke(command, {
         enabled: nextEnabled,
         shortcut: nextShortcut,
       });
       await Promise.all([
-        setSetting(GLOBAL_SEARCH_ENABLED_KEY, nextEnabled ? "1" : "0"),
-        setSetting(GLOBAL_SEARCH_SHORTCUT_KEY, nextShortcut),
+        setSetting(enabledKey, nextEnabled ? "1" : "0"),
+        setSetting(shortcutKey, nextShortcut),
       ]);
       setEnabled(nextEnabled);
       setShortcut(nextShortcut);
       if (nextEnabled) {
-        toast.success(`Global search active`, {
+        toast.success(`${successLabel} active`, {
           description: `Press ${nextShortcut.replace(/CmdOrCtrl/g, "Ctrl/⌘")} from anywhere.`,
         });
       } else {
-        toast.success("Global search disabled");
+        toast.success(`${successLabel} disabled`);
       }
     } catch (err) {
-      toast.error("Couldn't apply global search settings", {
+      toast.error(`Couldn't apply ${successLabel.toLowerCase()} settings`, {
         description: err instanceof Error ? err.message : String(err),
       });
     } finally {
@@ -76,89 +152,70 @@ export function DesktopSection() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="font-serif text-2xl tracking-tight">Desktop</h2>
-        <p className="mt-1 text-[13.5px] text-muted-foreground">
-          OS-level integrations — keep Tokori in the system tray and
-          summon a quick search popup with a global shortcut.
-        </p>
+    <section className="rounded-2xl border border-border bg-card px-5 py-4">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <h3 className="text-[14px] font-semibold tracking-tight">{title}</h3>
+          <p className="mt-1 text-[12.5px] text-muted-foreground">{blurb}</p>
+        </div>
+        <Button
+          size="sm"
+          variant={enabled ? "outline" : "default"}
+          onClick={() => void applyAndPersist(!enabled, shortcut)}
+          disabled={busy || !loaded}
+          className="shrink-0"
+        >
+          {busy ? (
+            <Loader2 className="size-3.5 animate-spin" />
+          ) : enabled ? (
+            <Power className="size-3.5" />
+          ) : (
+            <Sparkles className="size-3.5" />
+          )}
+          {enabled ? "Disable" : "Enable"}
+        </Button>
       </div>
 
-      <section className="rounded-2xl border border-border bg-card px-5 py-4">
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <h3 className="text-[14px] font-semibold tracking-tight">
-              Global search
-            </h3>
-            <p className="mt-1 text-[12.5px] text-muted-foreground">
-              When on, Tokori minimises to the system tray instead of
-              quitting, and the chosen shortcut opens a spotlight popup
-              from anywhere on your desktop.
-            </p>
-          </div>
+      <div className="mt-4 grid gap-2 border-t border-border/60 pt-4">
+        <Label className="text-[12px]">Shortcut</Label>
+        <div className="flex items-center gap-2">
+          <ShortcutRecorder
+            value={shortcut}
+            onCapture={(next) => {
+              setShortcut(next);
+              // Auto-apply if the feature is on so the new key
+              // combo takes effect immediately. Otherwise just
+              // remember it; next "Enable" click will register it.
+              if (enabled) void applyAndPersist(true, next);
+              else void setSetting(shortcutKey, next);
+            }}
+            disabled={busy || !loaded}
+          />
           <Button
             size="sm"
-            variant={enabled ? "outline" : "default"}
-            onClick={() => void applyAndPersist(!enabled, shortcut)}
-            disabled={busy || !loaded}
-            className="shrink-0"
+            variant="ghost"
+            onClick={() => {
+              setShortcut(defaultShortcut);
+              if (enabled) void applyAndPersist(true, defaultShortcut);
+              else void setSetting(shortcutKey, defaultShortcut);
+            }}
+            disabled={busy || !loaded || shortcut === defaultShortcut}
+            title="Reset to default"
           >
-            {busy ? (
-              <Loader2 className="size-3.5 animate-spin" />
-            ) : enabled ? (
-              <Power className="size-3.5" />
-            ) : (
-              <Sparkles className="size-3.5" />
-            )}
-            {enabled ? "Disable" : "Enable"}
+            <RotateCcw className="size-3.5" />
+            Reset
           </Button>
         </div>
-
-        <div className="mt-4 grid gap-2 border-t border-border/60 pt-4">
-          <Label htmlFor="global-shortcut" className="text-[12px]">
-            Shortcut
-          </Label>
-          <div className="flex items-center gap-2">
-            <ShortcutRecorder
-              value={shortcut}
-              onCapture={(next) => {
-                setShortcut(next);
-                // Auto-apply if the feature is on so the new key
-                // combo takes effect immediately. Otherwise just
-                // remember it; next "Enable" click will register it.
-                if (enabled) void applyAndPersist(true, next);
-                else void setSetting(GLOBAL_SEARCH_SHORTCUT_KEY, next);
-              }}
-              disabled={busy || !loaded}
-            />
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => {
-                setShortcut(DEFAULT_GLOBAL_SHORTCUT);
-                if (enabled) void applyAndPersist(true, DEFAULT_GLOBAL_SHORTCUT);
-                else void setSetting(GLOBAL_SEARCH_SHORTCUT_KEY, DEFAULT_GLOBAL_SHORTCUT);
-              }}
-              disabled={busy || !loaded || shortcut === DEFAULT_GLOBAL_SHORTCUT}
-              title="Reset to default"
-            >
-              <RotateCcw className="size-3.5" />
-              Reset
-            </Button>
-          </div>
-          <p className="text-[11.5px] text-muted-foreground">
-            Click the box, then press the key combination you want — modifier(s) plus a key.
-            Use the Reset button to go back to{" "}
-            <code className="rounded bg-muted px-1 py-0.5 font-mono text-[11px]">
-              {DEFAULT_GLOBAL_SHORTCUT}
-            </code>
-            . Avoid Ctrl+F unless you're OK losing browser
-            "find on page" while Tokori is running.
-          </p>
-        </div>
-      </section>
-    </div>
+        <p className="text-[11.5px] text-muted-foreground">
+          Click the box, then press the key combination you want —
+          modifier(s) plus a key. Use the Reset button to go back to{" "}
+          <code className="rounded bg-muted px-1 py-0.5 font-mono text-[11px]">
+            {defaultShortcut}
+          </code>
+          {hint ? <>. {hint}</> : "."}
+        </p>
+      </div>
+    </section>
   );
 }
 

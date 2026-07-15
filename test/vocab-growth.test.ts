@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   computeVocabGrowth,
+  currentGrowthBuckets,
   type GrowthReview,
   type GrowthVocab,
 } from "@/lib/vocab-growth";
@@ -297,5 +298,49 @@ describe("computeVocabGrowth", () => {
     // Today's bucket should be Learning, not Known.
     expect(rows[rows.length - 1].learning).toBe(1);
     expect(rows[rows.length - 1].known).toBe(0);
+  });
+});
+
+describe("currentGrowthBuckets", () => {
+  it("returns all-zero buckets for empty vocab", () => {
+    expect(currentGrowthBuckets({ vocab: [], reviews: [], now: NOW_MS })).toEqual({
+      known: 0,
+      due: 0,
+      learning: 0,
+      leeches: 0,
+    });
+  });
+
+  it("equals the chart's final data point regardless of window length", () => {
+    // This is the invariant every "Words known" stat relies on: the KPI
+    // (days-agnostic) must match the last row of whatever period the
+    // chart is showing, since the replay applies all reviews up to
+    // today's day-end either way.
+    const reviewAt = NOW_S - 10 * DAY;
+    const input = {
+      vocab: [
+        v({ id: 1, createdAt: NOW_S - 30 * DAY, status: "review" as const, stability: 30, dueAt: NOW_S + 20 * DAY, lastReview: reviewAt }),
+        v({ id: 2, createdAt: NOW_S - 30 * DAY, status: "review" as const, stability: 5, dueAt: NOW_S - 5 * DAY, lastReview: reviewAt }),
+        v({ id: 3, createdAt: NOW_S - 30 * DAY, status: "learning" as const, stability: 0.01, dueAt: NOW_S - 1 * DAY, lastReview: reviewAt }),
+        v({ id: 4, createdAt: NOW_S - 2 * DAY }),
+      ],
+      reviews: [
+        r({ vocabId: 1, newStatus: "review", newDueAt: NOW_S + 20 * DAY, reviewedAt: reviewAt }),
+        r({ vocabId: 2, newStatus: "review", newDueAt: NOW_S - 5 * DAY, reviewedAt: reviewAt }),
+        r({ vocabId: 3, grade: "again", newStatus: "learning", newDueAt: NOW_S - 1 * DAY, reviewedAt: reviewAt }),
+      ],
+      now: NOW_MS,
+    };
+    const buckets = currentGrowthBuckets(input);
+    expect(buckets).toEqual({ known: 2, due: 1, learning: 2, leeches: 0 });
+    for (const days of [7, 30, 365]) {
+      const last = computeVocabGrowth({ ...input, days }).at(-1)!;
+      expect(buckets).toEqual({
+        known: last.known,
+        due: last.due,
+        learning: last.learning,
+        leeches: last.leeches,
+      });
+    }
   });
 });

@@ -6,6 +6,11 @@
  * live — raises a dismissible toast offering to restart into it. It
  * renders nothing.
  *
+ * The check runs once per launch by design: no background polling loop.
+ * A user who dismisses the toast is left alone until the next launch,
+ * and Settings → About offers a manual "Check for updates" for anyone
+ * who wants to look sooner.
+ *
  * The check is inert wherever it should be: `checkForUpdate()` no-ops
  * off the packaged desktop build, and the dev guard below keeps a
  * published release from nagging while you iterate (`tauri dev` reports

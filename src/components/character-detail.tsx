@@ -550,9 +550,27 @@ export function CharacterDetail({ char, lang }: Props) {
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0 space-y-2">
               <div className="flex items-end gap-3">
-                <div className="font-serif text-7xl leading-none tracking-tight sm:text-8xl">
+                {/* Click-to-copy: the headword is what users take to
+                    other apps (Anki, a chat, a search bar), so the big
+                    glyphs themselves are the copy target — no tiny
+                    icon to hunt for. Copies the DISPLAYED form (incl.
+                    the traditional/simplified preference). */}
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(headword);
+                      toast.success(`Copied “${headword}”`);
+                    } catch {
+                      toast.error("Couldn't access the clipboard.");
+                    }
+                  }}
+                  title="Click to copy"
+                  aria-label={`Copy ${headword} to clipboard`}
+                  className="cursor-pointer text-left font-serif text-7xl leading-none tracking-tight transition-opacity hover:opacity-75 active:opacity-60 sm:text-8xl"
+                >
                   {headword}
-                </div>
+                </button>
                 {entry && (
                   <SpeakButton
                     text={entry.word}

@@ -23,7 +23,6 @@ import {
   Sparkles,
   Square,
   Trash2,
-  Minus,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -43,12 +42,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -94,6 +87,7 @@ import {
 } from "@/lib/db";
 import { filterAndOrderLibrary } from "@/lib/library-order";
 import { isMinutesUnit, singularUnitLabel } from "@/lib/library-units";
+import { isMediaKind } from "@/lib/media/kinds";
 import { queueCustomStudy } from "@/lib/study/custom-study";
 import { useWorkspace } from "@/lib/workspace-context";
 import { setWorkspaceFocus } from "@/lib/focus";
@@ -102,34 +96,23 @@ import { navigateToTab } from "@/lib/nav-event";
 import { HOSTED } from "@/lib/build-flags";
 import { cn } from "@/lib/utils";
 import { useChapterAdvanceFlow } from "@/components/chapter-advance-flow";
+import { ItemStatusMenu, Stepper } from "@/components/library-item-controls";
 import { PackImportDialog } from "@/components/pack-import-dialog";
 import type { TabId } from "@/components/shell/shell";
 
+// Media kinds (video / series / podcast) render in the Immersion view,
+// not here — but the Record stays exhaustive so a stray row can still
+// resolve an icon instead of crashing the card.
 const KIND_META: Record<LibraryKind, { label: string; icon: React.ComponentType<{ className?: string }>; defaultUnit: string }> = {
   book: { label: "Book", icon: BookOpen, defaultUnit: "pages" },
   ebook: { label: "Ebook", icon: BookOpen, defaultUnit: "chapters" },
   textbook: { label: "Textbook", icon: Library, defaultUnit: "chapters" },
   video: { label: "Video", icon: Film, defaultUnit: "minutes" },
+  series: { label: "Series", icon: Film, defaultUnit: "episodes" },
   article: { label: "Article", icon: Newspaper, defaultUnit: "minutes" },
   podcast: { label: "Podcast", icon: Mic, defaultUnit: "episodes" },
   other: { label: "Other", icon: Headphones, defaultUnit: "units" },
 };
-
-const STATUS_BADGE: Record<LibraryStatus, string> = {
-  active: "border-emerald-500/40 text-emerald-700 dark:text-emerald-300",
-  paused: "border-amber-500/40 text-amber-700 dark:text-amber-300",
-  finished: "border-violet-500/40 text-violet-700 dark:text-violet-300",
-  dropped: "border-muted-foreground/40 text-muted-foreground",
-};
-
-const STATUS_DOT: Record<LibraryStatus, string> = {
-  active: "bg-emerald-500",
-  paused: "bg-amber-500",
-  finished: "bg-violet-500",
-  dropped: "bg-muted-foreground",
-};
-
-const STATUS_ORDER: LibraryStatus[] = ["active", "paused", "finished", "dropped"];
 
 /** Shared status writer for the badge menu + the textbook quick
  *  button. Goes through setLibraryStatus (a targeted UPDATE) so a
@@ -152,9 +135,8 @@ async function applyLibraryStatus(
   await onChanged();
 }
 
-/** The status badge, made interactive — click it to move the item
- *  between active / paused / finished / dropped without opening the
- *  editor dialog. Used on the card and the detail header. */
+/** Library flavor of the shared status badge menu — binds the item and
+ *  refresh callback into the textbook-aware writer above. */
 function StatusMenu({
   item,
   onChanged,
@@ -163,34 +145,10 @@ function StatusMenu({
   onChanged: () => void | Promise<void>;
 }) {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Badge asChild variant="outline" className={cn("text-[10px]", STATUS_BADGE[item.status])}>
-          <button
-            type="button"
-            aria-label={`Status: ${item.status} — change`}
-            title="Change status"
-            className="cursor-pointer capitalize transition-colors hover:bg-accent/60"
-          >
-            {item.status}
-            <ChevronDown className="size-2.5! opacity-60" />
-          </button>
-        </Badge>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-36">
-        {STATUS_ORDER.map((s) => (
-          <DropdownMenuItem
-            key={s}
-            onSelect={() => void applyLibraryStatus(item, s, onChanged)}
-            className="gap-2 text-[12.5px] capitalize"
-          >
-            <span className={cn("size-1.5 shrink-0 rounded-full", STATUS_DOT[s])} />
-            {s}
-            {s === item.status && <Check className="ml-auto size-3.5" />}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <ItemStatusMenu
+      status={item.status}
+      applyStatus={(s) => void applyLibraryStatus(item, s, onChanged)}
+    />
   );
 }
 
@@ -222,52 +180,6 @@ function QuickStatusButton({
       {active ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}
       {active ? "Pause" : "Make active"}
     </Button>
-  );
-}
-
-/** Segmented − | + control. The plus side carries the label ("+1 page",
- *  "+10 min") so the pair reads as one adjuster for one quantity — the
- *  old layout's bare "−" floating between two unrelated "+" buttons
- *  read as three separate actions. */
-function Stepper({
-  label,
-  minusTitle,
-  plusTitle,
-  onMinus,
-  onPlus,
-  minusDisabled,
-}: {
-  label: string;
-  minusTitle: string;
-  plusTitle: string;
-  onMinus: () => void;
-  onPlus: () => void;
-  minusDisabled?: boolean;
-}) {
-  return (
-    <div className="inline-flex h-7 items-stretch overflow-hidden rounded-md border border-border">
-      <button
-        type="button"
-        onClick={onMinus}
-        disabled={minusDisabled}
-        title={minusTitle}
-        aria-label={minusTitle}
-        className="flex items-center px-1.5 text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground disabled:pointer-events-none disabled:opacity-35"
-      >
-        <Minus className="size-3.5" />
-      </button>
-      <div className="w-px shrink-0 bg-border" aria-hidden />
-      <button
-        type="button"
-        onClick={onPlus}
-        title={plusTitle}
-        aria-label={plusTitle}
-        className="flex items-center gap-1 px-2 text-[12px] font-medium transition-colors hover:bg-accent/60"
-      >
-        <Plus className="size-3.5" />
-        {label}
-      </button>
-    </div>
   );
 }
 
@@ -305,10 +217,14 @@ export function LibraryView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspace?.id]);
 
+  // Watch/listen media belongs to the Immersion view — the Library
+  // shows the print side of the split (see src/lib/media/kinds.ts).
+  const readingItems = useMemo(() => items.filter((i) => !isMediaKind(i.kind)), [items]);
+
   // Pure filter/sort lives in lib/library-order so the rules ("All"
   // keeps chronological order with active floated to the top; specific
   // statuses are a plain where) stay unit-testable.
-  const filtered = useMemo(() => filterAndOrderLibrary(items, filter), [items, filter]);
+  const filtered = useMemo(() => filterAndOrderLibrary(readingItems, filter), [readingItems, filter]);
 
   const selectedItem = useMemo(
     () => items.find((i) => i.id === selectedItemId) ?? null,
@@ -340,8 +256,8 @@ export function LibraryView({
           <div>
             <h1 className="font-serif text-3xl tracking-tight">Library</h1>
             <p className="mt-1 text-[13.5px] text-muted-foreground">
-              Books, textbooks, videos, articles, podcasts — track what you're consuming
-              and how far you've gotten.
+              Books, textbooks, articles — track what you're reading and how far
+              you've gotten. Shows and podcasts live in Immersion.
             </p>
           </div>
           <div className="flex shrink-0 gap-2">
@@ -361,7 +277,7 @@ export function LibraryView({
         </div>
 
         <div className="mx-auto mt-5 flex max-w-4xl xl:max-w-6xl 2xl:max-w-7xl flex-wrap gap-1 rounded-full border border-border bg-card p-1 w-fit">
-          {(["all", "active", "paused", "finished", "dropped"] as const).map((s) => (
+          {(["all", "planned", "active", "paused", "finished", "dropped"] as const).map((s) => (
             <button
               key={s}
               onClick={() => setFilter(s)}
@@ -384,7 +300,7 @@ export function LibraryView({
             <EmptyState
               onAdd={() => setEditing("new")}
               onRedeem={() => setShowPack(true)}
-              hasItems={items.length > 0}
+              hasItems={readingItems.length > 0}
             />
           ) : (
             <ul className="grid gap-3 md:grid-cols-2">
@@ -1333,7 +1249,7 @@ function EmptyState({
       <Library className="mx-auto mb-3 size-7 text-muted-foreground" />
       <h3 className="font-serif text-2xl tracking-tight">Track what you're working through.</h3>
       <p className="mx-auto mt-2 max-w-md text-[13.5px] text-muted-foreground">
-        Add a textbook, novel, or podcast — or redeem a pack to
+        Add a textbook, novel, or article — or redeem a pack to
         get a full curriculum (HSK, JLPT, textbook chapters) preloaded. Log
         progress as you go and watch the immersion hours stack up.
       </p>
@@ -1440,11 +1356,14 @@ function ItemEditor({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {Object.entries(KIND_META).map(([k, m]) => (
-                  <SelectItem key={k} value={k}>
-                    {m.label}
-                  </SelectItem>
-                ))}
+                {Object.entries(KIND_META)
+                  // Watch/listen kinds are added from the Immersion view.
+                  .filter(([k]) => !isMediaKind(k as LibraryKind))
+                  .map(([k, m]) => (
+                    <SelectItem key={k} value={k}>
+                      {m.label}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>
@@ -1489,6 +1408,7 @@ function ItemEditor({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="planned">Planned</SelectItem>
                 <SelectItem value="active">Active</SelectItem>
                 <SelectItem value="paused">Paused</SelectItem>
                 <SelectItem value="finished">Finished</SelectItem>

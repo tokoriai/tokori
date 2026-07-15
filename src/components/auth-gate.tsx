@@ -511,39 +511,24 @@ function CenteredCard({ children }: { children: React.ReactNode }) {
 function Brand() {
   return (
     <div className="flex items-center gap-2">
-      <BrandSvg className="size-7" />
+      <BrandMark className="size-7" />
       <span className="font-serif text-lg font-semibold tracking-tight">{APP_NAME}</span>
     </div>
   );
 }
 
-function BrandSvg({ className }: { className?: string }) {
-  // Inlined cockatoo silhouette — kept in sync with the favicon +
-  // marketing logo (docs/public/favicon.svg) so the gate carries the
-  // current brand mark without depending on an external asset path.
-  // `currentColor` + the evenodd eye-hole keep it transparent and
-  // theme-aware (black on light, white on dark, no background fill).
+function BrandMark({ className }: { className?: string }) {
+  // The packaged app icon (public/logo.png) — the same asset the title
+  // bar and the favicon use, so the gate carries the real brand mark
+  // instead of a hand-drawn copy that drifts. BASE_URL keeps the path
+  // right on the hosted build, which serves the SPA under /app/.
   return (
-    <svg
-      viewBox="0 0 64 64"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-      fillRule="evenodd"
-      role="img"
-      aria-label={APP_NAME}
+    <img
+      src={`${import.meta.env.BASE_URL}logo.png`}
+      alt=""
+      draggable={false}
       className={className}
-    >
-      {/* Crest: 5 swept-back feathers, leftmost shortest. */}
-      <path d="M22 22 L18 4 L26 18 Z" />
-      <path d="M27 19 L28 2 L34 18 Z" />
-      <path d="M33 18 L46 6 L40 22 Z" />
-      <path d="M40 22 L56 14 L46 28 Z" />
-      <path d="M44 28 L60 26 L48 34 Z" />
-      {/* Head + body; eye cut as a transparent hole via evenodd. */}
-      <path d="M16 32 C 16 23 23 18 32 18 C 42 18 49 25 49 33 C 49 37 47 40 45 42 C 48 48 53 53 58 56 L 58 60 L 28 60 C 19 60 13 53 13 44 C 13 38 14 34 16 32 Z M 26 28 a 2.5 2.5 0 1 0 5 0 a 2.5 2.5 0 1 0 -5 0 Z" />
-      {/* Beak: hooked, pointing forward-down from the lower-front. */}
-      <path d="M16 33 L 5 35 Q 3 37 5 39 Q 7 41 11 41 L 18 39 Z" />
-    </svg>
+    />
   );
 }
 

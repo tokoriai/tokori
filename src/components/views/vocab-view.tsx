@@ -323,8 +323,10 @@ export function VocabView() {
       if (e.createdAt >= weekAgo) addedThisWeek += 1;
       if (e.lastReview != null && e.lastReview >= startOfTodaySec) reviewedToday += 1;
     }
-    // "Known" — what the simplifier and the milestone tracker treat as words
-    // you can read without help. Mastered + Review.
+    // "Known" — status-level approximation of the app-wide words-known
+    // definition (studied and not lapsing): Mastered + Review. Deliberately
+    // status-based, not the growth-chart replay, so the number always agrees
+    // with the status chips and table rows it summarises.
     const known = counts.review + counts.mastered;
     const total = visibleEntries.length;
     const masteryPct = total === 0 ? 0 : Math.round((known / total) * 100);

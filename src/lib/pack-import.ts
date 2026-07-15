@@ -24,12 +24,16 @@
  *     "license":     "All rights reserved...",
  *     "collections": [Collection],             // optional
  *     "textbooks":   [Textbook],               // optional
+ *     "media":       [MediaItem],              // optional — Immersion recommendations
  *     "dictionary":  Dictionary | null,        // optional (rare)
  *   }
  *
  * Collection: { id, name, description?, words: Word[] }
  * Textbook:   { id, title, author?, totalUnits, unitLabel?, chapters: Chapter[] }
  * Chapter:    { position, title, vocab?: Word[], notes?: string, body?: string }
+ * MediaItem:  { id, kind: video|series|podcast, title, author?, url?,
+ *               coverUrl?, totalUnits?, unitLabel?, notes?, episodes?: Episode[] }
+ * Episode:    { position, title, vocab?: Word[] }
  * Word:       { word, reading?, gloss? }
  *
  * The importer creates:
@@ -38,6 +42,16 @@
  *   - one `library_chapter` per Chapter
  *   - one auto-collection per textbook chapter (so each chapter's vocab is
  *     drillable on its own)
+ *   - one `library_item` per `MediaItem` (media kind → renders in the
+ *     Immersion view; status 'planned' so recommendations land in the
+ *     "Up next" queue, not as active commitments). `url` becomes the
+ *     row's `source` — the same field the extension / local API match
+ *     on — so a video the user already listed by hand isn't duplicated,
+ *     and opening the card works. URL-less entries fall back to the
+ *     `pack:<packId>:<id>` source tag for idempotency.
+ *   - optional per-episode `library_chapters` (+ per-episode collections
+ *     when episodes ship vocab — the same episode→SRS bridge textbook
+ *     chapters get)
  *   - vocab entries via `saveVocab` (idempotent on workspace+word)
  */
 
@@ -59,6 +73,8 @@ import {
 } from "./db";
 import { HOSTED } from "./build-flags";
 import { cloudImportPack } from "./cloud-client";
+import { MEDIA_DEFAULT_UNIT, MEDIA_KINDS, type MediaKind } from "./media/kinds";
+import { mediaUrlsMatch } from "./media/url";
 
 // ── Pack format types ─────────────────────────────────────────────────────
 
@@ -97,6 +113,36 @@ export type PackTextbook = {
   chapters: PackChapter[];
 };
 
+export type PackMediaEpisode = {
+  /** 0-indexed within the media item, like textbook chapters. */
+  position: number;
+  title: string;
+  /** Words this episode introduces — stored as a per-episode collection
+   *  and linked to the chapter (the episode→SRS bridge). */
+  vocab?: PackWord[];
+};
+
+export type PackMediaItem = {
+  /** Stable within the pack — the idempotency fallback when no url. */
+  id: string;
+  kind: MediaKind;
+  title: string;
+  /** Channel / studio / host. */
+  author?: string | null;
+  /** Watch link. Becomes the library row's `source`, which powers the
+   *  card's open button, thumbnails, and extension/API dedupe. */
+  url?: string | null;
+  coverUrl?: string | null;
+  /** Minutes for a single video; episode count for series/podcasts.
+   *  Defaults to episodes.length when episodes ship, else unknown. */
+  totalUnits?: number | null;
+  /** Defaults per kind: video → "minutes", series/podcast → "episodes". */
+  unitLabel?: string | null;
+  /** Why it's recommended / level guidance — lands on the card. */
+  notes?: string | null;
+  episodes?: PackMediaEpisode[];
+};
+
 export type Pack = {
   schema: "tokori-pack/v1";
   id: string;
@@ -107,6 +153,9 @@ export type Pack = {
   license?: string;
   collections?: PackCollection[];
   textbooks?: PackTextbook[];
+  /** Immersion recommendations — what to watch/listen to alongside
+   *  the pack's study material. */
+  media?: PackMediaItem[];
 };
 
 // ── Validation ────────────────────────────────────────────────────────────
@@ -138,6 +187,7 @@ export function validatePack(raw: unknown): PackValidationResult {
   }
   const collections = Array.isArray(r.collections) ? (r.collections as PackCollection[]) : [];
   const textbooks = Array.isArray(r.textbooks) ? (r.textbooks as PackTextbook[]) : [];
+  const media = Array.isArray(r.media) ? (r.media as PackMediaItem[]) : [];
 
   for (let i = 0; i < collections.length; i++) {
     const c = collections[i];
@@ -160,7 +210,38 @@ export function validatePack(raw: unknown): PackValidationResult {
       return { ok: false, error: `Textbook ${t.title} has no chapters array.` };
     }
   }
-  return { ok: true, pack: { ...(r as Pack), collections, textbooks } };
+  for (let i = 0; i < media.length; i++) {
+    const m = media[i];
+    if (typeof m.id !== "string" || !m.id) {
+      return { ok: false, error: `Media item #${i} missing id.` };
+    }
+    if (typeof m.title !== "string" || !m.title) {
+      return { ok: false, error: `Media item ${m.id} missing title.` };
+    }
+    if (!(MEDIA_KINDS as readonly string[]).includes(m.kind as string)) {
+      return {
+        ok: false,
+        error: `Media item ${m.id} has unknown kind "${String(m.kind)}" — expected video, series, or podcast.`,
+      };
+    }
+    if (m.url != null && typeof m.url !== "string") {
+      return { ok: false, error: `Media item ${m.id} url must be a string.` };
+    }
+    if (m.episodes != null) {
+      if (!Array.isArray(m.episodes)) {
+        return { ok: false, error: `Media item ${m.id} episodes must be an array.` };
+      }
+      for (const ep of m.episodes) {
+        if (typeof ep.position !== "number" || typeof ep.title !== "string" || !ep.title) {
+          return {
+            ok: false,
+            error: `Media item ${m.id} has an episode missing position or title.`,
+          };
+        }
+      }
+    }
+  }
+  return { ok: true, pack: { ...(r as Pack), collections, textbooks, media } };
 }
 
 /**
@@ -198,6 +279,9 @@ export type PackSummary = {
   textbookCount: number;
   textbookChapterCount: number;
   textbookVocabCount: number;
+  mediaCount: number;
+  mediaEpisodeCount: number;
+  mediaVocabCount: number;
 };
 
 export function summarisePack(pack: Pack): PackSummary {
@@ -211,12 +295,22 @@ export function summarisePack(pack: Pack): PackSummary {
     textbookChapterCount += t.chapters.length;
     for (const ch of t.chapters) textbookVocabCount += ch.vocab?.length ?? 0;
   }
+  const mediaCount = pack.media?.length ?? 0;
+  let mediaEpisodeCount = 0;
+  let mediaVocabCount = 0;
+  for (const m of pack.media ?? []) {
+    mediaEpisodeCount += m.episodes?.length ?? 0;
+    for (const ep of m.episodes ?? []) mediaVocabCount += ep.vocab?.length ?? 0;
+  }
   return {
     collectionCount,
     collectionWordCount,
     textbookCount,
     textbookChapterCount,
     textbookVocabCount,
+    mediaCount,
+    mediaEpisodeCount,
+    mediaVocabCount,
   };
 }
 
@@ -238,6 +332,8 @@ export type ImportResult = {
   textbooksSkipped: number;
   chaptersCreated: number;
   wordsCreated: number;
+  mediaCreated: number;
+  mediaSkipped: number;
 };
 
 /** Per-textbook import preference. The user picks one mode + a current
@@ -353,6 +449,8 @@ export async function importPack(args: {
     textbooksSkipped: 0,
     chaptersCreated: 0,
     wordsCreated: 0,
+    mediaCreated: 0,
+    mediaSkipped: 0,
   };
   const presetIdFor = (innerId: string) => `${pack.id}:${innerId}`;
   const sourceTagFor = (innerId: string) => `pack:${pack.id}:${innerId}`;
@@ -825,6 +923,140 @@ export async function importPack(args: {
       }
     }
     onProgress?.({ stage: "textbooks", ratio: 1, wordsTotal: result.wordsCreated });
+  }
+
+  // 3. Media recommendations → Immersion (library_items with media kinds).
+  const media = pack.media ?? [];
+  if (media.length > 0) {
+    // Fresh list — the textbook stage above may have added rows.
+    const existingLibrary = await listLibrary(workspaceId);
+    let mediaSeen = 0;
+    for (const m of media) {
+      const tag = sourceTagFor(m.id);
+      // Idempotency: canonical-URL match first — the same key the
+      // local API and browser extension dedupe on, so a video the
+      // user already listed by hand isn't duplicated by the pack.
+      // The pack source tag is the fallback for URL-less entries
+      // (and catches rows created by an earlier import of this pack).
+      const found = existingLibrary.find(
+        (l) =>
+          l.source === tag || (m.url != null && mediaUrlsMatch(l.source, m.url)),
+      );
+      let item: LibraryItem;
+      if (found) {
+        item = found;
+        result.mediaSkipped += 1;
+      } else {
+        item = await saveLibraryItem({
+          workspaceId,
+          kind: m.kind,
+          title: m.title,
+          author: m.author ?? null,
+          source: m.url ?? tag,
+          totalUnits: m.totalUnits ?? (m.episodes?.length ? m.episodes.length : null),
+          unitLabel: m.unitLabel ?? MEDIA_DEFAULT_UNIT[m.kind],
+          completedUnits: 0,
+          coverUrl: m.coverUrl ?? null,
+          notes: m.notes ?? null,
+          // Recommendations land in the "Up next" queue, not as active
+          // commitments — opening one auto-promotes it (Immersion rule).
+          status: "planned",
+        });
+        result.mediaCreated += 1;
+      }
+
+      // Optional per-episode chapters, mirroring textbook chapters —
+      // including the chapter↔collection link that powers the
+      // episode→SRS bridge when episodes ship vocab.
+      if (m.episodes && m.episodes.length > 0) {
+        const existingChapters = found ? await listChapters(item.id) : [];
+        const hasVocab = m.episodes.some((e) => e.vocab && e.vocab.length > 0);
+        // Root collection per media item, only when there's vocab to
+        // hold. presetId's "media" segment keeps these out of the
+        // textbook-tree repair pass (which keys on 3-part ids).
+        let mediaRootId: number | null = null;
+        if (hasVocab) {
+          const rootPresetId = presetIdFor(`media:${m.id}`);
+          const cols = await listCollections(workspaceId);
+          const rootFound = cols.find((c) => c.presetId === rootPresetId);
+          if (rootFound) {
+            mediaRootId = rootFound.id;
+          } else {
+            const made = await createCollection({
+              workspaceId,
+              name: m.title,
+              description: m.author
+                ? `${m.author} — vocabulary by episode.`
+                : "Vocabulary by episode.",
+              source: "preset",
+              presetId: rootPresetId,
+            });
+            mediaRootId = made.id;
+          }
+        }
+        for (const ep of m.episodes) {
+          let chapterId: number | null;
+          const existingChap =
+            existingChapters.find((c) => c.position === ep.position) ?? null;
+          if (existingChap) {
+            chapterId = existingChap.id;
+          } else {
+            const created = await createChapter({
+              itemId: item.id,
+              position: ep.position,
+              title: ep.title,
+            });
+            chapterId = created.id;
+            result.chaptersCreated += 1;
+          }
+          if (ep.vocab && ep.vocab.length > 0 && mediaRootId != null) {
+            const epPresetId = presetIdFor(`media:${m.id}:${ep.position}`);
+            const cols = await listCollections(workspaceId);
+            const epFound = cols.find((c) => c.presetId === epPresetId);
+            let epCollectionId: number;
+            if (epFound) {
+              epCollectionId = epFound.id;
+              if (epFound.parentId !== mediaRootId) {
+                await setCollectionParent(epFound.id, mediaRootId);
+              }
+            } else {
+              const made = await createCollection({
+                workspaceId,
+                name: ep.title,
+                description: `Vocabulary from ${m.title} → ${ep.title}.`,
+                source: "preset",
+                presetId: epPresetId,
+                parentId: mediaRootId,
+              });
+              epCollectionId = made.id;
+            }
+            for (const w of ep.vocab) {
+              // Same pack-as-library rule as collections: words start
+              // inactive; completing the episode (or activating by
+              // hand) is what feeds the SRS.
+              await addWordToCollection({
+                workspaceId,
+                collectionId: epCollectionId,
+                word: w.word,
+                reading: w.reading ?? null,
+                gloss: w.gloss ?? null,
+                isActive: false,
+              });
+              result.wordsCreated += 1;
+            }
+            if (chapterId != null && existingChap?.collectionId !== epCollectionId) {
+              await setChapterCollection(chapterId, epCollectionId);
+            }
+          }
+        }
+      }
+      mediaSeen += 1;
+      onProgress?.({
+        stage: "media",
+        ratio: mediaSeen / media.length,
+        wordsTotal: result.wordsCreated,
+      });
+    }
   }
 
   return result;

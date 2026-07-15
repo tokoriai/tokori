@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { Loader2, Volume2 } from "lucide-react";
+import { Check, Download, Loader2, Trash2, Volume2 } from "lucide-react";
+import { isTauri } from "@tauri-apps/api/core";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +15,15 @@ import {
 import { useProviderConfigs } from "@/lib/provider-context";
 import { useProfile } from "@/lib/profile-context";
 import { findWhisperProvider, isBrowserSTTAvailable } from "@/lib/stt";
+import {
+  activeLocalWhisperModel,
+  deleteLocalWhisperModel,
+  downloadLocalWhisperModel,
+  onWhisperDlProgress,
+  setActiveLocalWhisperModel,
+  useLocalWhisperModels,
+  type WhisperDlProgress,
+} from "@/lib/whisper-local";
 import { useTTS } from "@/lib/tts-context";
 import {
   EDGE_DEFAULT_VOICE_BY_LANG,
@@ -667,11 +678,13 @@ export function TTSSection() {
 function DictationSection() {
   const { profile, update } = useProfile();
   const { providers } = useProviderConfigs();
+  const { models: localModels } = useLocalWhisperModels();
   const browserAvailable = isBrowserSTTAvailable();
   const whisperProvider = findWhisperProvider(providers);
+  const localReady = localModels.some((m) => m.downloaded);
 
   const choices: {
-    id: "auto" | "browser" | "whisper";
+    id: "auto" | "browser" | "whisper" | "local";
     label: string;
     sub: string;
     available: boolean;
@@ -680,13 +693,15 @@ function DictationSection() {
     {
       id: "auto",
       label: "Auto",
-      sub: "Browser when available, otherwise Whisper.",
-      available: browserAvailable || !!whisperProvider,
+      sub: "Browser when available, then a downloaded local model, then the Whisper API.",
+      available: browserAvailable || localReady || !!whisperProvider,
       detail: browserAvailable
         ? "Currently using browser speech recognition."
-        : whisperProvider
-          ? `Currently using Whisper via "${whisperProvider.label}".`
-          : "Nothing available — set up an OpenAI/Groq provider for Whisper.",
+        : localReady
+          ? "Currently using the local Whisper model."
+          : whisperProvider
+            ? `Currently using Whisper via "${whisperProvider.label}".`
+            : "Nothing available — download a local model below or add an OpenAI/Groq provider.",
     },
     {
       id: "browser",
@@ -695,7 +710,18 @@ function DictationSection() {
       available: browserAvailable,
       detail: browserAvailable
         ? "Available in this build."
-        : "Not available in this webview — pick Auto or Whisper.",
+        : "Not available in this webview — pick Auto, Local, or Whisper.",
+    },
+    {
+      id: "local",
+      label: "Local Whisper",
+      sub: "On-device whisper.cpp — private, free, works offline. Slower than the API on weak CPUs.",
+      available: localReady,
+      detail: localReady
+        ? "Model downloaded — runs entirely on this machine."
+        : isTauri()
+          ? "Download a model below to enable."
+          : "Desktop app only.",
     },
     {
       id: "whisper",
@@ -717,7 +743,7 @@ function DictationSection() {
           follows the workspace's "Explain to me in" setting.
         </p>
       </div>
-      <div className="grid gap-2 sm:grid-cols-3">
+      <div className="grid gap-2 sm:grid-cols-2">
         {choices.map((c) => {
           const active = profile.sttKind === c.id;
           return (
@@ -758,6 +784,171 @@ function DictationSection() {
           );
         })}
       </div>
+      {isTauri() && <LocalWhisperModelsCard />}
+    </div>
+  );
+}
+
+// ─── Local Whisper model manager ─────────────────────────────────────
+//
+// Download / delete the ggml models the on-device engine can run, and
+// pick which downloaded one dictation uses. Desktop only — the models
+// live on disk and whisper.cpp runs in the Rust shell.
+
+function fmtBytes(n: number): string {
+  if (n >= 1_000_000_000) return `${(n / 1_000_000_000).toFixed(1)} GB`;
+  return `${Math.round(n / 1_000_000)} MB`;
+}
+
+function LocalWhisperModelsCard() {
+  const { models, loading } = useLocalWhisperModels();
+  const [progress, setProgress] = useState<Record<string, WhisperDlProgress>>(
+    {},
+  );
+  const [active, setActive] = useState<string | null>(null);
+
+  // Resolve the effective active model (settings pick, falling back to
+  // the first downloaded) whenever the registry changes — e.g. right
+  // after a download finishes or the active model gets deleted.
+  useEffect(() => {
+    let cancelled = false;
+    void activeLocalWhisperModel().then((id) => {
+      if (!cancelled) setActive(id);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [models]);
+
+  useEffect(() => {
+    return onWhisperDlProgress((p) => {
+      setProgress((prev) => ({ ...prev, [p.model]: p }));
+      if (p.error) {
+        toast.error("Model download failed", { description: p.error });
+      } else if (p.done) {
+        toast.success("Whisper model downloaded");
+      }
+    });
+  }, []);
+
+  return (
+    <div className="rounded-xl border border-border bg-card/60 px-4 py-3.5">
+      <div className="flex items-baseline justify-between gap-2">
+        <h4 className="text-[13px] font-semibold tracking-tight">
+          Local Whisper models
+        </h4>
+        <span className="text-[11px] text-muted-foreground">
+          from ggerganov/whisper.cpp · stored in the app data folder
+        </span>
+      </div>
+      <ul className="mt-2.5 divide-y divide-border/60">
+        {loading && models.length === 0 && (
+          <li className="py-3 text-[12px] text-muted-foreground">
+            <Loader2 className="mr-1.5 inline size-3 animate-spin" />
+            Checking installed models…
+          </li>
+        )}
+        {models.map((m) => {
+          const p = progress[m.id];
+          const downloading =
+            m.downloading || (p != null && !p.done && !p.error);
+          const pct =
+            p && p.total > 0 && !p.done
+              ? Math.min(100, Math.round((p.received / p.total) * 100))
+              : null;
+          const isActive = m.downloaded && active === m.id;
+          return (
+            <li key={m.id} className="flex items-center gap-3 py-2.5">
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-baseline gap-x-2">
+                  <span className="text-[13px] font-medium">{m.label}</span>
+                  <span className="font-mono text-[11px] text-muted-foreground">
+                    {fmtBytes(m.bytes)}
+                  </span>
+                  {isActive && (
+                    <span className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-1.5 py-0.5 text-[10px] text-emerald-700 dark:text-emerald-400">
+                      in use
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11.5px] leading-snug text-muted-foreground">
+                  {m.blurb}
+                </p>
+                {downloading && (
+                  <div className="mt-1.5 flex items-center gap-2">
+                    <div className="h-1 flex-1 overflow-hidden rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full bg-foreground/70 transition-[width] duration-200"
+                        style={{ width: `${pct ?? 4}%` }}
+                      />
+                    </div>
+                    <span className="w-9 text-right font-mono text-[10.5px] tabular-nums text-muted-foreground">
+                      {pct != null ? `${pct}%` : "…"}
+                    </span>
+                  </div>
+                )}
+              </div>
+              {m.downloaded ? (
+                <div className="flex shrink-0 items-center gap-1">
+                  {!isActive && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() =>
+                        void setActiveLocalWhisperModel(m.id).then(() =>
+                          setActive(m.id),
+                        )
+                      }
+                      title="Use this model for dictation"
+                    >
+                      <Check className="size-3.5" />
+                      Use
+                    </Button>
+                  )}
+                  <Button
+                    size="icon-sm"
+                    variant="ghost"
+                    onClick={() =>
+                      void deleteLocalWhisperModel(m.id).catch((err) =>
+                        toast.error("Couldn't delete model", {
+                          description:
+                            err instanceof Error ? err.message : String(err),
+                        }),
+                      )
+                    }
+                    title="Delete this model from disk"
+                    aria-label={`Delete ${m.label}`}
+                  >
+                    <Trash2 className="size-3.5" />
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={downloading}
+                  onClick={() =>
+                    void downloadLocalWhisperModel(m.id).catch((err) =>
+                      toast.error("Download failed", {
+                        description:
+                          err instanceof Error ? err.message : String(err),
+                      }),
+                    )
+                  }
+                  className="shrink-0"
+                >
+                  {downloading ? (
+                    <Loader2 className="size-3.5 animate-spin" />
+                  ) : (
+                    <Download className="size-3.5" />
+                  )}
+                  {downloading ? "Downloading" : "Download"}
+                </Button>
+              )}
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }

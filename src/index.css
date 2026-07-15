@@ -88,10 +88,10 @@ html.dark {
   color-scheme: dark;
 }
 
-/* Spotlight window — frameless + transparent on the Tauri side, so the
- * page itself must be transparent so the rounded card we paint inside
- * SpotlightApp shows clean edges. Fallback to opaque outside spotlight
- * mode (the .is-spotlight class is added by the spotlight bootstrap). */
+/* Popup windows (spotlight + voice ask) — frameless + transparent on
+ * the Tauri side, so the page itself must be transparent so the
+ * rounded card each app paints shows clean edges. Fallback to opaque
+ * elsewhere (main.tsx adds .is-spotlight for both popup bootstraps). */
 html.is-spotlight,
 html.is-spotlight body,
 html.is-spotlight #root {

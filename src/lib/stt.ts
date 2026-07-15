@@ -16,9 +16,38 @@
  * override via the provider config later if we want.
  */
 
+import { invoke } from "@tauri-apps/api/core";
 import type { ProviderConfig } from "./db";
 
 // ── Engine availability ──────────────────────────────────────────────
+
+/** Hard ceiling on a single dictation take. Whisper uploads are paid
+ *  per second and MediaRecorder happily fills memory forever if a
+ *  user walks away mid-recording — callers auto-stop at this mark. */
+export const MAX_DICTATION_MS = 5 * 60_000;
+
+export type SttEngine = "browser" | "whisper" | "local" | "none";
+
+/** Resolve which dictation engine a surface should actually use given
+ *  the user's Settings → Voice choice and what's available right now.
+ *  "auto" prefers the instant browser engine, then a downloaded local
+ *  Whisper model (free, private, offline), then the metered API — the
+ *  ordering that matters on Linux, where WebKitGTK has no Web Speech
+ *  API at all. */
+export function resolveSttEngine(
+  choice: "auto" | "browser" | "whisper" | "local",
+  browserAvailable: boolean,
+  whisperProvider: ProviderConfig | null,
+  localModelReady: boolean,
+): SttEngine {
+  if (choice === "browser") return browserAvailable ? "browser" : "none";
+  if (choice === "whisper") return whisperProvider ? "whisper" : "none";
+  if (choice === "local") return localModelReady ? "local" : "none";
+  if (browserAvailable) return "browser";
+  if (localModelReady) return "local";
+  if (whisperProvider) return "whisper";
+  return "none";
+}
 
 export function isBrowserSTTAvailable(): boolean {
   if (typeof window === "undefined") return false;
@@ -207,4 +236,145 @@ export async function startRecording(
       stream.getTracks().forEach((t) => t.stop());
     },
   };
+}
+
+// ── Local Whisper (on-device whisper.cpp) ───────────────────────────
+//
+// The Rust side (`whisper_local.rs`) runs whisper.cpp on 16 kHz mono
+// int16 PCM, so instead of MediaRecorder (webm/opus — Rust would need
+// a codec stack) we capture raw PCM through an AudioWorklet, exactly
+// like the realtime live-voice pipelines do, and ship the buffer over
+// IPC as base64.
+
+export const LOCAL_WHISPER_SAMPLE_RATE = 16_000;
+
+const PCM_WORKLET = `
+class TokoriPcmCapture extends AudioWorkletProcessor {
+  process(inputs) {
+    const input = inputs[0];
+    if (input && input[0]) {
+      const f32 = input[0];
+      const i16 = new Int16Array(f32.length);
+      for (let i = 0; i < f32.length; i++) {
+        const s = Math.max(-1, Math.min(1, f32[i]));
+        i16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+      }
+      this.port.postMessage(i16.buffer, [i16.buffer]);
+    }
+    return true;
+  }
+}
+registerProcessor('tokori-pcm-capture', TokoriPcmCapture);
+`;
+
+export type PcmRecorderHandle = {
+  /** Stop capturing and resolve with the whole take as 16 kHz mono
+   *  int16 samples. Idempotent. */
+  stop: () => Promise<Int16Array>;
+  /** Stop and discard the take. */
+  cancel: () => void;
+  /** Live stream for waveform taps — same contract as RecorderHandle. */
+  stream: MediaStream;
+};
+
+/** Start a raw-PCM microphone recording for the local Whisper engine.
+ *  The AudioContext is created at 16 kHz so the browser does the
+ *  resampling; whisper.cpp gets exactly the rate it wants. */
+export async function startPcmRecording(
+  options: { deviceId?: string } = {},
+): Promise<PcmRecorderHandle> {
+  if (
+    typeof navigator === "undefined" ||
+    !navigator.mediaDevices?.getUserMedia
+  ) {
+    throw new Error("Microphone capture isn't available in this environment.");
+  }
+  const audio: MediaTrackConstraints | true = options.deviceId
+    ? { deviceId: { exact: options.deviceId } }
+    : true;
+  const stream = await navigator.mediaDevices.getUserMedia({ audio });
+  const ctx = new AudioContext({ sampleRate: LOCAL_WHISPER_SAMPLE_RATE });
+  void ctx.resume().catch(() => {});
+  const blobUrl = URL.createObjectURL(
+    new Blob([PCM_WORKLET], { type: "application/javascript" }),
+  );
+  try {
+    await ctx.audioWorklet.addModule(blobUrl);
+  } finally {
+    URL.revokeObjectURL(blobUrl);
+  }
+  const source = ctx.createMediaStreamSource(stream);
+  const node = new AudioWorkletNode(ctx, "tokori-pcm-capture");
+  const chunks: Int16Array[] = [];
+  node.port.onmessage = (e: MessageEvent) => {
+    chunks.push(new Int16Array(e.data as ArrayBuffer));
+  };
+  source.connect(node);
+  // The worklet writes no output — this connection only keeps the
+  // graph pulling; the destination hears silence.
+  node.connect(ctx.destination);
+
+  let finished = false;
+  function teardown() {
+    try {
+      node.disconnect();
+    } catch {
+      /* already gone */
+    }
+    try {
+      source.disconnect();
+    } catch {
+      /* already gone */
+    }
+    if (ctx.state !== "closed") void ctx.close();
+    stream.getTracks().forEach((t) => t.stop());
+  }
+
+  return {
+    stream,
+    async stop() {
+      if (!finished) {
+        finished = true;
+        teardown();
+      }
+      const total = chunks.reduce((n, c) => n + c.length, 0);
+      const pcm = new Int16Array(total);
+      let offset = 0;
+      for (const c of chunks) {
+        pcm.set(c, offset);
+        offset += c.length;
+      }
+      return pcm;
+    },
+    cancel() {
+      if (finished) return;
+      finished = true;
+      teardown();
+      chunks.length = 0;
+    },
+  };
+}
+
+/** Run a PCM take through the local whisper.cpp model. The model must
+ *  already be downloaded (see lib/whisper-local.ts); Rust returns a
+ *  user-facing error message otherwise. */
+export async function transcribeLocalWhisper(
+  pcm: Int16Array,
+  options: { model: string; lang?: string },
+): Promise<TranscribeResult> {
+  const bytes = new Uint8Array(pcm.buffer, pcm.byteOffset, pcm.byteLength);
+  let binary = "";
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(
+      ...bytes.subarray(i, Math.min(i + chunkSize, bytes.length)),
+    );
+  }
+  const text = await invoke<string>("whisper_local_transcribe", {
+    model: options.model,
+    pcmB64: btoa(binary),
+    // Same ISO 639-1 trim the API path does.
+    lang: options.lang ? options.lang.split("-")[0] : null,
+  });
+  return { text: text.trim() };
 }

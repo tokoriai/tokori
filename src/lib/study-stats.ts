@@ -9,22 +9,9 @@
  */
 
 import type { Grade } from "@/lib/fsrs";
-import type {
-  StudySession,
-  VocabEntry,
-  VocabReview,
-  VocabStatus,
-} from "@/lib/db";
+import type { StudySession, VocabEntry, VocabReview } from "@/lib/db";
 
 const DAY_SECS = 86_400;
-
-export const VOCAB_STATUSES: VocabStatus[] = [
-  "unseen",
-  "new",
-  "learning",
-  "review",
-  "mastered",
-];
 
 const GRADES: Grade[] = ["again", "hard", "good", "easy"];
 
@@ -37,31 +24,6 @@ function startOfLocalDay(epochSecs: number): number {
   const d = new Date(epochSecs * 1000);
   d.setHours(0, 0, 0, 0);
   return Math.floor(d.getTime() / 1000);
-}
-
-export type VocabCounts = Record<VocabStatus, number> & {
-  total: number;
-  /** Words in the active SRS queue (is_active = 1), vs library-only imports. */
-  active: number;
-};
-
-/** Count vocab by status (+ total + active). Mastered is "words known". */
-export function vocabStatusCounts(vocab: VocabEntry[]): VocabCounts {
-  const counts: VocabCounts = {
-    unseen: 0,
-    new: 0,
-    learning: 0,
-    review: 0,
-    mastered: 0,
-    total: 0,
-    active: 0,
-  };
-  for (const v of vocab) {
-    counts[v.status] += 1;
-    counts.total += 1;
-    if (v.isActive) counts.active += 1;
-  }
-  return counts;
 }
 
 export type ReviewSummary = {

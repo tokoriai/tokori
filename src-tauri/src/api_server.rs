@@ -15,14 +15,14 @@ use std::{
 };
 
 use axum::{
-    extract::{Query, State},
+    extract::{DefaultBodyLimit, Query, State},
     http::{header, HeaderMap, HeaderValue, Method, StatusCode},
     middleware::{self, Next},
     response::{
         sse::{Event, KeepAlive, Sse},
         IntoResponse, Response,
     },
-    routing::{get, post},
+    routing::{get, patch, post},
     Json, Router,
 };
 use base64::{engine::general_purpose::STANDARD as BASE64_STANDARD, Engine};
@@ -35,6 +35,7 @@ use tokio::{net::TcpListener, sync::oneshot};
 use tower_http::cors::{AllowOrigin, CorsLayer};
 
 use crate::commands::tokenize_zh;
+use crate::media_url::canonical_media_key;
 use crate::providers::{stream_chat, ChatEvent, ChatMessage, ProviderConfig};
 
 /// Default loopback bind address. Hard-coded — the API is local-only by
@@ -310,6 +311,15 @@ fn build_router(state: AppState) -> Router {
         .route("/ai/explain", post(ai_explain))
         .route("/workspaces", get(list_workspaces))
         .route("/workspaces/:id/vocab", get(list_vocab).post(create_vocab))
+        .route("/workspaces/:id/sessions", post(log_session))
+        .route("/workspaces/:id/sessions/start", post(start_live_session))
+        .route("/sessions/:id/heartbeat", post(heartbeat_session))
+        .route("/sessions/:id/finish", post(finish_session))
+        .route("/workspaces/:id/media", get(list_media).post(create_media))
+        .route("/media/:id", patch(update_media))
+        .route("/media/lookup", get(lookup_media))
+        .route("/media/progress", post(report_media_progress))
+        .route("/ocr", post(ocr_frame))
         .route("/vocab/status", post(set_vocab_status))
         .route("/translate", post(translate_text))
         .route(
@@ -328,7 +338,13 @@ fn build_router(state: AppState) -> Router {
         .route("/tokenize", post(tokenize))
         .with_state(state.clone())
         .layer(middleware::from_fn_with_state(state.clone(), auth_layer))
-        .layer(cors.clone());
+        .layer(cors.clone())
+        // Axum's default request-body cap is 2 MB, which a mined card
+        // with a recorded A/V clip (base64 audio_data) blows straight
+        // past — the extension's clip saves were 413ing before the
+        // handler ever ran. Loopback-only + bearer auth, so a generous
+        // cap is safe.
+        .layer(DefaultBodyLimit::max(64 * 1024 * 1024));
 
     // OAuth loopback routes — public (no bearer auth) because the
     // browser hitting these has no API token. Security comes from the
@@ -337,6 +353,7 @@ fn build_router(state: AppState) -> Router {
     let oauth = Router::new()
         .route("/callback", get(oauth_callback_page))
         .route("/finish", post(oauth_finish))
+        .route("/logo.png", get(oauth_logo))
         .with_state(state)
         .layer(cors);
 
@@ -1028,6 +1045,856 @@ async fn apply_vocab_mining_fields(
     }
 
     Ok(())
+}
+
+#[derive(Deserialize)]
+struct LogSessionBody {
+    /// Session kind. Defaults to "immersion" — that's what the Companion
+    /// extension logs for tracked video-watching time. Free-form so
+    /// future clients can log e.g. "podcast" without a server release.
+    kind: Option<String>,
+    duration_secs: i64,
+    /// Epoch seconds of the session END. Defaults to now. Mirrors the
+    /// frontend's `logSession`: started_at is back-derived so the
+    /// session lands in the right heatmap / streak day.
+    when: Option<i64>,
+    notes: Option<String>,
+}
+
+#[derive(Serialize)]
+struct LoggedSession {
+    id: i64,
+    workspace_id: i64,
+    kind: String,
+    started_at: i64,
+    ended_at: i64,
+    duration_secs: i64,
+}
+
+/// One-shot logger for a completed study session (`POST
+/// /v1/workspaces/:id/sessions`). The Companion extension pushes its
+/// tracked immersion time here so the dashboard's immersion KPIs,
+/// heatmap, and streak include time spent outside the app. Non-null
+/// `notes` (defaulted to "") marks the row as an external/manual log —
+/// same convention as the in-app activity logger.
+async fn log_session(
+    State(state): State<AppState>,
+    axum::extract::Path(ws_id): axum::extract::Path<i64>,
+    Json(body): Json<LogSessionBody>,
+) -> Result<(StatusCode, Json<LoggedSession>), Response> {
+    if body.duration_secs <= 0 {
+        return Err(err_response(
+            StatusCode::BAD_REQUEST,
+            "validation.duration_secs",
+            "duration_secs must be a positive number of seconds.",
+        ));
+    }
+    let now = chrono::Utc::now().timestamp();
+    // Clamp a bogus future end-time back to now, and the duration to a
+    // day — a buggy client must not be able to mint year-long sessions.
+    let ended_at = body.when.unwrap_or(now).min(now);
+    let duration = body.duration_secs.min(24 * 3600);
+    let started_at = (ended_at - duration).max(0);
+    let kind = body
+        .kind
+        .as_deref()
+        .map(str::trim)
+        .filter(|k| !k.is_empty());
+    let kind = kind.unwrap_or("immersion");
+    let notes = body.notes.unwrap_or_default();
+    let id: i64 = sqlx::query_scalar(
+        "INSERT INTO study_sessions
+           (workspace_id, kind, started_at, ended_at, duration_secs, notes)
+         VALUES (?, ?, ?, ?, ?, ?)
+         RETURNING id",
+    )
+    .bind(ws_id)
+    .bind(kind)
+    .bind(started_at)
+    .bind(ended_at)
+    .bind(duration)
+    .bind(notes)
+    .fetch_one(&state.pool)
+    .await
+    .map_err(|e| {
+        log::error!("log_session insert: {e}");
+        err_response(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "internal.unexpected",
+            "Failed to record the session.",
+        )
+    })?;
+    Ok((
+        StatusCode::CREATED,
+        Json(LoggedSession {
+            id,
+            workspace_id: ws_id,
+            kind: kind.to_string(),
+            started_at,
+            ended_at,
+            duration_secs: duration,
+        }),
+    ))
+}
+
+// ── Live sessions ───────────────────────────────────────────────────
+//
+// The Companion extension's immersion timer drives these so a tracked
+// video session runs as a real `study_sessions` row while the user
+// watches — the same tracking the in-app timer produces, hence the
+// dashboard / heatmap / streak / Activities all pick it up natively.
+//
+// Crash-safety invariant: the row is ALWAYS closed as of its last
+// write (`ended_at` set on start and refreshed by every heartbeat).
+// A client that dies mid-session simply leaves the last-heartbeat
+// state behind, and `finalizeStaleSessions` (which only repairs
+// ended_at-IS-NULL rows) can never clobber or inflate it.
+
+#[derive(Deserialize)]
+struct StartSessionBody {
+    /// Session kind. Defaults to "video" — the Companion's tracked
+    /// YouTube time. Free-form for future clients.
+    kind: Option<String>,
+}
+
+#[derive(Serialize)]
+struct StartedSession {
+    id: i64,
+    workspace_id: i64,
+    kind: String,
+    started_at: i64,
+}
+
+/// `POST /v1/workspaces/:id/sessions/start` → 201 `{id, …}`.
+async fn start_live_session(
+    State(state): State<AppState>,
+    axum::extract::Path(ws_id): axum::extract::Path<i64>,
+    Json(body): Json<StartSessionBody>,
+) -> Result<(StatusCode, Json<StartedSession>), Response> {
+    let now = chrono::Utc::now().timestamp();
+    let kind = body
+        .kind
+        .as_deref()
+        .map(str::trim)
+        .filter(|k| !k.is_empty())
+        .unwrap_or("video");
+    // notes stays NULL while live — the Activities view only lists
+    // rows with non-null notes, so an in-flight (or abandoned
+    // zero-length) session doesn't show up as a logged activity.
+    // `finish` sets the label.
+    let id: i64 = sqlx::query_scalar(
+        "INSERT INTO study_sessions
+           (workspace_id, kind, started_at, ended_at, duration_secs)
+         VALUES (?, ?, ?, ?, 0)
+         RETURNING id",
+    )
+    .bind(ws_id)
+    .bind(kind)
+    .bind(now)
+    .bind(now)
+    .fetch_one(&state.pool)
+    .await
+    .map_err(|e| {
+        log::error!("start_live_session insert: {e}");
+        err_response(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "internal.unexpected",
+            "Failed to start the session.",
+        )
+    })?;
+    emit_live_session(&state.app, "start", id, ws_id, kind, now, 0);
+    Ok((
+        StatusCode::CREATED,
+        Json(StartedSession {
+            id,
+            workspace_id: ws_id,
+            kind: kind.to_string(),
+            started_at: now,
+        }),
+    ))
+}
+
+/// Push live-session state to the desktop UI (`tokori:live-session`).
+/// The sidebar's session chip mirrors Companion-driven sessions from
+/// these — start shows the "Immersing" indicator, beats re-anchor its
+/// timer, finish (or beat silence) clears it. Best-effort: a session
+/// is never failed over a UI event.
+fn emit_live_session(
+    app: &AppHandle,
+    phase: &str,
+    id: i64,
+    workspace_id: i64,
+    kind: &str,
+    started_at: i64,
+    duration_secs: i64,
+) {
+    let _ = app.emit(
+        "tokori:live-session",
+        serde_json::json!({
+            "phase": phase,
+            "id": id,
+            "workspaceId": workspace_id,
+            "kind": kind,
+            "startedAt": started_at,
+            "durationSecs": duration_secs,
+        }),
+    );
+}
+
+#[derive(Deserialize)]
+struct SessionProgressBody {
+    /// Total accrued ACTIVE seconds so far (not a delta). May lag wall
+    /// clock — paused time doesn't count unless the client says so.
+    duration_secs: i64,
+    /// Only used by /finish: human-readable label (video title). Makes
+    /// the session appear in the Activities view.
+    notes: Option<String>,
+}
+
+async fn update_live_session(
+    state: &AppState,
+    phase: &str,
+    id: i64,
+    duration_secs: i64,
+    notes: Option<&str>,
+) -> Result<(), Response> {
+    if duration_secs < 0 {
+        return Err(err_response(
+            StatusCode::BAD_REQUEST,
+            "validation.duration_secs",
+            "duration_secs cannot be negative.",
+        ));
+    }
+    let now = chrono::Utc::now().timestamp();
+    let duration = duration_secs.min(24 * 3600);
+    let r = sqlx::query(
+        "UPDATE study_sessions
+         SET duration_secs = ?, ended_at = ?, notes = COALESCE(?, notes)
+         WHERE id = ?",
+    )
+    .bind(duration)
+    .bind(now)
+    .bind(notes)
+    .bind(id)
+    .execute(&state.pool)
+    .await
+    .map_err(|e| {
+        log::error!("update_live_session: {e}");
+        err_response(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "internal.unexpected",
+            "Failed to update the session.",
+        )
+    })?;
+    if r.rows_affected() == 0 {
+        return Err(err_response(
+            StatusCode::NOT_FOUND,
+            "not_found.session",
+            "No session with that id.",
+        ));
+    }
+    // Keep the sidebar's mirror ticking (beat) / cleared (finish).
+    if let Ok(Some((kind, ws_id, started_at))) = sqlx::query_as::<_, (String, i64, i64)>(
+        "SELECT kind, workspace_id, started_at FROM study_sessions WHERE id = ?",
+    )
+    .bind(id)
+    .fetch_optional(&state.pool)
+    .await
+    {
+        emit_live_session(&state.app, phase, id, ws_id, &kind, started_at, duration);
+    }
+    Ok(())
+}
+
+/// `POST /v1/sessions/:id/heartbeat` `{duration_secs}` — refresh the
+/// live row to "now" with the client's accrued active time.
+async fn heartbeat_session(
+    State(state): State<AppState>,
+    axum::extract::Path(id): axum::extract::Path<i64>,
+    Json(body): Json<SessionProgressBody>,
+) -> Result<Json<serde_json::Value>, Response> {
+    update_live_session(&state, "beat", id, body.duration_secs, None).await?;
+    Ok(Json(serde_json::json!({ "id": id, "ok": true })))
+}
+
+/// `POST /v1/sessions/:id/finish` `{duration_secs, notes?}` — final
+/// numbers + the label that surfaces the session in Activities.
+async fn finish_session(
+    State(state): State<AppState>,
+    axum::extract::Path(id): axum::extract::Path<i64>,
+    Json(body): Json<SessionProgressBody>,
+) -> Result<Json<serde_json::Value>, Response> {
+    // A finish with no label still marks the row as a completed manual
+    // log ("" = the same marker the in-app activity logger writes).
+    let notes = body.notes.unwrap_or_default();
+    update_live_session(&state, "finish", id, body.duration_secs, Some(&notes)).await?;
+    Ok(Json(serde_json::json!({ "id": id, "ok": true })))
+}
+
+// ── Media (Immersion watch library) ─────────────────────────────────
+//
+// Media items are `library_items` rows with a watch/listen kind — the
+// same lens the Immersion view renders (src/lib/media/kinds.ts). The
+// by-URL endpoints canonicalize both the stored `source` and the
+// incoming URL (media_url.rs) so the Companion extension can ask "is
+// the video I'm playing on this user's list?" without knowing row ids.
+
+const MEDIA_KINDS: [&str; 3] = ["video", "series", "podcast"];
+const MEDIA_KIND_SQL: &str = "kind IN ('video','series','podcast')";
+const MEDIA_STATUSES: [&str; 5] = ["planned", "active", "paused", "finished", "dropped"];
+const MEDIA_COLS: &str = "id, workspace_id, kind, title, author, source, total_units, \
+     unit_label, completed_units, total_seconds, status, cover_url, notes, created_at, updated_at";
+
+#[derive(Serialize, sqlx::FromRow)]
+struct MediaItem {
+    id: i64,
+    workspace_id: i64,
+    kind: String,
+    title: String,
+    author: Option<String>,
+    source: Option<String>,
+    total_units: Option<i64>,
+    unit_label: String,
+    completed_units: i64,
+    total_seconds: i64,
+    status: String,
+    cover_url: Option<String>,
+    notes: Option<String>,
+    created_at: i64,
+    updated_at: i64,
+}
+
+fn validate_media_kind(kind: &str) -> Result<(), Response> {
+    if MEDIA_KINDS.contains(&kind) {
+        Ok(())
+    } else {
+        Err(err_response(
+            StatusCode::BAD_REQUEST,
+            "validation.kind",
+            "kind must be one of: video, series, podcast.",
+        ))
+    }
+}
+
+fn validate_media_status(status: &str) -> Result<(), Response> {
+    if MEDIA_STATUSES.contains(&status) {
+        Ok(())
+    } else {
+        Err(err_response(
+            StatusCode::BAD_REQUEST,
+            "validation.status",
+            "status must be one of: planned, active, paused, finished, dropped.",
+        ))
+    }
+}
+
+/// Progress denominator per medium — mirrors MEDIA_DEFAULT_UNIT in
+/// src/lib/media/kinds.ts.
+fn default_media_unit(kind: &str) -> &'static str {
+    match kind {
+        "video" => "minutes",
+        _ => "episodes",
+    }
+}
+
+/// Mirrors `isMinutesUnit` (src/lib/library-units.ts): when the unit
+/// itself is time, playback position maps directly onto units.
+fn is_minutes_unit(label: &str) -> bool {
+    matches!(label.trim().to_lowercase().as_str(), "min" | "mins" | "minute" | "minutes")
+}
+
+fn internal_media_error(context: &str, e: sqlx::Error) -> Response {
+    log::error!("{context}: {e}");
+    err_response(
+        StatusCode::INTERNAL_SERVER_ERROR,
+        "internal.unexpected",
+        "Media operation failed.",
+    )
+}
+
+async fn fetch_media_item(pool: &SqlitePool, id: i64) -> Result<MediaItem, Response> {
+    sqlx::query_as::<_, MediaItem>(&format!(
+        "SELECT {MEDIA_COLS} FROM library_items WHERE id = ? AND {MEDIA_KIND_SQL}"
+    ))
+    .bind(id)
+    .fetch_optional(pool)
+    .await
+    .map_err(|e| internal_media_error("fetch_media_item", e))?
+    .ok_or_else(|| {
+        err_response(
+            StatusCode::NOT_FOUND,
+            "not_found.media",
+            "No media item with that id.",
+        )
+    })
+}
+
+/// Find the row whose stored `source` URL canonicalizes to `key`.
+/// Linear over the (small) media list — most recently touched wins so
+/// a re-added duplicate resolves to the live row.
+async fn find_media_by_key(
+    pool: &SqlitePool,
+    workspace_id: Option<i64>,
+    key: &str,
+) -> Result<Option<MediaItem>, Response> {
+    let mut sql = format!(
+        "SELECT {MEDIA_COLS} FROM library_items WHERE {MEDIA_KIND_SQL} AND source IS NOT NULL"
+    );
+    if workspace_id.is_some() {
+        sql.push_str(" AND workspace_id = ?");
+    }
+    sql.push_str(" ORDER BY updated_at DESC");
+    let mut query = sqlx::query_as::<_, MediaItem>(&sql);
+    if let Some(ws) = workspace_id {
+        query = query.bind(ws);
+    }
+    let rows = query
+        .fetch_all(pool)
+        .await
+        .map_err(|e| internal_media_error("find_media_by_key", e))?;
+    Ok(rows.into_iter().find(|item| {
+        item.source
+            .as_deref()
+            .and_then(canonical_media_key)
+            .is_some_and(|k| k == key)
+    }))
+}
+
+fn require_media_key(url: &str) -> Result<String, Response> {
+    canonical_media_key(url).ok_or_else(|| {
+        err_response(
+            StatusCode::BAD_REQUEST,
+            "validation.url",
+            "url must be an http(s) link.",
+        )
+    })
+}
+
+#[derive(Deserialize)]
+struct MediaQuery {
+    status: Option<String>,
+    kind: Option<String>,
+    limit: Option<i64>,
+}
+
+/// `GET /v1/workspaces/:id/media?status=&kind=&limit=` — the watch list.
+async fn list_media(
+    State(state): State<AppState>,
+    axum::extract::Path(ws_id): axum::extract::Path<i64>,
+    Query(q): Query<MediaQuery>,
+) -> Result<Json<Page<MediaItem>>, Response> {
+    if let Some(kind) = q.kind.as_deref() {
+        validate_media_kind(kind)?;
+    }
+    if let Some(status) = q.status.as_deref() {
+        validate_media_status(status)?;
+    }
+    let limit = q.limit.unwrap_or(200).clamp(1, 500);
+    let mut sql = format!(
+        "SELECT {MEDIA_COLS} FROM library_items WHERE workspace_id = ? AND {MEDIA_KIND_SQL}"
+    );
+    if q.kind.is_some() {
+        sql.push_str(" AND kind = ?");
+    }
+    if q.status.is_some() {
+        sql.push_str(" AND status = ?");
+    }
+    sql.push_str(" ORDER BY updated_at DESC LIMIT ?");
+    let mut query = sqlx::query_as::<_, MediaItem>(&sql).bind(ws_id);
+    if let Some(kind) = q.kind.as_deref() {
+        query = query.bind(kind.to_string());
+    }
+    if let Some(status) = q.status.as_deref() {
+        query = query.bind(status.to_string());
+    }
+    let rows = query
+        .bind(limit)
+        .fetch_all(&state.pool)
+        .await
+        .map_err(|e| internal_media_error("list_media", e))?;
+    Ok(Json(Page {
+        data: rows,
+        next_cursor: None,
+    }))
+}
+
+#[derive(Deserialize)]
+struct CreateMediaBody {
+    title: String,
+    url: Option<String>,
+    kind: Option<String>,
+    author: Option<String>,
+    total_units: Option<i64>,
+    unit_label: Option<String>,
+    status: Option<String>,
+    notes: Option<String>,
+}
+
+/// `POST /v1/workspaces/:id/media` — add to the watch list. Idempotent
+/// on the canonical URL: re-adding a link that's already on the list
+/// returns the existing row with 200 instead of minting a duplicate
+/// (same contract as the pack importer's upsert-by-source).
+async fn create_media(
+    State(state): State<AppState>,
+    axum::extract::Path(ws_id): axum::extract::Path<i64>,
+    Json(body): Json<CreateMediaBody>,
+) -> Result<(StatusCode, Json<MediaItem>), Response> {
+    let title = body.title.trim();
+    if title.is_empty() {
+        return Err(err_response(
+            StatusCode::BAD_REQUEST,
+            "validation.empty_title",
+            "title cannot be empty.",
+        ));
+    }
+    let url = body
+        .url
+        .as_deref()
+        .map(str::trim)
+        .filter(|u| !u.is_empty());
+    let key = url.map(require_media_key).transpose()?;
+    if let Some(key) = key.as_deref() {
+        if let Some(existing) = find_media_by_key(&state.pool, Some(ws_id), key).await? {
+            return Ok((StatusCode::OK, Json(existing)));
+        }
+    }
+    let kind = match body.kind.as_deref().map(str::trim).filter(|k| !k.is_empty()) {
+        Some(k) => {
+            validate_media_kind(k)?;
+            k.to_string()
+        }
+        // No explicit kind: infer the medium from the canonical key.
+        None => match key.as_deref() {
+            Some(k) if k.starts_with("yt:pl:") => "series".to_string(),
+            Some(k) if k.starts_with("sp:") || k.starts_with("ap:") => "podcast".to_string(),
+            _ => "video".to_string(),
+        },
+    };
+    let status = match body.status.as_deref().map(str::trim).filter(|s| !s.is_empty()) {
+        Some(s) => {
+            validate_media_status(s)?;
+            s.to_string()
+        }
+        None => "planned".to_string(),
+    };
+    let unit_label = body
+        .unit_label
+        .as_deref()
+        .map(str::trim)
+        .filter(|u| !u.is_empty())
+        .unwrap_or_else(|| default_media_unit(&kind))
+        .to_string();
+    let id: i64 = sqlx::query_scalar(
+        "INSERT INTO library_items
+           (workspace_id, kind, title, author, source, total_units, unit_label, status, notes)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+         RETURNING id",
+    )
+    .bind(ws_id)
+    .bind(&kind)
+    .bind(title)
+    .bind(body.author.as_deref().map(str::trim).filter(|a| !a.is_empty()))
+    .bind(url)
+    .bind(body.total_units.filter(|t| *t > 0))
+    .bind(&unit_label)
+    .bind(&status)
+    .bind(body.notes.as_deref())
+    .fetch_one(&state.pool)
+    .await
+    .map_err(|e| internal_media_error("create_media insert", e))?;
+    let item = fetch_media_item(&state.pool, id).await?;
+    Ok((StatusCode::CREATED, Json(item)))
+}
+
+#[derive(Deserialize)]
+struct UpdateMediaBody {
+    title: Option<String>,
+    author: Option<String>,
+    source: Option<String>,
+    kind: Option<String>,
+    status: Option<String>,
+    total_units: Option<i64>,
+    unit_label: Option<String>,
+    completed_units: Option<i64>,
+    total_seconds: Option<i64>,
+    notes: Option<String>,
+    /// Relative progress bumps — the MCP-friendly way to say "one more
+    /// episode" without knowing the current count. Mutually exclusive
+    /// with the absolute fields above.
+    delta_units: Option<i64>,
+    delta_seconds: Option<i64>,
+}
+
+/// `PATCH /v1/media/:id` — partial update. Only media-kind rows are
+/// reachable here; the print library keeps its own surface.
+async fn update_media(
+    State(state): State<AppState>,
+    axum::extract::Path(id): axum::extract::Path<i64>,
+    Json(body): Json<UpdateMediaBody>,
+) -> Result<Json<MediaItem>, Response> {
+    if body.delta_units.is_some() && body.completed_units.is_some()
+        || body.delta_seconds.is_some() && body.total_seconds.is_some()
+    {
+        return Err(err_response(
+            StatusCode::BAD_REQUEST,
+            "validation.conflicting_progress",
+            "Send either absolute progress (completed_units / total_seconds) or deltas, not both.",
+        ));
+    }
+    if let Some(kind) = body.kind.as_deref() {
+        validate_media_kind(kind)?;
+    }
+    if let Some(status) = body.status.as_deref() {
+        validate_media_status(status)?;
+    }
+    if let Some(title) = body.title.as_deref() {
+        if title.trim().is_empty() {
+            return Err(err_response(
+                StatusCode::BAD_REQUEST,
+                "validation.empty_title",
+                "title cannot be empty.",
+            ));
+        }
+    }
+
+    // SET clauses and their binds are built in lockstep so the two can
+    // never drift out of order.
+    enum Bind {
+        Text(String),
+        Int(i64),
+    }
+    let mut sets: Vec<&str> = Vec::new();
+    let mut args: Vec<Bind> = Vec::new();
+    let mut set_text = |set: &'static str, v: &str| {
+        sets.push(set);
+        args.push(Bind::Text(v.to_string()));
+    };
+    if let Some(v) = body.title.as_deref() {
+        set_text("title = ?", v.trim());
+    }
+    // NULLIF: an explicit empty string clears the field (there's no
+    // other way to express "remove the link" through a PATCH).
+    if let Some(v) = body.author.as_deref() {
+        set_text("author = NULLIF(?, '')", v.trim());
+    }
+    if let Some(v) = body.source.as_deref() {
+        set_text("source = NULLIF(?, '')", v.trim());
+    }
+    if let Some(v) = body.kind.as_deref() {
+        set_text("kind = ?", v);
+    }
+    if let Some(v) = body.status.as_deref() {
+        set_text("status = ?", v);
+    }
+    if let Some(v) = body.unit_label.as_deref() {
+        set_text("unit_label = ?", v.trim());
+    }
+    if let Some(v) = body.notes.as_deref() {
+        set_text("notes = ?", v);
+    }
+    let mut set_int = |set: &'static str, v: i64| {
+        sets.push(set);
+        args.push(Bind::Int(v));
+    };
+    if let Some(v) = body.total_units {
+        set_int("total_units = MAX(0, ?)", v);
+    }
+    if let Some(v) = body.completed_units {
+        set_int("completed_units = MAX(0, ?)", v);
+    }
+    if let Some(v) = body.total_seconds {
+        set_int("total_seconds = MAX(0, ?)", v);
+    }
+    if let Some(v) = body.delta_units {
+        set_int("completed_units = MAX(0, completed_units + ?)", v);
+    }
+    if let Some(v) = body.delta_seconds {
+        set_int("total_seconds = MAX(0, total_seconds + ?)", v);
+    }
+    if sets.is_empty() {
+        return Err(err_response(
+            StatusCode::BAD_REQUEST,
+            "validation.empty_patch",
+            "Provide at least one field to update.",
+        ));
+    }
+
+    let sql = format!(
+        "UPDATE library_items SET {}, updated_at = strftime('%s','now') WHERE id = ? AND {MEDIA_KIND_SQL}",
+        sets.join(", ")
+    );
+    let mut query = sqlx::query(&sql);
+    for arg in args {
+        query = match arg {
+            Bind::Text(s) => query.bind(s),
+            Bind::Int(i) => query.bind(i),
+        };
+    }
+    let result = query
+        .bind(id)
+        .execute(&state.pool)
+        .await
+        .map_err(|e| internal_media_error("update_media", e))?;
+    if result.rows_affected() == 0 {
+        return Err(err_response(
+            StatusCode::NOT_FOUND,
+            "not_found.media",
+            "No media item with that id.",
+        ));
+    }
+    Ok(Json(fetch_media_item(&state.pool, id).await?))
+}
+
+#[derive(Deserialize)]
+struct MediaLookupQuery {
+    url: String,
+    workspace_id: Option<i64>,
+}
+
+/// `GET /v1/media/lookup?url=&workspace_id=` — "is this on the list?"
+/// The extension probes this to badge the player without writing.
+async fn lookup_media(
+    State(state): State<AppState>,
+    Query(q): Query<MediaLookupQuery>,
+) -> Result<Json<serde_json::Value>, Response> {
+    let key = require_media_key(&q.url)?;
+    let item = find_media_by_key(&state.pool, q.workspace_id, &key).await?;
+    Ok(Json(match item {
+        Some(item) => serde_json::json!({ "matched": true, "item": item }),
+        None => serde_json::json!({ "matched": false }),
+    }))
+}
+
+#[derive(Deserialize)]
+struct MediaProgressBody {
+    url: String,
+    workspace_id: Option<i64>,
+    /// Current playback position, seconds into the media.
+    position_secs: Option<i64>,
+    /// Total media length, seconds. Fills/expands the item's minute
+    /// denominator so percent works without manual entry.
+    duration_secs: Option<i64>,
+    /// Active watch/listen seconds since the previous beat (clamped —
+    /// a buggy client can't mint hours per beat).
+    delta_secs: Option<i64>,
+    /// The player finished (or the client decided it's done).
+    ended: Option<bool>,
+}
+
+/// `POST /v1/media/progress` — the Companion extension's beat. Soft
+/// no-match (`{"matched": false}`, 200) because the extension probes
+/// speculatively for every video the user plays; only list members
+/// accrue progress.
+async fn report_media_progress(
+    State(state): State<AppState>,
+    Json(body): Json<MediaProgressBody>,
+) -> Result<Json<serde_json::Value>, Response> {
+    let key = require_media_key(&body.url)?;
+    let Some(item) = find_media_by_key(&state.pool, body.workspace_id, &key).await? else {
+        return Ok(Json(serde_json::json!({ "matched": false })));
+    };
+
+    let mut completed = item.completed_units;
+    let mut total = item.total_units;
+    let mut seconds = item.total_seconds;
+    if let Some(delta) = body.delta_secs {
+        seconds += delta.clamp(0, 3600);
+    }
+
+    // Position → minute progress only where minutes ARE the unit (single
+    // videos). Episodic items keep manual/chapter episode counts; their
+    // beats still accrue listened time above.
+    if is_minutes_unit(&item.unit_label) {
+        if let Some(duration) = body.duration_secs.filter(|d| *d > 0) {
+            let minutes = (duration + 59) / 60;
+            total = Some(total.unwrap_or(0).max(minutes));
+        }
+        if let Some(position) = body.position_secs.filter(|p| *p > 0) {
+            // Furthest-watched semantics: scrubbing backwards never
+            // loses progress.
+            completed = completed.max(position / 60);
+            if let Some(t) = total {
+                completed = completed.min(t);
+            }
+        }
+    }
+
+    let reached_end = matches!(
+        (body.position_secs, body.duration_secs),
+        (Some(p), Some(d)) if d > 0 && p * 10 >= d * 9
+    );
+    let status = if item.status == "finished" {
+        // Rewatching never un-finishes; the extra minutes still count.
+        "finished".to_string()
+    } else if body.ended == Some(true) || reached_end {
+        if let Some(t) = total.filter(|_| is_minutes_unit(&item.unit_label)) {
+            completed = t;
+        }
+        "finished".to_string()
+    } else if item.status == "planned" || item.status == "dropped" {
+        // A beat means it's playing — promote it onto the watching shelf.
+        "active".to_string()
+    } else {
+        item.status.clone()
+    };
+
+    sqlx::query(
+        "UPDATE library_items
+         SET completed_units = ?, total_units = ?, total_seconds = ?, status = ?,
+             updated_at = strftime('%s','now')
+         WHERE id = ?",
+    )
+    .bind(completed)
+    .bind(total)
+    .bind(seconds)
+    .bind(&status)
+    .bind(item.id)
+    .execute(&state.pool)
+    .await
+    .map_err(|e| internal_media_error("report_media_progress", e))?;
+
+    let updated = fetch_media_item(&state.pool, item.id).await?;
+    Ok(Json(serde_json::json!({ "matched": true, "item": updated })))
+}
+
+#[derive(Deserialize)]
+struct OcrFrameBody {
+    /// Base64 (standard alphabet) PNG/JPEG bytes — typically a video
+    /// frame's subtitle band captured by the Companion extension.
+    image_b64: String,
+    /// OCR language ("zh" | "ja" | "ko" | Latin fallback for the rest).
+    lang: Option<String>,
+}
+
+/// `POST /v1/ocr` `{image_b64, lang}` → `{lines: [string]}` — the HTTP
+/// door to the desktop's PaddleOCR engine (ocr.rs). Powers burned-in
+/// subtitle recognition in the extension's player: the models and the
+/// warm engine cache live here, so the browser never ships an OCR
+/// runtime. First call per language downloads models (seconds); after
+/// that a subtitle-band frame recognises in tens of milliseconds.
+async fn ocr_frame(
+    State(state): State<AppState>,
+    Json(body): Json<OcrFrameBody>,
+) -> Result<Json<serde_json::Value>, Response> {
+    if body.image_b64.is_empty() {
+        return Err(err_response(
+            StatusCode::BAD_REQUEST,
+            "validation.empty_image",
+            "image_b64 is required.",
+        ));
+    }
+    let lang = body.lang.as_deref().map(str::trim).filter(|l| !l.is_empty()).unwrap_or("en");
+    let lines = crate::ocr::ocr_plain(&state.app, body.image_b64, lang)
+        .await
+        .map_err(|e| {
+            log::error!("ocr_frame: {e}");
+            err_response(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "internal.ocr_failed",
+                "OCR failed on this frame.",
+            )
+        })?;
+    Ok(Json(serde_json::json!({ "lines": lines })))
 }
 
 /// INSERT … ON CONFLICT keeps the existing row (preserving its FSRS state and
@@ -2074,113 +2941,103 @@ const OAUTH_BOUNCER_HTML: &str = r##"<!doctype html>
 <meta charset="utf-8">
 <title>Tokori — signing you in…</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/oauth/logo.png">
 <style>
+  /* Mirrors the app's theme tokens (src/index.css @theme + .dark) so
+     this page — the one out-of-app surface every desktop sign-in walks
+     through — reads as the same product. Keep the two in sync. */
   :root {
     color-scheme: light dark;
-    /* Brand: electric indigo-violet, matched to the app's --color-brand
-       (oklch(0.55 0.2 280)). Hex so it renders identically in any
-       default browser. */
-    --brand: #6d4aec;
-    --brand-2: #a78bfa;
-    --page: #f4f4f7;
-    --card: #ffffff;
-    --ink: #181b25;
-    --muted: #5b6173;
-    --border: #e7e8ee;
-    --ring: rgba(109, 74, 236, .35);
-    --ok: #0f9d6b;
-    --err: #e0483f;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.16 0.005 250);
+    --card: oklch(1 0 0);
+    --muted-foreground: oklch(0.51 0.01 250);
+    --border: oklch(0.93 0.006 250);
+    --primary: oklch(0.21 0.01 250);
+    --primary-foreground: oklch(0.985 0 0);
+    --ring: oklch(0.62 0.16 280);
+    --brand: oklch(0.55 0.2 280);
+    --ok: oklch(0.6 0.15 155);
+    --destructive: oklch(0.585 0.225 27);
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --page: #0d0f13;
-      --card: #16181f;
-      --ink: #f0f1f5;
-      --muted: #9aa0b0;
-      --border: #262a34;
-      --ring: rgba(167, 139, 250, .30);
-      --ok: #34d39e;
-      --err: #ff6b61;
+      --background: oklch(0.13 0.006 250);
+      --foreground: oklch(0.97 0.005 250);
+      --card: oklch(0.165 0.007 250);
+      --muted-foreground: oklch(0.71 0.012 250);
+      --border: oklch(1 0 0 / 0.08);
+      --primary: oklch(0.97 0.005 250);
+      --primary-foreground: oklch(0.21 0.01 250);
+      --ring: oklch(0.66 0.17 280);
+      --brand: oklch(0.7 0.18 280);
+      --ok: oklch(0.72 0.16 155);
+      --destructive: oklch(0.7 0.2 22);
     }
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; }
   body {
     margin: 0;
-    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    color: var(--ink);
-    background:
-      radial-gradient(1100px 600px at 50% -260px, var(--ring), transparent 60%),
-      var(--page);
-    display: flex; align-items: center; justify-content: center;
-    padding: 24px;
+    display: grid; place-items: center; padding: 24px;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px; line-height: 1.5;
+    font-feature-settings: "cv11", "ss01", "ss03";
     -webkit-font-smoothing: antialiased;
+    color: var(--foreground);
+    background: var(--background);
   }
+  /* Same recipe as the app's sign-in card: bg-card, 1px border,
+     rounded-2xl, shadow-sm — no gradients, no glow. */
   .card {
-    width: 100%; max-width: 380px;
+    width: 100%; max-width: 24rem;
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 36px 32px 32px;
-    text-align: center;
-    box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 18px 50px -18px rgba(20,12,60,.22);
+    border-radius: 1rem;
+    padding: 28px;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   }
-  .badge {
-    width: 60px; height: 60px; margin: 0 auto 18px;
-    border-radius: 16px;
-    display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(150deg, var(--brand), var(--brand-2));
-    box-shadow: 0 8px 22px -8px var(--brand);
+  .brand { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+  .brand img { width: 28px; height: 28px; }
+  .brand span {
+    font-family: "Charter", "Iowan Old Style", "Apple Garamond", Baskerville, Georgia, "Times New Roman", serif;
+    font-size: 18px; font-weight: 600; letter-spacing: -0.025em;
   }
-  .badge svg { width: 34px; height: 34px; color: #fff; }
-  .wordmark {
-    font-weight: 680; letter-spacing: -0.02em; font-size: 19px;
-    margin-bottom: 22px; color: var(--ink);
-  }
-  .status { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 26px; }
+  .status { display: flex; align-items: center; gap: 8px; min-height: 24px; }
   .spin {
-    width: 18px; height: 18px; flex: none;
-    border: 2.5px solid var(--ring); border-top-color: var(--brand);
-    border-radius: 50%; animation: r .7s linear infinite;
+    width: 16px; height: 16px; flex: none; border-radius: 50%;
+    border: 2px solid var(--border); border-top-color: var(--brand);
+    animation: r .7s linear infinite;
   }
   @keyframes r { to { transform: rotate(360deg); } }
-  .glyph { width: 22px; height: 22px; flex: none; border-radius: 50%;
+  .glyph { width: 20px; height: 20px; flex: none; border-radius: 50%;
            display: none; align-items: center; justify-content: center;
-           color: #fff; font-size: 13px; font-weight: 700; }
-  h1 { font-size: 17px; font-weight: 640; margin: 0; letter-spacing: -0.01em; }
-  p { margin: 9px 0 0; color: var(--muted); font-size: 13.5px; word-break: break-word; }
+           color: #fff; font-size: 12px; font-weight: 700; }
+  h1 { font-size: 15px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+  p { margin: 8px 0 0; color: var(--muted-foreground); font-size: 13px; word-break: break-word; }
   .btn {
-    display: none; margin: 22px auto 0; padding: 10px 20px;
-    font: inherit; font-weight: 600; font-size: 14px; cursor: pointer;
-    color: #fff; border: 0; border-radius: 10px;
-    background: linear-gradient(150deg, var(--brand), var(--brand-2));
+    display: none; width: 100%; height: 36px; margin-top: 20px; padding: 0 16px;
+    font: inherit; font-weight: 500; font-size: 14px; cursor: pointer;
+    color: var(--primary-foreground); background: var(--primary);
+    border: 0; border-radius: 10px;
   }
-  .btn:hover { filter: brightness(1.05); }
-  .btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .btn:hover { opacity: .9; }
+  .btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
   /* State accents */
   .card.is-ok .glyph { display: inline-flex; background: var(--ok); }
   .card.is-ok .spin { display: none; }
-  .card.is-ok h1 { color: var(--ok); }
   .card.is-ok .btn { display: block; }
-  .card.is-err .glyph { display: inline-flex; background: var(--err); }
+  .card.is-err .glyph { display: inline-flex; background: var(--destructive); }
   .card.is-err .spin { display: none; }
-  .card.is-err h1 { color: var(--err); }
+  .card.is-err h1 { color: var(--destructive); }
 </style>
 </head>
 <body>
 <div class="card" id="card">
-  <div class="badge">
-    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="currentColor" fill-rule="evenodd" role="img" aria-label="Tokori">
-      <path d="M22 22 L18 4 L26 18 Z"/>
-      <path d="M27 19 L28 2 L34 18 Z"/>
-      <path d="M33 18 L46 6 L40 22 Z"/>
-      <path d="M40 22 L56 14 L46 28 Z"/>
-      <path d="M44 28 L60 26 L48 34 Z"/>
-      <path d="M16 32 C 16 23 23 18 32 18 C 42 18 49 25 49 33 C 49 37 47 40 45 42 C 48 48 53 53 58 56 L 58 60 L 28 60 C 19 60 13 53 13 44 C 13 38 14 34 16 32 Z M 26 28 a 2.5 2.5 0 1 0 5 0 a 2.5 2.5 0 1 0 -5 0 Z"/>
-      <path d="M16 33 L 5 35 Q 3 37 5 39 Q 7 41 11 41 L 18 39 Z"/>
-    </svg>
+  <div class="brand">
+    <img src="/oauth/logo.png" alt="" width="28" height="28">
+    <span>Tokori</span>
   </div>
-  <div class="wordmark">Tokori</div>
   <div aria-live="polite">
     <div class="status">
       <span class="spin" id="spin"></span>
@@ -2204,7 +3061,23 @@ const OAUTH_BOUNCER_HTML: &str = r##"<!doctype html>
     titleEl.textContent = title;
     hintEl.textContent = hint;
   };
-  document.getElementById("closeBtn").addEventListener("click", () => window.close());
+  const closeBtn = document.getElementById("closeBtn");
+  closeBtn.addEventListener("click", () => {
+    // This tab was opened by the OS (the desktop app launched the
+    // browser), not by a script — so a bare window.close() is refused
+    // by Firefox always and by Chrome whenever the tab accumulated
+    // history through the OAuth redirects. Try the plain close, then
+    // the legacy self-open trick that still satisfies some engines,
+    // and if the page is still alive after a beat, swap the dead
+    // button for an honest instruction instead of silently no-opping.
+    window.close();
+    try { window.open("", "_self"); window.close(); } catch {}
+    setTimeout(() => {
+      closeBtn.style.display = "none";
+      hintEl.textContent =
+        "Your browser doesn't let pages close this tab themselves — press Ctrl+W (⌘W on Mac) and you're done.";
+    }, 300);
+  });
   try {
     const search = new URLSearchParams(location.search);
     const hash = new URLSearchParams(location.hash.slice(1));
@@ -2230,8 +3103,10 @@ const OAUTH_BOUNCER_HTML: &str = r##"<!doctype html>
     }
     set("ok", "Signed in", "You're all set — close this window and return to Tokori.");
     // Clear sensitive params from history so a "show all tabs" view
-    // doesn't display the token in the URL bar.
-    history.replaceState(null, "", "/oauth/callback");
+    // doesn't display the token in the URL bar. Best-effort: sign-in
+    // already completed, so a history quirk must not repaint the card
+    // as a failure.
+    try { history.replaceState(null, "", "/oauth/callback"); } catch {}
   } catch (e) {
     set("err", "Sign-in failed", String(e && e.message ? e.message : e));
   }
@@ -2250,6 +3125,23 @@ async fn oauth_callback_page() -> Response {
         .body(OAUTH_BOUNCER_HTML.into())
         .unwrap_or_else(|_| {
             (StatusCode::INTERNAL_SERVER_ERROR, "page build failed").into_response()
+        })
+}
+
+/// The app icon, embedded at compile time so the bouncer always shows
+/// the exact brand mark the rest of the app carries (public/logo.png —
+/// the same file the title bar and the favicon use). Can't drift, and
+/// the page needs no external hosts.
+const APP_LOGO_PNG: &[u8] = include_bytes!("../../public/logo.png");
+
+async fn oauth_logo() -> Response {
+    Response::builder()
+        .status(StatusCode::OK)
+        .header(header::CONTENT_TYPE, "image/png")
+        .header(header::CACHE_CONTROL, "public, max-age=86400")
+        .body(APP_LOGO_PNG.into())
+        .unwrap_or_else(|_| {
+            (StatusCode::INTERNAL_SERVER_ERROR, "logo build failed").into_response()
         })
 }
 

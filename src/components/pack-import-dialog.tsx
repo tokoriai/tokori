@@ -5,6 +5,7 @@ import {
   Eye,
   FileJson,
   Loader2,
+  MonitorPlay,
   Package,
   ShoppingBag,
 } from "lucide-react";
@@ -291,10 +292,16 @@ export function PackImportDialog({
         parts.push(`${result.textbooksCreated} textbook${result.textbooksCreated === 1 ? "" : "s"}`);
       if (result.chaptersCreated > 0)
         parts.push(`${result.chaptersCreated} chapter${result.chaptersCreated === 1 ? "" : "s"}`);
+      if (result.mediaCreated > 0)
+        parts.push(
+          `${result.mediaCreated} watch recommendation${result.mediaCreated === 1 ? "" : "s"}`,
+        );
+      const skipped =
+        result.collectionsSkipped + result.textbooksSkipped + result.mediaSkipped;
       const skipMsg =
-        result.collectionsSkipped + result.textbooksSkipped > 0
-          ? ` · ${result.collectionsSkipped + result.textbooksSkipped} already-installed item${
-              result.collectionsSkipped + result.textbooksSkipped === 1 ? "" : "s"
+        skipped > 0
+          ? ` · ${skipped} already-installed item${
+              skipped === 1 ? "" : "s"
             } updated in place.`
           : "";
       toast.success(
@@ -524,6 +531,20 @@ export function PackImportDialog({
                   } · ${summary.textbookVocabCount.toLocaleString()} words`}
                   icon={<BookOpen className="size-3.5" />}
                 />
+                {summary.mediaCount > 0 && (
+                  <Stat
+                    label="To watch"
+                    value={summary.mediaCount}
+                    sub={
+                      summary.mediaEpisodeCount > 0
+                        ? `${summary.mediaEpisodeCount} episode${
+                            summary.mediaEpisodeCount === 1 ? "" : "s"
+                          } — lands in Immersion`
+                        : "lands in Immersion's Up next"
+                    }
+                    icon={<MonitorPlay className="size-3.5" />}
+                  />
+                )}
               </div>
               {pack.version && (
                 <p className="mt-2 text-[10.5px] text-muted-foreground">

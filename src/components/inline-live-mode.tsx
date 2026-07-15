@@ -45,6 +45,10 @@ import { useCloud } from "@/lib/cloud-context";
 import { HOSTED } from "@/lib/build-flags";
 import { useLiveVoice } from "@/lib/live-voice";
 import { useCloudLiveVoice } from "@/lib/live-voice-cloud";
+import {
+  CLOUD_OPENAI_LIVE_MODELS,
+  useCloudOpenAIVoice,
+} from "@/lib/live-voice-cloud-openai";
 import { useLocalLiveVoice } from "@/lib/live-voice-local";
 import {
   OPENAI_LIVE_MODELS,
@@ -167,6 +171,10 @@ export function InlineLiveMode({
   // build, and this hook surfaces a clear error if the user hasn't
   // configured a Whisper-shaped provider.
   const cloudLive = useCloudLiveVoice();
+  // Cloud-proxied OpenAI Realtime (gpt-realtime-2.1*) — the server
+  // mints an ephemeral client secret, so it works signed-in with no
+  // BYOK key, on desktop and hosted alike.
+  const cloudOpenai = useCloudOpenAIVoice();
 
   // Provider for the live session. Persists in localStorage so a user
   // who picked OpenAI doesn't get bounced back to Gemini on reload.
@@ -178,11 +186,26 @@ export function InlineLiveMode({
   // a desktop or BYOK session in the same browser profile — otherwise
   // a saved "local" or "gemini" silently disables the Start button
   // and the user sees "I speak but nothing happens".
-  type LiveBackend = "gemini" | "openai" | "qwen" | "local" | "cloud";
+  type LiveBackend =
+    | "gemini"
+    | "openai"
+    | "qwen"
+    | "local"
+    | "cloud"
+    | "cloud-openai";
   const [liveBackend, setLiveBackend] = useState<LiveBackend>(() => {
-    if (HOSTED) return "cloud";
+    if (HOSTED) {
+      // Both cloud-proxied backends work in HOSTED; anything BYOK/local
+      // in stale localStorage falls back to the Gemini cloud default.
+      const v = readString("live.backend", "cloud");
+      return v === "cloud-openai" ? "cloud-openai" : "cloud";
+    }
     const v = readString("live.backend", "gemini");
-    return v === "openai" || v === "qwen" || v === "local" || v === "cloud"
+    return v === "openai" ||
+      v === "qwen" ||
+      v === "local" ||
+      v === "cloud" ||
+      v === "cloud-openai"
       ? v
       : "gemini";
   });
@@ -214,7 +237,9 @@ export function InlineLiveMode({
     }
   }, [providers, cloud.account]);
   useEffect(() => {
-    if (typeof window === "undefined" || HOSTED) return;
+    // Persist in HOSTED too — the init above filters hosted reads down
+    // to the two cloud backends, so a stale BYOK value can't stick.
+    if (typeof window === "undefined") return;
     window.localStorage.setItem("live.backend", liveBackend);
   }, [liveBackend]);
 
@@ -227,7 +252,9 @@ export function InlineLiveMode({
           ? local
           : liveBackend === "cloud"
             ? cloudLive
-            : gemini;
+            : liveBackend === "cloud-openai"
+              ? cloudOpenai
+              : gemini;
   const { state, error, turns, liveUser, liveAssistant, start, stop } = live;
   const [systemPrompt, setSystemPrompt] = useState<string>("");
 
@@ -265,7 +292,9 @@ export function InlineLiveMode({
           ? QWEN_LIVE_MODELS[0]
           : liveBackend === "cloud"
             ? DEFAULT_CLOUD_LIVE_MODEL
-            : pickLiveModel(geminiProvider?.model ?? ""),
+            : liveBackend === "cloud-openai"
+              ? CLOUD_OPENAI_LIVE_MODELS[0].id
+              : pickLiveModel(geminiProvider?.model ?? ""),
     [geminiProvider?.model, liveBackend],
   );
   const [liveModel, setLiveModel] = useState<string>(initialModel);
@@ -295,9 +324,19 @@ export function InlineLiveMode({
             // from the direct Gemini Live backend so a user can keep
             // separate preferences for the two.
             "live.voice.cloud-gemini"
-          : "live.voice";
+          : liveBackend === "cloud-openai"
+            ? "live.voice.cloud-openai"
+            : "live.voice";
   const voiceDefault =
-    liveBackend === "openai" ? "alloy" : liveBackend === "qwen" ? "Cherry" : "Aoede";
+    liveBackend === "openai"
+      ? "alloy"
+      : liveBackend === "cloud-openai"
+        ? // marin is the flagship voice OpenAI shipped with gpt-realtime;
+          // the best first impression for a fresh cloud user.
+          "marin"
+        : liveBackend === "qwen"
+          ? "Cherry"
+          : "Aoede";
   const [liveVoice, setLiveVoice] = useState<string>(() =>
     readString(voiceKey, voiceDefault),
   );
@@ -483,10 +522,20 @@ export function InlineLiveMode({
 
   // The "current focus" — what the user is meant to read RIGHT NOW.
   // Priority: live assistant > live user > most recent assistant turn.
+  // The OpenAI backends skip the live-user rung: their input
+  // transcription lands late (post-VAD, often after the reply has
+  // already started), so surfacing it here flashes the user's own
+  // words over the tutor line they're still reading. Gemini
+  // transcribes while the user speaks, where the echo reads as a
+  // live caption instead — it keeps the rung. Completed user turns
+  // still land in the transcript panel on every backend.
+  const showOwnSpeech =
+    liveBackend !== "openai" && liveBackend !== "cloud-openai";
   const currentFocus: { role: "user" | "assistant"; text: string; isLive: boolean } | null =
     (() => {
       if (liveAssistant) return { role: "assistant", text: liveAssistant, isLive: true };
-      if (liveUser) return { role: "user", text: liveUser, isLive: true };
+      if (liveUser && showOwnSpeech)
+        return { role: "user", text: liveUser, isLive: true };
       for (let i = turns.length - 1; i >= 0; i--) {
         if (turns[i].role === "assistant") {
           return { role: "assistant", text: turns[i].content, isLive: false };
@@ -739,9 +788,9 @@ export function InlineLiveMode({
   // server mints a Gemini ephemeral token, so no per-user provider
   // setup is needed beyond the cloud session bearer).
   const canStart =
-    liveBackend === "cloud"
-      ? // Cloud needs a signed-in account — the server mints the Gemini
-        // ephemeral token against the session bearer.
+    liveBackend === "cloud" || liveBackend === "cloud-openai"
+      ? // Cloud backends need a signed-in account — the server mints the
+        // ephemeral token/secret against the session bearer.
         !!systemPrompt && !!cloud.account
       : liveBackend === "local"
         ? !!systemPrompt
@@ -1176,6 +1225,12 @@ export function InlineLiveMode({
                   : "Tokori Cloud (Gemini Live, server-proxied)"}
                 {!cloud.account ? " — sign in required" : ""}
               </option>
+              <option value="cloud-openai">
+                {HOSTED
+                  ? "Tokori Cloud (OpenAI Realtime)"
+                  : "Tokori Cloud (OpenAI Realtime, server-proxied)"}
+                {!cloud.account ? " — sign in required" : ""}
+              </option>
               {!HOSTED && (
                 <option value="local">
                   Local pipeline (Whisper + LLM + TTS)
@@ -1284,7 +1339,8 @@ export function InlineLiveMode({
                 </div>
               )}
             </>
-          ) : liveBackend === "cloud" && !cloud.account ? (
+          ) : (liveBackend === "cloud" || liveBackend === "cloud-openai") &&
+            !cloud.account ? (
             // Cloud backend picked without a signed-in account — the
             // server can't mint a Live token, so Start is disabled.
             // Say so here instead of letting the button silently stay
@@ -1368,6 +1424,70 @@ export function InlineLiveMode({
                 · realtime Gemini Live via your cloud credits ·
                 auto-detects when you stop · API key stays server-
                 side
+              </span>
+            </div>
+          ) : liveBackend === "cloud-openai" ? (
+            // Cloud OpenAI Realtime — the cloud server mints an
+            // ephemeral client secret (models allowlisted server-side),
+            // the app opens the WS to OpenAI directly with it. Voices
+            // are language-agnostic like Gemini's, so no per-language
+            // filtering here either.
+            <div className="flex flex-wrap items-center gap-2">
+              <label htmlFor="live-model-cloud-openai" className="opacity-70">
+                Model
+              </label>
+              <select
+                id="live-model-cloud-openai"
+                value={liveModel}
+                disabled={isActive}
+                onChange={(e) => setLiveModel(e.target.value)}
+                className="rounded-md border border-border bg-background px-2 py-0.5 font-mono text-[11.5px] text-foreground disabled:opacity-50"
+                title="gpt-realtime-2.1 generation (July 2026) — mini is a third of the audio price; the full model reasons harder and handles noise/interruptions better."
+              >
+                {CLOUD_OPENAI_LIVE_MODELS.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.id} — {m.blurb}
+                  </option>
+                ))}
+              </select>
+              <label htmlFor="live-voice-cloud-openai" className="opacity-70">
+                Voice
+              </label>
+              <select
+                id="live-voice-cloud-openai"
+                value={liveVoice}
+                disabled={isActive}
+                onChange={(e) => setLiveVoice(e.target.value)}
+                className="rounded-md border border-border bg-background px-2 py-0.5 text-[11.5px] text-foreground disabled:opacity-50"
+              >
+                {OPENAI_LIVE_VOICES.map((v) => (
+                  <option key={v.name} value={v.name}>
+                    {v.name} — {v.blurb}
+                  </option>
+                ))}
+              </select>
+              <label htmlFor="live-mic-cloud-openai" className="opacity-70">
+                Mic
+              </label>
+              <select
+                id="live-mic-cloud-openai"
+                value={micDeviceId}
+                disabled={isActive}
+                onChange={(e) => setMicDeviceId(e.target.value)}
+                className="rounded-md border border-border bg-background px-2 py-0.5 text-[11.5px] text-foreground disabled:opacity-50"
+                title="Pick which microphone to capture from. Defaults to OS default."
+              >
+                <option value="">System default</option>
+                {micDevices.map((d) => (
+                  <option key={d.deviceId} value={d.deviceId}>
+                    {d.label || `Mic ${d.deviceId.slice(0, 6)}`}
+                  </option>
+                ))}
+              </select>
+              <span className="text-[10.5px] opacity-60">
+                · realtime OpenAI (gpt-realtime-2.1) via your cloud
+                credits · auto-detects when you stop · API key stays
+                server-side
               </span>
             </div>
           ) : (

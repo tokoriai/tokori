@@ -324,11 +324,17 @@ export type LibraryKind =
   | "ebook"
   | "textbook"
   | "video"
+  // A show/season with episodes — rendered by the Immersion view, not
+  // Library (see src/lib/media/kinds.ts for the kind split).
+  | "series"
   | "article"
   | "podcast"
   | "other";
 
-export type LibraryStatus = "active" | "paused" | "finished" | "dropped";
+// "planned" = the backlog ("want to watch/read") — items queued before
+// any progress exists. The DB column is free text, so older rows are
+// unaffected; the sync wire carries it as-is.
+export type LibraryStatus = "planned" | "active" | "paused" | "finished" | "dropped";
 
 export type LibraryItem = {
   id: number;

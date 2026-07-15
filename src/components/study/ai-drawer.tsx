@@ -118,6 +118,7 @@ export function StudyAiDrawer({
   const [streamingText, setStreamingText] = useState("");
   const [fullscreen, setFullscreen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   // Reset on card change — earlier questions become confusing context
   // for a new card. The drawer stays mounted across cards for a
   // smoother feel; only the conversation gets cleared.
@@ -131,6 +132,18 @@ export function StudyAiDrawer({
       setInput("");
     }
   }, [open, card.id]);
+
+  // Focus the composer on open so the "a" shortcut flows straight into
+  // typing the question — no click in between. After-paint via rAF:
+  // the drawer mounts in the same tick as the keydown that opened it
+  // (the plugin preventDefaults that key, but focus before mount
+  // settles is unreliable on WebKit). The study surface's shortcut
+  // handlers already ignore keys typed into a textarea.
+  useEffect(() => {
+    if (!open) return;
+    const raf = requestAnimationFrame(() => inputRef.current?.focus());
+    return () => cancelAnimationFrame(raf);
+  }, [open]);
 
   // Auto-scroll on new tokens / turns.
   useEffect(() => {
@@ -360,6 +373,7 @@ export function StudyAiDrawer({
               )}
             >
               <textarea
+                ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 rows={1}

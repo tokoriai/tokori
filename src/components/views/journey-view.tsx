@@ -50,8 +50,10 @@ import {
 import {
   listSessions,
   listVocab,
+  listWorkspaceReviews,
   type StudySession,
   type VocabEntry,
+  type VocabReview,
 } from "@/lib/db";
 import { useWorkspace } from "@/lib/workspace-context";
 import { useProfile } from "@/lib/profile-context";
@@ -188,6 +190,7 @@ function JourneyOverview({ onGoToGoals }: { onGoToGoals: () => void }) {
 
   const [vocab, setVocab] = useState<VocabEntry[]>([]);
   const [sessions, setSessions] = useState<StudySession[]>([]);
+  const [reviews, setReviews] = useState<VocabReview[]>([]);
   const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
@@ -205,12 +208,14 @@ function JourneyOverview({ onGoToGoals }: { onGoToGoals: () => void }) {
     Promise.all([
       listVocab(workspace.id),
       listSessions(workspace.id),
+      listWorkspaceReviews(workspace.id),
       listHabits(workspace.id),
     ])
-      .then(([v, s, h]) => {
+      .then(([v, s, r, h]) => {
         if (cancelled) return;
         setVocab(v);
         setSessions(s);
+        setReviews(r);
         setHabits(h);
       })
       .finally(() => {
@@ -243,6 +248,7 @@ function JourneyOverview({ onGoToGoals }: { onGoToGoals: () => void }) {
     return computeLearningJourney({
       workspace,
       vocab,
+      reviews,
       sessions,
       scale,
       targetLevelId,
@@ -260,6 +266,7 @@ function JourneyOverview({ onGoToGoals }: { onGoToGoals: () => void }) {
     scale,
     availableLevels,
     vocab,
+    reviews,
     sessions,
   ]);
 
@@ -578,7 +585,7 @@ function ProgressStrip({ journey }: { journey: LearningJourney }) {
         />
       </div>
       <p className="text-[12px] text-muted-foreground">
-        {journey.currentVocab} words mastered ·{" "}
+        {journey.currentVocab} words known ·{" "}
         {journey.currentHours.toFixed(1)}h immersion
       </p>
     </section>

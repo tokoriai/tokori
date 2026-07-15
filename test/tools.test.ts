@@ -99,6 +99,43 @@ describe("sanitizeStreamingReply", () => {
     expect(sanitizeStreamingReply(csv).text).toBe(csv);
     expect(sanitizeStreamingReply(csv).toolPending).toBe(false);
   });
+
+  it("hides vocab blocks (complete and unterminated) behind the pulse", () => {
+    const complete = sanitizeStreamingReply(
+      "Here are the words:\n```vocab\n猫 | māo | cat\n狗 | gǒu | dog\n```\nPractice them!",
+    );
+    expect(complete.text).toBe("Here are the words:\n\nPractice them!");
+    expect(complete.vocabPending).toBe(true);
+
+    const streaming = sanitizeStreamingReply(
+      "Here are the words:\n```vocab\n猫 | māo | ca",
+    );
+    expect(streaming.text).toBe("Here are the words:");
+    expect(streaming.vocabPending).toBe(true);
+
+    expect(sanitizeStreamingReply("plain").vocabPending).toBe(false);
+  });
+
+  it("keeps passage text readable while stripping only the fence markers", () => {
+    // Unterminated: the opener line vanishes, streamed content shows.
+    const streaming = sanitizeStreamingReply(
+      "Here's a story:\n```passage\n# 我的一天\n今天我去了公园。",
+    );
+    expect(streaming.text).toBe("Here's a story:\n# 我的一天\n今天我去了公园。");
+
+    // Complete: closer goes too, and the shown prefix is unchanged —
+    // the imperative typer depends on prefix stability at the moment
+    // the closing fence lands.
+    const complete = sanitizeStreamingReply(
+      "Here's a story:\n```passage\n# 我的一天\n今天我去了公园。\n```",
+    );
+    expect(complete.text.startsWith(streaming.text)).toBe(true);
+  });
+
+  it("hides any partial fence tail, not just the tool one", () => {
+    expect(sanitizeStreamingReply("Words below.\n```voc").text).toBe("Words below.");
+    expect(sanitizeStreamingReply("A story:\n```passa").text).toBe("A story:");
+  });
 });
 
 describe("pendingToolLabel", () => {

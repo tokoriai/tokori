@@ -1870,6 +1870,8 @@ export async function cloudImportPack(input: {
   textbooksSkipped: number;
   chaptersCreated: number;
   wordsCreated: number;
+  mediaCreated: number;
+  mediaSkipped: number;
 }> {
   const data = await expectJson<{
     collectionsCreated: number;
@@ -1878,6 +1880,8 @@ export async function cloudImportPack(input: {
     textbooksSkipped: number;
     chaptersCreated: number;
     wordsCreated: number;
+    mediaCreated?: number;
+    mediaSkipped?: number;
   }>(
     await authedFetch(
       `/api/v1/workspaces/${input.workspaceId}/pack-import`,
@@ -1891,5 +1895,11 @@ export async function cloudImportPack(input: {
       },
     ),
   );
-  return data;
+  // Media counts default to 0 against a cloud that predates the media
+  // stage — the import still succeeds, just without recommendations.
+  return {
+    ...data,
+    mediaCreated: data.mediaCreated ?? 0,
+    mediaSkipped: data.mediaSkipped ?? 0,
+  };
 }

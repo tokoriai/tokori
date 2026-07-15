@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Pinyin } from "@/components/pinyin";
 import { SpeakButton } from "@/components/speak-button";
 import { StudyAiDrawer } from "@/components/study/ai-drawer";
 import { deleteVocab } from "@/lib/db";
@@ -53,6 +54,10 @@ import {
   saveSnapshot,
   type SessionSnapshot,
 } from "@/lib/study/session-state";
+import {
+  buildStudySessionQueue,
+  UNCAPPED_DAILY_LIMITS,
+} from "@/lib/study-config";
 import { useTTS } from "@/lib/tts-context";
 import type {
   Grade,
@@ -247,6 +252,12 @@ const DEFAULT_PALETTE: StageDef[] = [
  *  25-card queue stays under ~10 minutes. */
 const STAGES_PER_CARD = 3;
 
+/** Batch presets for the prestart picker — same mechanism as
+ *  vocab-recall's, with smaller rungs because every kaniwani card is
+ *  ~3–5 tasks (intro + typed stages + tone pick), not a single flip.
+ *  Ten new cards ≈ forty tasks, so "5 cards" is a real session here. */
+const SESSION_PRESETS = [5, 10, 20];
+
 /** When a card lapses, we re-queue it this many positions ahead for
  *  a single retest. Far enough that the user has practised other
  *  cards in between (so it's a real recall test, not just typing
@@ -336,13 +347,26 @@ function StudyView({ ctx }: StudyViewProps) {
   // reset the user's expectations about whether grades flow.
   const [started, setStarted] = useState(initial != null);
 
-  // Queue is the fixed set of cards for the session — the lapsed
-  // re-test lives in the `tasks` list (a new task spliced ahead), so
-  // the queue itself stays immutable after build.
-  const [queue] = useState<VocabEntry[]>(() => {
-    if (initial) return initial.queue;
-    return pickQueue(ctx.dueVocab, ctx.vocab);
-  });
+  // The ready pool — the exact queue vocab-recall builds (due reviews
+  // first, then new cards, deduped), so the two modes always agree on
+  // what "N cards ready" means. Kaniwani additionally needs a gloss
+  // (several stages prompt with it). Uncapped like vocab-recall: the
+  // prestart batch picker below is the user's session-size control.
+  const sessionPool = useMemo(() => {
+    if (initial) return [];
+    return buildStudySessionQueue(
+      ctx.dueVocab,
+      ctx.vocab,
+      UNCAPPED_DAILY_LIMITS,
+    ).filter((c) => !!c.gloss?.trim());
+  }, [initial, ctx.dueVocab, ctx.vocab]);
+  // Queue is the fixed set of cards for the session — the batch the
+  // user picked off the front of the pool. The lapsed re-test lives in
+  // the `tasks` list (a new task spliced ahead), so the queue itself
+  // stays immutable after `startSession`.
+  const [queue, setQueue] = useState<VocabEntry[]>(
+    initial ? initial.queue : [],
+  );
   // Cards waiting on a single in-session retest before they get
   // graded. When a card finishes its last task with too many
   // mistakes for the first time, we append a fresh retest stage to
@@ -366,37 +390,27 @@ function StudyView({ ctx }: StudyViewProps) {
   const gradesRef = useRef({ again: 0, hard: 0, good: 0, easy: 0 });
   const reviewedCardsRef = useRef<ReviewedCardSummary[]>([]);
   const [progress, setProgress] = useState<Record<number, CardProgress>>(() => {
-    if (initial) {
-      const out: Record<number, CardProgress> = {};
-      for (const c of initial.queue) {
-        const plan = initial.snap.plans[c.id];
-        if (!plan) continue;
-        out[c.id] = {
-          plan,
-          mistakes: initial.snap.mistakesByCardId[c.id] ?? 0,
-        };
-      }
-      return out;
+    if (!initial) return {};
+    const out: Record<number, CardProgress> = {};
+    for (const c of initial.queue) {
+      const plan = initial.snap.plans[c.id];
+      if (!plan) continue;
+      out[c.id] = {
+        plan,
+        mistakes: initial.snap.mistakesByCardId[c.id] ?? 0,
+      };
     }
-    return Object.fromEntries(
-      queue.map((c) => [c.id, { plan: planForCard(c, palette), mistakes: 0 }]),
-    );
+    return out;
   });
   // Interleaved task list: each entry is (cardId, stageInPlanIdx).
-  // Built once on mount from the initial plans; mutated when a card
-  // lapses (a retest task is spliced in ~4 positions ahead).
+  // Built once in `startSession`; mutated when a card lapses (a retest
+  // task is spliced in ~4 positions ahead).
   const [tasks, setTasks] = useState<TaskRef[]>(() => {
-    if (initial) {
-      return initial.snap.tasks.map((t) => ({
-        cardId: t.cardId,
-        stageInPlanIdx: t.stageInPlanIdx,
-      }));
-    }
-    const plans: Record<number, StageDef[]> = {};
-    for (const c of queue) {
-      plans[c.id] = planForCard(c, palette);
-    }
-    return buildInterleavedTasks(queue, plans);
+    if (!initial) return [];
+    return initial.snap.tasks.map((t) => ({
+      cardId: t.cardId,
+      stageInPlanIdx: t.stageInPlanIdx,
+    }));
   });
   const [taskIdx, setTaskIdx] = useState(initial?.snap.taskIdx ?? 0);
   // Snapshot of pre-restored cards already done — used to seed the
@@ -450,6 +464,9 @@ function StudyView({ ctx }: StudyViewProps) {
   // both are updated synchronously alongside the state changes that
   // trigger this effect.
   useEffect(() => {
+    // Nothing to persist until the user picks a batch — and saving the
+    // empty pre-start state would clobber nothing useful anyway.
+    if (!started || queue.length === 0) return;
     const wsId = ctx.workspace.id;
     const plans: Record<number, StageDef[]> = {};
     const mistakesByCardId: Record<number, number> = {};
@@ -476,7 +493,7 @@ function StudyView({ ctx }: StudyViewProps) {
       startedAt: Math.floor(Date.now() / 1000),
     };
     saveSnapshot(snap);
-  }, [ctx.workspace.id, queue, tasks, taskIdx, progress, done]);
+  }, [ctx.workspace.id, started, queue, tasks, taskIdx, progress, done]);
 
   // Clear the snapshot once the runner reaches the "all done" state
   // (taskIdx past the end). The user can also clear it explicitly by
@@ -552,10 +569,10 @@ function StudyView({ ctx }: StudyViewProps) {
   // arrives when the user is being taught the card or being asked to
   // listen — never as a side-channel hint to a recall question.
   useEffect(() => {
-    // Don't autoplay behind the prestart picker — the first card's
-    // stage is already computed while `started` is false, so without
-    // this guard the word is spoken before the user hits Start. `silent`
-    // keeps a failing provider from toasting once per card.
+    // No autoplay behind the prestart picker (belt-and-braces — the
+    // queue is empty until the user picks a batch, so `card` is null
+    // there anyway). `silent` keeps a failing provider from toasting
+    // once per card.
     if (!started || !card || !stage) return;
     if (stage.kind !== "promptAudio" && stage.kind !== "intro") return;
     void tts.speak(card.word, ctx.workspace.targetLang, { silent: true });
@@ -564,23 +581,73 @@ function StudyView({ ctx }: StudyViewProps) {
 
   const total = queue.length;
 
+  /** Slice the first `n` cards off the pool (reviews first, then new —
+   *  the same order vocab-recall studies them in), draw each card's
+   *  plan once, and derive both the progress map and the interleaved
+   *  task list from that single draw. */
+  function startSession(n: number) {
+    const picked = sessionPool.slice(0, n);
+    if (picked.length === 0) return;
+    const plans: Record<number, StageDef[]> = {};
+    for (const c of picked) plans[c.id] = planForCard(c, palette);
+    setQueue(picked);
+    setProgress(
+      Object.fromEntries(
+        picked.map((c) => [c.id, { plan: plans[c.id]!, mistakes: 0 }]),
+      ),
+    );
+    setTasks(buildInterleavedTasks(picked, plans));
+    setTaskIdx(0);
+    setStarted(true);
+  }
+
   if (!started) {
+    const ready = sessionPool.length;
+    const presets = SESSION_PRESETS.filter((n) => ready > n);
     return (
       <PrestartShell
         icon={Pencil}
         pluginName="Kaniwani — typed recall"
-        title={total === 0 ? "Nothing to type yet." : `${total} cards ready.`}
+        title={ready === 0 ? "All caught up." : `${ready} cards ready.`}
         description={
-          total === 0
-            ? "Save some vocabulary first, or wait for cards to become due. Kaniwani works best on cards you've seen at least once."
-            : "Production practice for CJK. Each card walks through a short plan — character ↔ reading ↔ meaning ↔ audio — in a mixed order. Wrong attempts feed the FSRS grade."
+          ready === 0
+            ? "Nothing due right now and no new cards are queued. Save more words from chat or the reader, then come back."
+            : "Pick how many you want to type now. Reviews come first, then new cards — so a smaller batch still gives priority to what's actually due."
         }
         drillMode={ctx.drillMode}
         setDrillMode={ctx.setDrillMode}
         srsAnchorState={ctx.srsAnchorState}
-        onStart={total === 0 ? undefined : () => setStarted(true)}
-        startLabel="Start session"
-      />
+      >
+        {ready > 0 && (
+          <>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {presets.map((n) => (
+                <Button
+                  key={n}
+                  variant="outline"
+                  size="lg"
+                  onClick={() => startSession(n)}
+                  className="min-w-[110px]"
+                >
+                  {n} cards
+                </Button>
+              ))}
+              <Button
+                size="lg"
+                onClick={() => startSession(ready)}
+                className="min-w-[110px]"
+              >
+                All {ready}
+              </Button>
+            </div>
+            <p className="text-center text-[11px] text-muted-foreground">
+              Each card walks a short plan — character ↔ reading ↔ meaning
+              ↔ audio, ~3–5 tasks per card — so batches run longer than
+              plain flashcards.
+            </p>
+          </>
+        )}
+      </PrestartShell>
     );
   }
 
@@ -837,7 +904,12 @@ function StudyView({ ctx }: StudyViewProps) {
       setTimeout(advanceStage, 350);
     } else {
       setFeedback("wrong");
-      setReveal(expected);
+      // Readings can be stored in numeric CC-CEDICT form ("ni3 hao3");
+      // reveal the tone-marked form the rest of the app shows. Kana
+      // and word/gloss answers pass through prettyPinyin untouched.
+      setReveal(
+        stage.answerField === "reading" ? prettyPinyin(expected) : expected,
+      );
       setProgress((p) => ({
         ...p,
         [card.id]: { ...cardProg, mistakes: cardProg.mistakes + 1 },
@@ -1226,8 +1298,8 @@ function IntroStage({
         {card.word}
       </div>
       {card.reading && (
-        <div className="mt-3 font-mono text-[16px] text-muted-foreground">
-          {card.reading}
+        <div className="mt-3">
+          <Pinyin raw={card.reading} className="text-lg" />
         </div>
       )}
       {card.gloss && (
@@ -1406,10 +1478,12 @@ function SelfAssessGlossStage({
             {/* Reading starts blurred — pronunciation is a strong hint
                 for meaning recall, so revealing it is the user's call.
                 The per-task key on this stage (see the call site)
-                resets the blur for the next card. */}
+                resets the blur for the next card. Pretty (tone-marked)
+                but uncoloured: tone colours would bleed through the
+                blur and telegraph the tones before the reveal. */}
             <BlurReveal
-              text={card.reading}
-              className="font-mono text-muted-foreground"
+              text={prettyPinyin(card.reading)}
+              className="text-muted-foreground"
               hiddenTitle="Click to reveal reading"
             />
           </div>
@@ -1445,8 +1519,8 @@ function SelfAssessGlossStage({
         {card.word}
       </div>
       {card.reading && (
-        <div className="mt-2 font-mono text-[14px] text-muted-foreground">
-          {card.reading}
+        <div className="mt-2">
+          <Pinyin raw={card.reading} className="text-[14px]" />
         </div>
       )}
       {card.gloss && (
@@ -1633,17 +1707,6 @@ function PromptDisplay({
 }
 
 // ── Pure helpers (exported for tests) ──
-
-/** Build the queue: due cards first, then any non-mastered cards as
- *  backfill. Both lists are filtered to cards with a gloss — the
- *  plugin's stages lean on it for prompts in multiple places. */
-function pickQueue(due: VocabEntry[], all: VocabEntry[]): VocabEntry[] {
-  const seen = new Set(due.map((c) => c.id));
-  const fillers = all.filter(
-    (c) => !seen.has(c.id) && c.status !== "mastered" && c.gloss,
-  );
-  return [...due.filter((c) => c.gloss), ...fillers].slice(0, 25);
-}
 
 /** Build a per-card stage plan. Strategy:
  *

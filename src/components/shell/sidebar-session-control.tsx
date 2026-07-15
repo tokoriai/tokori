@@ -56,14 +56,30 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useExternalLiveSession } from "@/lib/external-session";
 import { useSession, type SessionKind } from "@/lib/session-context";
 import { useWorkspace } from "@/lib/workspace-context";
 import { useProfile } from "@/lib/profile-context";
-import { deleteSession, listSessions, listVocab } from "@/lib/db";
+import {
+  deleteSession,
+  listSessions,
+  listVocab,
+  listWorkspaceReviews,
+} from "@/lib/db";
 import { useJourneySettings } from "@/lib/use-journey-settings";
 import { computeLearningJourney } from "@/lib/learning-journey";
 import { scaleFor } from "@/lib/level";
 import { cn } from "@/lib/utils";
+
+/** Emerald live-pulse marking the Companion-mirrored session. */
+function PulseDot() {
+  return (
+    <span className="relative flex size-2 shrink-0">
+      <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-500 opacity-60" />
+      <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+    </span>
+  );
+}
 
 const KIND_OPTIONS: { kind: SessionKind; label: string; glyph: string }[] = [
   { kind: "review", label: "Review", glyph: "🔁" },
@@ -88,6 +104,10 @@ export function SidebarSessionControl({ collapsed }: { collapsed: boolean }) {
     discard,
   } = useSession();
   const { settings: jSettings } = useJourneySettings(workspace?.id ?? 0);
+  // Companion-extension immersion sessions, mirrored via the local
+  // api_server's tokori:live-session events. Display-only — the
+  // extension owns start/stop; a locally started session outranks it.
+  const external = useExternalLiveSession();
 
   const [picker, setPicker] = useState(false);
   const [menu, setMenu] = useState(false);
@@ -155,13 +175,15 @@ export function SidebarSessionControl({ collapsed }: { collapsed: boolean }) {
     let nextMilestone: string | null = null;
     try {
       if (workspace && jSettings.targetLevelId) {
-        const [vocab, sessions] = await Promise.all([
+        const [vocab, sessions, reviews] = await Promise.all([
           listVocab(workspace.id),
           listSessions(workspace.id),
+          listWorkspaceReviews(workspace.id),
         ]);
         const j = computeLearningJourney({
           workspace,
           vocab,
+          reviews,
           sessions,
           scale,
           targetLevelId: jSettings.targetLevelId,
@@ -242,6 +264,26 @@ export function SidebarSessionControl({ collapsed }: { collapsed: boolean }) {
 
   // ── Collapsed sidebar — icon-only entry that opens the popover ──
   if (collapsed) {
+    if (!session && external) {
+      return (
+        <div className="flex justify-center px-2 py-1">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div
+                aria-label="Immersion session running via the Companion extension"
+                className="flex size-8 items-center justify-center rounded-md bg-emerald-500/15"
+              >
+                <PulseDot />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="right" sideOffset={8}>
+              Immersing · {formatElapsed(external.secs)} — tracked by the
+              Companion extension
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      );
+    }
     const Icon = session ? (paused ? Pause : Play) : Clock;
     return (
       <div className="flex justify-center px-2 py-1">
@@ -391,6 +433,27 @@ export function SidebarSessionControl({ collapsed }: { collapsed: boolean }) {
               />
             </PopoverContent>
           </Popover>
+        </div>
+      ) : external ? (
+        // Companion-driven immersion — mirrored, not controlled: the
+        // extension's beats drive the clock; stopping happens at the
+        // ⏱ pill in the browser.
+        <div
+          className="flex items-center gap-2 rounded-md border border-border bg-emerald-500/5 px-2.5 py-1.5"
+          title="Live from the Companion extension — the timer follows your watching. Start/stop it from the ⏱ pill on YouTube."
+        >
+          <PulseDot />
+          <div className="min-w-0 flex-1">
+            <div className="font-mono text-[12.5px] tabular-nums leading-none text-foreground">
+              {formatElapsed(external.secs)}
+            </div>
+            <div className="mt-0.5 truncate text-[10.5px] text-muted-foreground">
+              Immersing · Companion
+            </div>
+          </div>
+          <span className="text-[14px] leading-none" aria-hidden>
+            {external.kind === "podcast" ? "🎧" : "📺"}
+          </span>
         </div>
       ) : (
         <Popover open={picker} onOpenChange={setPicker}>

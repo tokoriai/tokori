@@ -4,11 +4,14 @@ import { Progress } from "@/components/ui/progress";
 import {
   listSessions,
   listVocab,
+  listWorkspaceReviews,
   type StudySession,
   type VocabEntry,
+  type VocabReview,
 } from "@/lib/db";
 import { useWorkspace } from "@/lib/workspace-context";
 import { computeStreak } from "@/lib/streak";
+import { currentGrowthBuckets } from "@/lib/vocab-growth";
 import { cn } from "@/lib/utils";
 
 const VOCAB_GOALS = [100, 1000, 5000, 10_000];
@@ -18,28 +21,33 @@ export function MilestonesView() {
   const { active: workspace } = useWorkspace();
   const [vocab, setVocab] = useState<VocabEntry[]>([]);
   const [sessions, setSessions] = useState<StudySession[]>([]);
+  const [reviews, setReviews] = useState<VocabReview[]>([]);
 
   useEffect(() => {
     if (!workspace) return;
     let cancelled = false;
-    Promise.all([listVocab(workspace.id), listSessions(workspace.id)]).then(
-      ([v, s]) => {
-        if (!cancelled) {
-          setVocab(v);
-          setSessions(s);
-        }
-      },
-    );
+    Promise.all([
+      listVocab(workspace.id),
+      listSessions(workspace.id),
+      listWorkspaceReviews(workspace.id),
+    ]).then(([v, s, r]) => {
+      if (!cancelled) {
+        setVocab(v);
+        setSessions(s);
+        setReviews(r);
+      }
+    });
     return () => {
       cancelled = true;
     };
   }, [workspace?.id]);
 
   const stats = useMemo(() => {
-    const wordsKnown = vocab.filter((v) => v.status === "mastered").length;
-    const wordsLearning = vocab.filter(
-      (v) => v.status === "learning" || v.status === "review",
-    ).length;
+    // Same replay engine as the vocab-growth chart, so "Words known"
+    // here matches the chart and the other KPI surfaces.
+    const buckets = currentGrowthBuckets({ vocab, reviews });
+    const wordsKnown = buckets.known;
+    const wordsLearning = buckets.learning;
     const totalSeconds = sessions.reduce((sum, s) => sum + (s.durationSecs ?? 0), 0);
     const hours = totalSeconds / 3600;
 
@@ -58,7 +66,7 @@ export function MilestonesView() {
       streak,
       last7,
     };
-  }, [vocab, sessions]);
+  }, [vocab, reviews, sessions]);
 
   if (!workspace) return null;
 

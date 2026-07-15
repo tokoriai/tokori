@@ -39,16 +39,19 @@ export type Profile = {
    *  CEFR. */
   customScale: LevelInfo[] | null;
   /** Dictation engine for the composer's mic button.
-   *  "auto"    — prefer the browser's Web Speech API; fall back to
-   *              Whisper via the first openai-kind provider with a
-   *              key. This is what most users want; specifically
-   *              important on Linux where the WebKitGTK webview
-   *              doesn't support Web Speech at all.
+   *  "auto"    — prefer the browser's Web Speech API, then a
+   *              downloaded local Whisper model, then Whisper via the
+   *              first openai-kind provider with a key. This is what
+   *              most users want; specifically important on Linux
+   *              where the WebKitGTK webview doesn't support Web
+   *              Speech at all.
    *  "browser" — force Web Speech; fail if unavailable.
    *  "whisper" — always go via the configured openai-kind provider's
    *              /v1/audio/transcriptions endpoint. Slightly slower
-   *              than browser STT but works anywhere a key works. */
-  sttKind: "auto" | "browser" | "whisper";
+   *              than browser STT but works anywhere a key works.
+   *  "local"   — on-device whisper.cpp (desktop only). Needs a model
+   *              downloaded under Settings → Voice → Dictation. */
+  sttKind: "auto" | "browser" | "whisper" | "local";
 };
 
 const DEFAULT_PROFILE: Profile = {
@@ -129,7 +132,9 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
             levelScale: ((levelScale as LevelScaleChoice) || "auto"),
             customScale: parsedCustom,
             sttKind:
-              sttKind === "browser" || sttKind === "whisper"
+              sttKind === "browser" ||
+              sttKind === "whisper" ||
+              sttKind === "local"
                 ? sttKind
                 : "auto",
           });

@@ -45,10 +45,10 @@ import {
   startOfToday,
   studyTotals,
   summarizeReviews,
-  vocabStatusCounts,
   wordsAddedSince,
   type ReviewSummary,
 } from "@/lib/study-stats";
+import { currentGrowthBuckets } from "@/lib/vocab-growth";
 import { computeStreak, longestStreak } from "@/lib/streak";
 import { computeLevel, type ComputedLevel } from "@/lib/level";
 import { languageName } from "@/lib/languages";
@@ -338,7 +338,12 @@ export function StatisticsPanel() {
     void refresh();
   });
 
-  const counts = useMemo(() => vocabStatusCounts(vocab), [vocab]);
+  // Same replay engine as the Vocabulary-growth chart below, so the
+  // "Words known" KPI always equals the chart's Known series.
+  const buckets = useMemo(
+    () => currentGrowthBuckets({ vocab, reviews }),
+    [vocab, reviews],
+  );
   const totals = useMemo(() => studyTotals(sessions), [sessions]);
   const reviewSummary = useMemo(() => summarizeReviews(reviews), [reviews]);
   const streak = useMemo(() => computeStreak(sessions), [sessions]);
@@ -356,7 +361,7 @@ export function StatisticsPanel() {
     () =>
       computeLevel(
         workspace?.targetLang ?? "en",
-        counts.mastered,
+        buckets.known,
         totals.totalSecs / 3600,
         profile.goalLevel,
         {
@@ -368,7 +373,7 @@ export function StatisticsPanel() {
       ),
     [
       workspace?.targetLang,
-      counts.mastered,
+      buckets.known,
       totals.totalSecs,
       profile.goalLevel,
       profile.manualLevelId,
@@ -424,8 +429,8 @@ export function StatisticsPanel() {
                 icon={BookOpen}
                 accent="emerald"
                 label="Words known"
-                value={counts.mastered.toLocaleString()}
-                sub={`${counts.learning} learning · ${counts.review} reviewing`}
+                value={buckets.known.toLocaleString()}
+                sub={`${buckets.learning} learning · ${buckets.due} due`}
               />
               <KpiCard
                 icon={Clock}

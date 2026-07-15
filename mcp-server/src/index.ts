@@ -14,6 +14,7 @@ import { z } from "zod";
 
 import {
   ApiError,
+  addMedia,
   addWordsToCollection,
   createCollection,
   createVocab,
@@ -21,9 +22,11 @@ import {
   importCollection,
   listCollections,
   listCollectionWords,
+  listMedia,
   listVocab,
   listWorkspaces,
   searchDict,
+  updateMedia,
 } from "./api.js";
 
 const server = new McpServer({
@@ -120,6 +123,27 @@ server.registerTool(
     },
   },
   safe(async ({ collection_id }) => listCollectionWords(collection_id)),
+);
+
+server.registerTool(
+  "list_media",
+  {
+    title: "List immersion media",
+    description:
+      "List the workspace's immersion watch list (videos, series, podcasts) with progress. Statuses: planned (queued), active (watching), paused, finished, dropped. Progress = completed_units / total_units (minutes for videos, episodes for series/podcasts) plus total_seconds of tracked watch time.",
+    inputSchema: {
+      workspace_id: z.number().int().positive(),
+      status: z
+        .enum(["planned", "active", "paused", "finished", "dropped"])
+        .optional()
+        .describe("Filter to one status section."),
+      kind: z.enum(["video", "series", "podcast"]).optional(),
+      limit: z.number().int().min(1).max(500).optional(),
+    },
+  },
+  safe(async ({ workspace_id, status, kind, limit }) =>
+    listMedia(workspace_id, { status, kind, limit }),
+  ),
 );
 
 server.registerTool(
@@ -289,6 +313,61 @@ server.registerTool(
   safe(async ({ workspace_id, name, description, words }) =>
     importCollection(workspace_id, { name, description, words }),
   ),
+);
+
+server.registerTool(
+  "add_media",
+  {
+    title: "Add media to the immersion list",
+    description:
+      "Queue a video, series, or podcast on the workspace's immersion watch list. Pass the URL when you have one — items with a link open in the browser with one click, the Companion extension auto-tracks their watch progress, and re-adding the same link is idempotent (returns the existing item instead of a duplicate). Kind is inferred from the URL when omitted. New items default to status 'planned' (the queue).",
+    inputSchema: {
+      workspace_id: z.number().int().positive(),
+      title: z.string().min(1),
+      url: z.string().optional().describe("Link to the media (YouTube, Netflix, Spotify, …)."),
+      kind: z.enum(["video", "series", "podcast"]).optional(),
+      author: z.string().optional().describe("Channel / creator / show host."),
+      total_units: z
+        .number()
+        .int()
+        .positive()
+        .optional()
+        .describe("Length in minutes (video) or episode count (series/podcast)."),
+      status: z
+        .enum(["planned", "active", "paused", "finished", "dropped"])
+        .optional(),
+      notes: z.string().optional(),
+    },
+  },
+  safe(async ({ workspace_id, title, url, kind, author, total_units, status, notes }) =>
+    addMedia(workspace_id, { title, url, kind, author, total_units, status, notes }),
+  ),
+);
+
+server.registerTool(
+  "update_media",
+  {
+    title: "Update immersion media",
+    description:
+      "Patch an immersion item: fix metadata, move it between statuses, or log progress. For progress prefer the deltas — delta_units: 1 marks one more episode/minute done, delta_seconds adds tracked watch time — so you don't need the current counts. Absolute completed_units/total_seconds overwrite instead (mutually exclusive with the deltas).",
+    inputSchema: {
+      media_id: z.number().int().positive().describe("The item's id from list_media / add_media."),
+      title: z.string().min(1).optional(),
+      author: z.string().optional(),
+      url: z.string().optional().describe("Replace the stored link."),
+      kind: z.enum(["video", "series", "podcast"]).optional(),
+      status: z
+        .enum(["planned", "active", "paused", "finished", "dropped"])
+        .optional(),
+      total_units: z.number().int().optional(),
+      completed_units: z.number().int().optional(),
+      total_seconds: z.number().int().optional(),
+      delta_units: z.number().int().optional().describe("Relative bump, e.g. 1 = one more episode."),
+      delta_seconds: z.number().int().optional().describe("Add tracked watch/listen seconds."),
+      notes: z.string().optional(),
+    },
+  },
+  safe(async ({ media_id, url, ...patch }) => updateMedia(media_id, { ...patch, source: url })),
 );
 
 // ── Health (handy for "is the app running?" debugging) ──────────────────

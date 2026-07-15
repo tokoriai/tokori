@@ -29,6 +29,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { isTauri } from "@tauri-apps/api/core";
 import { liveVoiceRate } from "./live-voice-rate";
+import {
+  createPcmStreamPlayer,
+  type PcmStreamPlayer,
+} from "./pcm-stream-player";
 
 export type LiveState =
   | "idle"
@@ -97,14 +101,6 @@ function base64ToArrayBuffer(b64: string): ArrayBuffer {
   return bytes.buffer;
 }
 
-function int16ToFloat32(int16: Int16Array): Float32Array {
-  const f = new Float32Array(int16.length);
-  for (let i = 0; i < int16.length; i++) {
-    f[i] = int16[i] / (int16[i] < 0 ? 0x8000 : 0x7fff);
-  }
-  return f;
-}
-
 function wsUrlFor(region: QwenRegion, model: string): string {
   const host =
     region === "cn"
@@ -130,12 +126,11 @@ export function useQwenLiveVoice() {
 
   const sockRef = useRef<LiveSocket | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
-  const playbackCtxRef = useRef<AudioContext | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const workletRef = useRef<AudioWorkletNode | null>(null);
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
-  const playbackQueueRef = useRef<Float32Array[]>([]);
-  const playingRef = useRef(false);
+  // Output playback — gapless scheduled PCM (see pcm-stream-player.ts).
+  const playerRef = useRef<PcmStreamPlayer | null>(null);
   const userBufRef = useRef("");
   const asstBufRef = useRef("");
   const stateRef = useRef<LiveState>("idle");
@@ -143,38 +138,6 @@ export function useQwenLiveVoice() {
   useEffect(() => {
     stateRef.current = state;
   }, [state]);
-
-  const playNext = useCallback(() => {
-    if (playingRef.current) return;
-    if (playbackQueueRef.current.length === 0) {
-      if (stateRef.current === "speaking") {
-        if (asstBufRef.current.trim()) {
-          const text = asstBufRef.current.trim();
-          setTurns((prev) => [...prev, { role: "assistant", content: text }]);
-          asstBufRef.current = "";
-        }
-        setLiveAssistant("");
-        setState("listening");
-      }
-      return;
-    }
-    playingRef.current = true;
-    const data = playbackQueueRef.current.shift()!;
-    const ctx = playbackCtxRef.current!;
-    const buffer = ctx.createBuffer(1, data.length, OUTPUT_SAMPLE_RATE);
-    buffer.getChannelData(0).set(data);
-    const src = ctx.createBufferSource();
-    src.buffer = buffer;
-    // User-adjustable speed. BufferSource rate shifts pitch with it —
-    // unavoidable on this pipeline, mild within the offered 0.75–1.5×.
-    src.playbackRate.value = liveVoiceRate.current;
-    src.connect(ctx.destination);
-    src.onended = () => {
-      playingRef.current = false;
-      playNext();
-    };
-    src.start();
-  }, []);
 
   const cleanup = useCallback(() => {
     try {
@@ -191,12 +154,8 @@ export function useQwenLiveVoice() {
       void audioCtxRef.current.close();
     }
     audioCtxRef.current = null;
-    if (playbackCtxRef.current && playbackCtxRef.current.state !== "closed") {
-      void playbackCtxRef.current.close();
-    }
-    playbackCtxRef.current = null;
-    playbackQueueRef.current = [];
-    playingRef.current = false;
+    playerRef.current?.destroy();
+    playerRef.current = null;
     try {
       sockRef.current?.close();
     } catch {}
@@ -223,6 +182,27 @@ export function useQwenLiveVoice() {
       setState("connecting");
 
       try {
+        // Playback player, created SYNCHRONOUSLY before any await so
+        // it inherits the click's user activation — the same invariant
+        // the Gemini/OpenAI hooks follow. onDrain commits the finished
+        // assistant turn.
+        playerRef.current?.destroy();
+        const player = createPcmStreamPlayer({
+          sampleRate: OUTPUT_SAMPLE_RATE,
+          rate: () => liveVoiceRate.current,
+        });
+        player.onDrain = () => {
+          if (stateRef.current !== "speaking") return;
+          if (asstBufRef.current.trim()) {
+            const text = asstBufRef.current.trim();
+            setTurns((prev) => [...prev, { role: "assistant", content: text }]);
+            asstBufRef.current = "";
+          }
+          setLiveAssistant("");
+          setState("listening");
+        };
+        playerRef.current = player;
+
         // 1. Mic permission @16 kHz — Qwen-Omni's input rate. The
         // browser negotiates the closest hardware rate; the capture
         // AudioContext below enforces 16 k on the samples we send.
@@ -238,14 +218,9 @@ export function useQwenLiveVoice() {
         });
         streamRef.current = stream;
 
-        // 2. AudioContexts — 16 k capture, 24 k playback.
+        // 2. Capture AudioContext — 16 k (playback lives in the player).
         const audioCtx = new AudioContext({ sampleRate: INPUT_SAMPLE_RATE });
         audioCtxRef.current = audioCtx;
-        const playbackCtx = new AudioContext({
-          sampleRate: OUTPUT_SAMPLE_RATE,
-        });
-        playbackCtxRef.current = playbackCtx;
-        if (playbackCtx.state === "suspended") await playbackCtx.resume();
 
         // 3. AudioWorklet for PCM capture
         const blob = new Blob([WORKLET_CODE], {
@@ -347,8 +322,7 @@ export function useQwenLiveVoice() {
               return;
             case "input_audio_buffer.speech_started":
               // Barge-in: drop queued audio so playback cuts cleanly.
-              playbackQueueRef.current = [];
-              playingRef.current = false;
+              player.clear();
               if (asstBufRef.current.trim()) {
                 setTurns((prev) => [
                   ...prev,
@@ -383,9 +357,7 @@ export function useQwenLiveVoice() {
               if (stateRef.current !== "speaking") setState("speaking");
               try {
                 const ab = base64ToArrayBuffer(msg.delta);
-                const i16 = new Int16Array(ab);
-                playbackQueueRef.current.push(int16ToFloat32(i16));
-                if (!playingRef.current) playNext();
+                player.enqueue(new Int16Array(ab));
               } catch {}
               return;
             }
@@ -396,10 +368,13 @@ export function useQwenLiveVoice() {
               return;
             case "response.audio_transcript.done":
             case "response.output_audio_transcript.done":
-              // Text finalised; audio may still be playing — playNext
-              // flushes the turn when the queue drains.
+              // Text finalised; audio may still be playing — the
+              // player's onDrain flushes the turn when playback ends.
               return;
             case "response.done":
+              // Response boundary — surface any sub-threshold tail on
+              // the player's fallback path (no-op when gapless).
+              player.flush();
               return;
           }
         };
@@ -484,7 +459,7 @@ export function useQwenLiveVoice() {
         setState("error");
       }
     },
-    [cleanup, playNext],
+    [cleanup],
   );
 
   // Best-effort cleanup on unmount.

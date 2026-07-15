@@ -2,23 +2,42 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "@/App";
 import { SpotlightApp } from "@/spotlight-app";
+import { VoiceAskApp } from "@/voice-ask-app";
 import "@/index.css";
 import { isDemoRequested, seedDemoData } from "@/lib/demo-seed";
 
-function isSpotlightWindow(): boolean {
+function windowParam(name: string): boolean {
   if (typeof window === "undefined") return false;
-  return new URLSearchParams(window.location.search).get("spotlight") === "1";
+  return new URLSearchParams(window.location.search).get(name) === "1";
 }
 
 async function bootstrap() {
-  // The spotlight popup loads the same bundle but with `?spotlight=1`
-  // so it can render a tiny search-only UI without paying for the
-  // full provider tree / shell. Branch as early as possible.
-  if (isSpotlightWindow()) {
+  // The spotlight + voice-ask popups load the same bundle but with
+  // `?spotlight=1` / `?voiceask=1` so they can render a tiny single-
+  // purpose UI without paying for the full provider tree / shell.
+  // Branch as early as possible. Both reuse the `is-spotlight` class:
+  // it just makes the html/body/#root transparent for the frameless
+  // rounded card.
+  if (windowParam("spotlight")) {
     document.documentElement.classList.add("is-spotlight");
     createRoot(document.getElementById("root")!).render(
       <StrictMode>
         <SpotlightApp />
+      </StrictMode>,
+    );
+    return;
+  }
+  if (windowParam("voiceask")) {
+    document.documentElement.classList.add("is-spotlight");
+    // The voice pill is a deliberately always-dark overlay (Wispr-Flow
+    // style): it floats over arbitrary desktop content, so it commits
+    // to one look instead of following the app theme. Adding .dark
+    // makes every theme token in this standalone webview resolve to
+    // the dark palette.
+    document.documentElement.classList.add("dark");
+    createRoot(document.getElementById("root")!).render(
+      <StrictMode>
+        <VoiceAskApp />
       </StrictMode>,
     );
     return;

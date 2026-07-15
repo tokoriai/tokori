@@ -194,7 +194,7 @@ describe("buildCoachPrompt", () => {
       "on-pace-and-habits-hit",
     );
     expect(user).toContain("currently HSK 2, target HSK 4");
-    expect(user).toContain("Vocab known (mastered): 815");
+    expect(user).toContain("Words known: 815");
     expect(user).toContain("Immersion hours: 42.0");
   });
 

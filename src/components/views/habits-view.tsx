@@ -74,11 +74,13 @@ import {
   listGoals,
   listSessions,
   listVocab,
+  listWorkspaceReviews,
   type Goal,
   type GoalKind,
   type GoalSkill,
   type StudySession,
   type VocabEntry,
+  type VocabReview,
 } from "@/lib/db";
 import {
   computeGoalProgress,
@@ -120,10 +122,11 @@ export function HabitsView({
   // one-click materialise into an actual habit row.
   const [goals, setGoals] = useState<GoalRow[]>([]);
   const [recent, setRecent] = useState<StudySession[]>([]);
-  // Full vocab + sessions kept so the AI "Suggest goals" action can
-  // recompute the journey snapshot it reasons over — the same pure
-  // function the Journey overview + dashboard widget use.
+  // Full vocab + review log + sessions kept so the AI "Suggest goals"
+  // action can recompute the journey snapshot it reasons over — the
+  // same pure function the Journey overview + dashboard widget use.
   const [allVocab, setAllVocab] = useState<VocabEntry[]>([]);
+  const [allReviews, setAllReviews] = useState<VocabReview[]>([]);
   const [allSessions, setAllSessions] = useState<StudySession[]>([]);
   const [knownKinds, setKnownKinds] = useState<string[]>(BUILTIN_KINDS);
   const [loading, setLoading] = useState(true);
@@ -143,13 +146,15 @@ export function HabitsView({
     if (!workspace) return;
     setLoading(true);
     try {
-      const [habitsList, goalList, sessions, vocab, kinds] = await Promise.all([
-        listHabits(workspace.id),
-        listGoals(workspace.id),
-        listSessions(workspace.id),
-        listVocab(workspace.id),
-        listSeenActivityKinds(workspace.id),
-      ]);
+      const [habitsList, goalList, sessions, vocab, reviews, kinds] =
+        await Promise.all([
+          listHabits(workspace.id),
+          listGoals(workspace.id),
+          listSessions(workspace.id),
+          listVocab(workspace.id),
+          listWorkspaceReviews(workspace.id),
+          listSeenActivityKinds(workspace.id),
+        ]);
       const progresses = await Promise.all(habitsList.map(computeHabitProgress));
       setHabits(progresses);
       setGoals(
@@ -160,6 +165,7 @@ export function HabitsView({
         })),
       );
       setAllVocab(vocab as VocabEntry[]);
+      setAllReviews(reviews);
       setAllSessions(sessions);
       // Most-recent first, capped — full session log is the dashboard's job.
       setRecent(sessions.slice(0, 12));
@@ -224,6 +230,7 @@ export function HabitsView({
     return computeLearningJourney({
       workspace,
       vocab: allVocab,
+      reviews: allReviews,
       sessions: allSessions,
       scale,
       targetLevelId,

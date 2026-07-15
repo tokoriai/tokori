@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { BookmarkPlus, Check, FolderPlus, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { BlurToggle } from "@/components/chat-markdown";
 import { Reading } from "@/components/reading";
+import { useDisplay } from "@/lib/display-context";
 import {
   Popover,
   PopoverContent,
@@ -22,13 +24,16 @@ import { cn } from "@/lib/utils";
 /**
  * Rich rendering of a ```vocab block inside an assistant reply: a compact
  * table with the word + colour-coded reading + direct meaning, and inline
- * actions to save each word to vocabulary or add it to a collection. The
- * meanings are always visible (no translation blur) — this is a reference
- * list, not immersion prose.
+ * actions to save each word to vocabulary or add it to a collection.
+ * Readings and meanings follow the SAME global toggles running text
+ * does (the composer's pinyin / EN buttons): toggle off → blurred with
+ * per-cell click-to-reveal, so the list drills recall; toggle on →
+ * everything visible.
  */
 export function VocabTable({ raw }: { raw: string }) {
   const rows = useMemo(() => parseVocabBlock(raw), [raw]);
   const { active: workspace } = useWorkspace();
+  const { showPinyin, showTranslations } = useDisplay();
   const lang = (workspace?.targetLang ?? "en") as LanguageCode;
   const workspaceId = workspace?.id ?? null;
   const [savedRows, setSavedRows] = useState<Set<number>>(() => new Set());
@@ -169,16 +174,26 @@ export function VocabTable({ raw }: { raw: string }) {
                     </div>
                     {r.reading && (
                       <div className="mt-0.5">
-                        <Reading
-                          lang={lang}
-                          reading={r.reading}
-                          className="text-[12px]"
-                        />
+                        <BlurToggle
+                          show={showPinyin}
+                          revealTitle="Click to reveal the reading"
+                        >
+                          <Reading
+                            lang={lang}
+                            reading={r.reading}
+                            className="text-[12px]"
+                          />
+                        </BlurToggle>
                       </div>
                     )}
                   </td>
                   <td className="px-3 py-2 align-top text-foreground/85">
-                    {r.meaning}
+                    <BlurToggle
+                      show={showTranslations}
+                      revealTitle="Click to reveal the meaning"
+                    >
+                      {r.meaning}
+                    </BlurToggle>
                   </td>
                   {workspaceId != null && (
                     <td className="w-px whitespace-nowrap px-2 py-2 align-top">

@@ -1,6 +1,6 @@
 ---
 name: tokori
-description: Read and write the user's local Tokori language-learning database (workspaces, vocabulary, collections, dictionaries) via the Tokori MCP server. Use whenever the user asks to add words, build a vocabulary collection, scrape vocabulary from a source, audit their study queue, or look up dictionary entries.
+description: Read and write the user's local Tokori language-learning database (workspaces, vocabulary, collections, dictionaries, immersion watch list) via the Tokori MCP server. Use whenever the user asks to add words, build a vocabulary collection, scrape vocabulary from a source, audit their study queue, look up dictionary entries, or manage their watch list of videos/series/podcasts.
 ---
 
 # Tokori
@@ -22,6 +22,9 @@ Trigger when the user asks to:
 - **Audit / inspect** their learning state ("what's in my review queue?",
   "list the collections in my Japanese workspace")
 - **Look up a word** in their installed dictionary
+- **Manage the immersion watch list** ("queue these five Peppa Pig
+  episodes", "what am I currently watching?", "mark one more episode of
+  Terrace House done")
 
 Don't invoke it for general LLM chat about language learning — only when
 the action involves reading or mutating the user's local database.
@@ -92,6 +95,38 @@ collection in the same call:
   "collection_id": 12
 }
 ```
+
+### Building an immersion watch list
+
+`list_media` / `add_media` / `update_media` manage the Immersion view —
+the user's queue of videos, series, and podcasts with watch progress.
+
+```jsonc
+// add_media — queue a video for later
+{
+  "workspace_id": 3,
+  "title": "Slow Chinese — Ep. 12: At the market",
+  "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "author": "Slow Chinese",
+  "total_units": 22          // minutes for videos, episodes for series/podcasts
+}
+```
+
+Tips:
+
+- **Always pass the `url` when you have one.** Linked items open in the
+  user's browser from the app, the Companion browser extension recognises
+  them and tracks watch progress automatically, and re-adding the same
+  link is idempotent (you get the existing item back, never a duplicate).
+- `kind` (`video` | `series` | `podcast`) is inferred from the URL when
+  omitted — a YouTube playlist becomes a `series`, Spotify/Apple links
+  become `podcast`s.
+- New items land in status `planned` (the "Up next" queue). The list is
+  Refold-style curation: when recommending content, match the user's
+  level and put the easiest material first.
+- Progress bumps go through `update_media` with **deltas**:
+  `{ "media_id": 7, "delta_units": 1 }` marks one more episode done;
+  `{ "media_id": 7, "status": "finished" }` moves it to the trophy shelf.
 
 ### Filling in readings / glosses from the dictionary
 

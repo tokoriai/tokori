@@ -26,6 +26,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { liveVoiceRate } from "./live-voice-rate";
 import { useCloud } from "./cloud-context";
+import {
+  createPcmStreamPlayer,
+  type PcmStreamPlayer,
+} from "./pcm-stream-player";
 
 export type CloudLiveState =
   | "idle"
@@ -103,46 +107,10 @@ function base64ToArrayBuffer(b64: string): ArrayBuffer {
   return bytes.buffer;
 }
 
-/** Wrap mono Int16 PCM in a minimal RIFF/WAVE container so it can
- *  be played through an HTMLAudioElement (the audio path that
- *  works reliably on Linux WebKit2GTK; AudioBufferSource has issues
- *  on that stack). Same helper the standalone Gemini hook uses. */
+/** Gemini Live's native output rate. Playback goes through the shared
+ *  gapless PCM player (pcm-stream-player.ts) — same pipeline as the
+ *  BYOK Gemini hook. */
 const PLAYBACK_SAMPLE_RATE = 24000;
-const FLUSH_THRESHOLD_SAMPLES = PLAYBACK_SAMPLE_RATE; // ≈ 1s
-function concatInt16(parts: Int16Array[]): Int16Array {
-  let total = 0;
-  for (const p of parts) total += p.length;
-  const out = new Int16Array(total);
-  let off = 0;
-  for (const p of parts) {
-    out.set(p, off);
-    off += p.length;
-  }
-  return out;
-}
-function pcmToWav(samples: Int16Array, sampleRate: number): Blob {
-  const dataBytes = samples.length * 2;
-  const buf = new ArrayBuffer(44 + dataBytes);
-  const view = new DataView(buf);
-  const writeStr = (offset: number, s: string) => {
-    for (let i = 0; i < s.length; i++) view.setUint8(offset + i, s.charCodeAt(i));
-  };
-  writeStr(0, "RIFF");
-  view.setUint32(4, 36 + dataBytes, true);
-  writeStr(8, "WAVE");
-  writeStr(12, "fmt ");
-  view.setUint32(16, 16, true);
-  view.setUint16(20, 1, true);
-  view.setUint16(22, 1, true);
-  view.setUint32(24, sampleRate, true);
-  view.setUint32(28, sampleRate * 2, true);
-  view.setUint16(32, 2, true);
-  view.setUint16(34, 16, true);
-  writeStr(36, "data");
-  view.setUint32(40, dataBytes, true);
-  new Int16Array(buf, 44, samples.length).set(samples);
-  return new Blob([buf], { type: "audio/wav" });
-}
 
 export function useCloudLiveVoice(): CloudLiveControls {
   const cloud = useCloud();
@@ -157,73 +125,14 @@ export function useCloudLiveVoice(): CloudLiveControls {
   const streamRef = useRef<MediaStream | null>(null);
   const workletRef = useRef<AudioWorkletNode | null>(null);
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
-  // Playback queue (HTMLAudioElement-based, see comment on pcmToWav).
-  const pendingPcmRef = useRef<Int16Array[]>([]);
-  const pendingSamplesRef = useRef(0);
-  const wavQueueRef = useRef<string[]>([]);
-  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
-  const playingRef = useRef(false);
+  // Output playback — gapless scheduled PCM (see pcm-stream-player.ts).
+  const playerRef = useRef<PcmStreamPlayer | null>(null);
   const userBufRef = useRef("");
   const asstBufRef = useRef("");
   const stateRef = useRef<CloudLiveState>("idle");
   useEffect(() => {
     stateRef.current = state;
   }, [state]);
-
-  const playNext = useCallback(() => {
-    if (playingRef.current) return;
-    const url = wavQueueRef.current.shift();
-    if (!url) {
-      if (
-        stateRef.current === "speaking" &&
-        pendingPcmRef.current.length === 0
-      ) {
-        if (asstBufRef.current.trim()) {
-          const text = asstBufRef.current.trim();
-          setTurns((prev) => [...prev, { role: "assistant", content: text }]);
-          asstBufRef.current = "";
-        }
-        setLiveAssistant("");
-        setState("listening");
-      }
-      return;
-    }
-    playingRef.current = true;
-    const audio = new Audio(url);
-    audio.playbackRate = liveVoiceRate.current;
-    (audio as HTMLAudioElement & { preservesPitch?: boolean }).preservesPitch =
-      true;
-    currentAudioRef.current = audio;
-    audio.onended = () => {
-      URL.revokeObjectURL(url);
-      if (currentAudioRef.current === audio) currentAudioRef.current = null;
-      playingRef.current = false;
-      playNext();
-    };
-    audio.onerror = () => {
-      URL.revokeObjectURL(url);
-      if (currentAudioRef.current === audio) currentAudioRef.current = null;
-      playingRef.current = false;
-      playNext();
-    };
-    void audio.play().catch(() => {
-      URL.revokeObjectURL(url);
-      if (currentAudioRef.current === audio) currentAudioRef.current = null;
-      playingRef.current = false;
-      playNext();
-    });
-  }, []);
-
-  const flushPending = useCallback(() => {
-    if (pendingPcmRef.current.length === 0) return;
-    const samples = concatInt16(pendingPcmRef.current);
-    pendingPcmRef.current = [];
-    pendingSamplesRef.current = 0;
-    const blob = pcmToWav(samples, PLAYBACK_SAMPLE_RATE);
-    const url = URL.createObjectURL(blob);
-    wavQueueRef.current.push(url);
-    if (!playingRef.current) playNext();
-  }, [playNext]);
 
   const cleanup = useCallback(() => {
     try {
@@ -240,18 +149,8 @@ export function useCloudLiveVoice(): CloudLiveControls {
       void audioCtxRef.current.close();
     }
     audioCtxRef.current = null;
-    if (currentAudioRef.current) {
-      try {
-        currentAudioRef.current.pause();
-      } catch {}
-      currentAudioRef.current.src = "";
-      currentAudioRef.current = null;
-    }
-    for (const url of wavQueueRef.current) URL.revokeObjectURL(url);
-    wavQueueRef.current = [];
-    pendingPcmRef.current = [];
-    pendingSamplesRef.current = 0;
-    playingRef.current = false;
+    playerRef.current?.destroy();
+    playerRef.current = null;
     if (
       wsRef.current &&
       (wsRef.current.readyState === WebSocket.OPEN ||
@@ -300,6 +199,25 @@ export function useCloudLiveVoice(): CloudLiveControls {
         // invariant as the BYOK Gemini hook (live-voice.ts).
         const audioCtx = new AudioContext({ sampleRate: 16000 });
         audioCtxRef.current = audioCtx;
+
+        // Playback player — created synchronously too, same activation
+        // invariant. onDrain commits the finished assistant turn.
+        playerRef.current?.destroy();
+        const player = createPcmStreamPlayer({
+          sampleRate: PLAYBACK_SAMPLE_RATE,
+          rate: () => liveVoiceRate.current,
+        });
+        player.onDrain = () => {
+          if (stateRef.current !== "speaking") return;
+          if (asstBufRef.current.trim()) {
+            const text = asstBufRef.current.trim();
+            setTurns((prev) => [...prev, { role: "assistant", content: text }]);
+            asstBufRef.current = "";
+          }
+          setLiveAssistant("");
+          setState("listening");
+        };
+        playerRef.current = player;
 
         // 1) Fetch ephemeral token from cloud (charges credits there).
         const tokenRes = await fetch(
@@ -517,19 +435,14 @@ export function useCloudLiveVoice(): CloudLiveControls {
           const sc = (msg as { serverContent?: ServerContent }).serverContent;
           if (!sc) return;
 
-          // Audio reply chunks → flush queue.
+          // Audio reply chunks → the gapless player.
           if (sc.modelTurn?.parts) {
             for (const part of sc.modelTurn.parts) {
               if (part.inlineData?.data) {
                 if (stateRef.current !== "speaking") setState("speaking");
                 try {
                   const ab = base64ToArrayBuffer(part.inlineData.data);
-                  const i16 = new Int16Array(ab);
-                  pendingPcmRef.current.push(i16);
-                  pendingSamplesRef.current += i16.length;
-                  if (pendingSamplesRef.current >= FLUSH_THRESHOLD_SAMPLES) {
-                    flushPending();
-                  }
+                  player.enqueue(new Int16Array(ab));
                 } catch {}
               }
             }
@@ -549,21 +462,10 @@ export function useCloudLiveVoice(): CloudLiveControls {
               userBufRef.current = "";
               setLiveUser("");
             }
-            flushPending();
+            player.flush();
           }
           if (sc.interrupted) {
-            for (const url of wavQueueRef.current) URL.revokeObjectURL(url);
-            wavQueueRef.current = [];
-            pendingPcmRef.current = [];
-            pendingSamplesRef.current = 0;
-            if (currentAudioRef.current) {
-              try {
-                currentAudioRef.current.pause();
-              } catch {}
-              currentAudioRef.current.src = "";
-              currentAudioRef.current = null;
-            }
-            playingRef.current = false;
+            player.clear();
             if (asstBufRef.current.trim()) {
               setTurns((prev) => [
                 ...prev,
@@ -614,7 +516,7 @@ export function useCloudLiveVoice(): CloudLiveControls {
         setState("error");
       }
     },
-    [cloud, cleanup, flushPending],
+    [cloud, cleanup],
   );
 
   // Cleanup on unmount.

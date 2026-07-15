@@ -16,7 +16,8 @@ import { HOSTED } from "@/lib/build-flags";
 import { useSearch } from "@/lib/search-context";
 import { useWorkspace } from "@/lib/workspace-context";
 import { useCloud } from "@/lib/cloud-context";
-import { applyGlobalSearchOnBoot } from "@/lib/global-search";
+import { applyGlobalSearchOnBoot, applyVoiceAskOnBoot } from "@/lib/global-search";
+import { requestVoiceAsk } from "@/lib/ask-intent";
 import { onNavigateToTab } from "@/lib/nav-event";
 import { Sidebar } from "./sidebar";
 import { TitleBar } from "./title-bar";
@@ -35,6 +36,7 @@ const loadFlashcardsView = () => import("@/components/views/flashcards-view");
 const loadCollectionsView = () => import("@/components/views/collections-view");
 const loadJournalView = () => import("@/components/views/journal-view");
 const loadLibraryView = () => import("@/components/views/library-view");
+const loadImmersionView = () => import("@/components/views/immersion-view");
 const loadJourneyView = () => import("@/components/views/journey-view");
 const loadStatisticsView = () => import("@/components/views/statistics-view");
 const loadMilestonesView = () => import("@/components/views/milestones-view");
@@ -57,6 +59,7 @@ const FlashcardsView = lazy(async () => ({ default: (await loadFlashcardsView())
 const CollectionsView = lazy(async () => ({ default: (await loadCollectionsView()).CollectionsView }));
 const JournalView = lazy(async () => ({ default: (await loadJournalView()).JournalView }));
 const LibraryView = lazy(async () => ({ default: (await loadLibraryView()).LibraryView }));
+const ImmersionView = lazy(async () => ({ default: (await loadImmersionView()).ImmersionView }));
 const JourneyView = lazy(async () => ({ default: (await loadJourneyView()).JourneyView }));
 const StatisticsPanel = lazy(async () => ({ default: (await loadStatisticsView()).StatisticsPanel }));
 const MilestonesView = lazy(async () => ({ default: (await loadMilestonesView()).MilestonesView }));
@@ -78,6 +81,7 @@ const ALL_LAZY_LOADERS = [
   loadCollectionsView,
   loadJournalView,
   loadLibraryView,
+  loadImmersionView,
   loadJourneyView,
   loadStatisticsView,
   loadMilestonesView,
@@ -94,6 +98,7 @@ export type TabId =
   | "dashboard"
   | "chat"
   | "reader"
+  | "immersion"
   | "flashcards"
   | "vocab"
   | "collections"
@@ -188,11 +193,12 @@ export function Shell() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Re-apply the persisted Global Search setting on app boot so the
-  // tray + OS-level shortcut come back without the user revisiting
-  // Settings. Cheap no-op outside Tauri / when feature is off.
+  // Re-apply the persisted Global Search + Voice Ask settings on app
+  // boot so the tray + OS-level shortcuts come back without the user
+  // revisiting Settings. Cheap no-ops outside Tauri / when off.
   useEffect(() => {
     void applyGlobalSearchOnBoot();
+    void applyVoiceAskOnBoot();
   }, []);
 
   // Warm every view chunk once the browser goes idle after first paint.
@@ -226,6 +232,34 @@ export function Shell() {
           search.setQuery(q);
           setTab("search");
         });
+        unlisten = off;
+      } catch {
+        /* not running under Tauri (browser dev) — ignore */
+      }
+    })();
+    return () => {
+      unlisten?.();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Voice-ask bridge — the voice popup hands its transcript to Rust,
+  // which brings this window forward and emits `tokori:voice-ask`.
+  // Park the question in ask-intent (ChatView consumes it once its
+  // chat row is ready) and flip to the chat tab.
+  useEffect(() => {
+    let unlisten: (() => void) | null = null;
+    void (async () => {
+      try {
+        const off = await listen<{ text: string; speak: boolean }>(
+          "tokori:voice-ask",
+          (e) => {
+            const text = (e.payload?.text ?? "").toString().trim();
+            if (!text) return;
+            requestVoiceAsk({ text, speak: !!e.payload?.speak });
+            setTab("chat");
+          },
+        );
         unlisten = off;
       } catch {
         /* not running under Tauri (browser dev) — ignore */
@@ -464,6 +498,8 @@ function TabContent({
       return <CollectionsView onNavigate={onNavigate} />;
     case "library":
       return <LibraryView onNavigate={onNavigate} />;
+    case "immersion":
+      return <ImmersionView />;
     case "notes":
       return <NotesView />;
     case "journal":

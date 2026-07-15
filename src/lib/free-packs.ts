@@ -25,7 +25,7 @@ export type FreePackEntry = {
   /** ISO-639-1 — used to gate by the active workspace's target language. */
   language: string;
   /** Tiny stat preview shown on the catalogue card. */
-  preview: { vocabCount: number; chapterCount?: number };
+  preview: { vocabCount: number; chapterCount?: number; mediaCount?: number };
   /** Lazy loader so a user who never opens the catalogue doesn't pay
    *  the JSON parse cost. */
   load: () => Promise<Pack>;
@@ -36,9 +36,9 @@ export const FREE_PACKS: FreePackEntry[] = [
     id: "free:chinese-hsk1-new3",
     title: "HSK 1 (new HSK 3.0)",
     pitch:
-      "All 506 vocabulary items at the new HSK 1 level (HSK 3.0), verified against the canonical word list, plus a 15-lesson beginner Chinese course. Free for everyone.",
+      "All 506 vocabulary items at the new HSK 1 level (HSK 3.0), verified against the canonical word list, plus a 15-lesson beginner Chinese course and eight level-checked watch recommendations. Free for everyone.",
     language: "zh",
-    preview: { vocabCount: 506, chapterCount: 15 },
+    preview: { vocabCount: 506, chapterCount: 15, mediaCount: 8 },
     load: async () => {
       // Vite will inline the JSON import at build time. The default
       // export is the parsed JSON object; we cast to Pack since we

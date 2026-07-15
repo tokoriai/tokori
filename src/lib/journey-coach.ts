@@ -236,7 +236,7 @@ The user's *current* phase is implied by their level position in the scale (${j.
   const userLines: string[] = [
     "## STATE",
     `Journey: ${j.scale.toUpperCase()} scale, currently ${j.currentLevelId}, target ${j.targetLevelId}.`,
-    `Vocab known (mastered): ${j.currentVocab}. Immersion hours: ${j.currentHours.toFixed(1)}.`,
+    `Words known: ${j.currentVocab}. Immersion hours: ${j.currentHours.toFixed(1)}.`,
     nextMilestone
       ? `Next milestone: ${nextMilestone.label} (${nextMilestone.vocabTarget} words, ${nextMilestone.hoursTarget}h).`
       : "All milestones cleared on this journey.",
@@ -449,9 +449,9 @@ function buildGoalPrompt(
   const user = [
     "## STATE",
     `Scale ${j.scale.toUpperCase()} — current ${j.currentLevelId}, target ${j.targetLevelId}.`,
-    `Mastered vocab: ${j.currentVocab}. Immersion hours: ${j.currentHours.toFixed(1)}.`,
+    `Words known: ${j.currentVocab}. Immersion hours: ${j.currentHours.toFixed(1)}.`,
     nextMilestone
-      ? `Next milestone: ${nextMilestone.label} needs ${nextMilestone.vocabTarget} mastered words.`
+      ? `Next milestone: ${nextMilestone.label} needs ${nextMilestone.vocabTarget} words known.`
       : "All milestones on this journey are cleared.",
     j.deadline
       ? `A target deadline is set (${Math.max(0, Math.ceil((j.deadline - now) / 86_400))} days away).`

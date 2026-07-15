@@ -2196,6 +2196,154 @@ fn current_time_string() -> String {
     format!("{now} GMT+0000 (Coordinated Universal Time)")
 }
 
+// ── Media metadata probe (Immersion add dialog) ─────────────────────
+//
+// Fetches title / channel / duration for a pasted media link so the
+// add dialog can prefill instead of making the user type what the
+// page already knows. Runs in Rust because the webview can't fetch
+// youtube.com cross-origin. Best-effort by design: every failure
+// degrades to "field stays empty", never an error dialog.
+
+#[derive(serde::Serialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct MediaProbe {
+    pub title: Option<String>,
+    pub author: Option<String>,
+    pub duration_secs: Option<i64>,
+}
+
+/// Minimal entity decode for the handful HTML meta attributes use.
+fn decode_html_entities(s: &str) -> String {
+    s.replace("&amp;", "&")
+        .replace("&quot;", "\"")
+        .replace("&#39;", "'")
+        .replace("&#x27;", "'")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+}
+
+/// `"lengthSeconds":"1234"` from YouTube's embedded player response.
+fn extract_length_seconds(html: &str) -> Option<i64> {
+    let needle = "\"lengthSeconds\":\"";
+    let start = html.find(needle)? + needle.len();
+    let rest = &html[start..];
+    let end = rest.find('"')?;
+    rest[..end].parse().ok()
+}
+
+/// og:title content, tolerating either attribute order in the tag.
+fn extract_og_title(html: &str) -> Option<String> {
+    let idx = html.find("property=\"og:title\"")?;
+    let tag_start = html[..idx].rfind('<')?;
+    let tag_end = idx + html[idx..].find('>')?;
+    let tag = &html[tag_start..tag_end];
+    let c = tag.find("content=\"")? + "content=\"".len();
+    let rest = &tag[c..];
+    let end = rest.find('"')?;
+    let title = decode_html_entities(rest[..end].trim());
+    (!title.is_empty()).then_some(title)
+}
+
+fn extract_title_tag(html: &str) -> Option<String> {
+    let start = html.find("<title")?;
+    let open_end = start + html[start..].find('>')? + 1;
+    let rest = &html[open_end..];
+    let end = rest.find("</title>")?;
+    let title = decode_html_entities(rest[..end].trim());
+    (!title.is_empty()).then_some(title)
+}
+
+#[tauri::command]
+pub async fn media_probe(url: String) -> Result<MediaProbe, String> {
+    let client = reqwest::Client::builder()
+        // YouTube serves a JS-shell page to unknown agents; a browser
+        // UA gets the HTML with the embedded player response.
+        .user_agent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36")
+        .timeout(std::time::Duration::from_secs(8))
+        .build()
+        .map_err(|e| e.to_string())?;
+
+    let key = crate::media_url::canonical_media_key(&url);
+    let yt_video_id = key
+        .as_deref()
+        .and_then(|k| k.strip_prefix("yt:"))
+        .filter(|rest| !rest.starts_with("pl:"))
+        .map(str::to_string);
+
+    if let Some(id) = yt_video_id {
+        let watch = format!("https://www.youtube.com/watch?v={id}");
+        // oEmbed carries a clean title + channel name (no " - YouTube"
+        // suffix to strip); the watch page carries the duration.
+        let oembed = client
+            .get("https://www.youtube.com/oembed")
+            .query(&[("url", watch.as_str()), ("format", "json")])
+            .send()
+            .await
+            .ok();
+        let mut probe = MediaProbe::default();
+        if let Some(resp) = oembed {
+            if let Ok(json) = resp.json::<serde_json::Value>().await {
+                probe.title = json
+                    .get("title")
+                    .and_then(|v| v.as_str())
+                    .map(str::to_string);
+                probe.author = json
+                    .get("author_name")
+                    .and_then(|v| v.as_str())
+                    .map(str::to_string);
+            }
+        }
+        if let Ok(resp) = client.get(&watch).send().await {
+            if let Ok(html) = resp.text().await {
+                probe.duration_secs = extract_length_seconds(&html);
+                if probe.title.is_none() {
+                    probe.title = extract_og_title(&html);
+                }
+            }
+        }
+        return Ok(probe);
+    }
+
+    // Generic pages: og:title (or <title>) is the best we can do
+    // without per-provider APIs. No duration.
+    let mut probe = MediaProbe::default();
+    if let Ok(resp) = client.get(&url).send().await {
+        if let Ok(html) = resp.text().await {
+            probe.title = extract_og_title(&html).or_else(|| extract_title_tag(&html));
+        }
+    }
+    Ok(probe)
+}
+
+#[cfg(test)]
+mod media_probe_tests {
+    use super::{extract_length_seconds, extract_og_title, extract_title_tag};
+
+    #[test]
+    fn length_seconds_parses_from_player_response() {
+        let html = r#"…"videoDetails":{"videoId":"x","lengthSeconds":"1234","title":"T"}…"#;
+        assert_eq!(extract_length_seconds(html), Some(1234));
+        assert_eq!(extract_length_seconds("no marker here"), None);
+    }
+
+    #[test]
+    fn og_title_tolerates_attribute_order_and_entities() {
+        let a = r#"<meta property="og:title" content="Cats &amp; Dogs">"#;
+        assert_eq!(extract_og_title(a).as_deref(), Some("Cats & Dogs"));
+        let b = r#"<meta content="Reversed" property="og:title">"#;
+        assert_eq!(extract_og_title(b).as_deref(), Some("Reversed"));
+        assert_eq!(extract_og_title("<meta name=\"x\">"), None);
+    }
+
+    #[test]
+    fn title_tag_fallback() {
+        assert_eq!(
+            extract_title_tag("<html><title lang=\"en\"> Hi &#39;there&#39; </title>").as_deref(),
+            Some("Hi 'there'"),
+        );
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

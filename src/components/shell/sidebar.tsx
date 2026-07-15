@@ -5,10 +5,9 @@ import {
   BookMarked,
   BookOpen,
   BookOpenText,
+  Clapperboard,
   FolderOpen,
   ChevronDown,
-  PanelLeftClose,
-  PanelLeftOpen,
   Home,
   Layers,
   Library,
@@ -74,6 +73,7 @@ import {
 } from "@/lib/languages";
 import type { DictEntry } from "@/lib/db";
 import type { TabId } from "./shell";
+import { SidebarGlyph } from "./sidebar-glyph";
 import { TierBadge } from "./tier-badge";
 import { SidebarSessionControl } from "./sidebar-session-control";
 
@@ -99,6 +99,7 @@ const ALL_NAV_GROUPS: { label: string | null; items: NavItem[] }[] = [
       { id: "dashboard", label: "Home", icon: Home },
       { id: "chat", label: "Conversation", icon: MessageSquare },
       { id: "reader", label: "Reader", icon: BookOpenText },
+      { id: "immersion", label: "Immersion", icon: Clapperboard },
       { id: "flashcards", label: "Flashcards", icon: Layers },
     ],
   },
@@ -203,11 +204,9 @@ export function Sidebar({
                 )}
                 aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
               >
-                {collapsed ? (
-                  <PanelLeftOpen className="size-[18px]" />
-                ) : (
-                  <PanelLeftClose className="size-[18px]" />
-                )}
+                {/* Same glyph as the title bar's toggle — one
+                    mechanism, one icon (filled pill = sidebar open). */}
+                <SidebarGlyph open={!collapsed} className="size-[18px]" />
               </button>
             </TooltipTrigger>
             <TooltipContent side={collapsed ? "right" : "bottom"} sideOffset={6}>

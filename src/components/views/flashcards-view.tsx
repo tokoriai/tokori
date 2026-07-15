@@ -1185,8 +1185,8 @@ function ReviewedGroup({
           >
             <span className="font-serif text-[14px]">{c.word}</span>
             {c.reading && (
-              <span className="ml-1.5 text-[11px] text-muted-foreground">
-                {c.reading}
+              <span className="ml-1.5 text-[11px]">
+                <Pinyin raw={c.reading} />
               </span>
             )}
           </li>

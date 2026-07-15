@@ -111,6 +111,7 @@ export default defineConfig({
             { text: "Auth", link: "/reference/auth" },
             { text: "Workspaces", link: "/reference/workspaces" },
             { text: "Vocabulary", link: "/reference/vocab" },
+            { text: "Media (Immersion)", link: "/reference/media" },
             { text: "Dictionaries", link: "/reference/dict" },
             { text: "Remote chat", link: "/reference/remote" },
             { text: "Errors", link: "/reference/errors" },

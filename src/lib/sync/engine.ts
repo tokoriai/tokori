@@ -366,6 +366,16 @@ export async function forceUpload(auth: SyncAuth): Promise<SyncOutcome> {
 export async function forceDownload(auth: SyncAuth): Promise<SyncOutcome> {
   if (HOSTED || !isTauri()) throw new SyncUnavailableError();
   const db = await getRawDb();
+  // Never wipe this device against an empty account — a download that
+  // has nothing to deliver must not destroy the only copy of the data.
+  // (Meta is also the auth/Pro pre-flight, so a bad token fails here
+  // before any local write.)
+  const meta = await call<SyncMeta>(auth, "/api/v1/sync/v2/meta");
+  if (!meta.hasData) {
+    throw new Error(
+      "This cloud account has no synced data yet — download would only erase this device. Use Upload (or a normal sync) first.",
+    );
+  }
   for (const sql of FORCE_WIPE_SQL) await db.execute(sql);
   await recountPersonalDicts(db);
   await clearState(db);

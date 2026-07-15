@@ -4,6 +4,10 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { liveVoiceRate } from "./live-voice-rate";
+import {
+  createPcmStreamPlayer,
+  type PcmStreamPlayer,
+} from "./pcm-stream-player";
 
 export type LiveState =
   | "idle"
@@ -61,64 +65,11 @@ function base64ToArrayBuffer(b64: string): ArrayBuffer {
   return bytes.buffer;
 }
 
-/** Wrap mono Int16 PCM in a minimal RIFF/WAVE container so it can be
- *  played through an HTMLAudioElement (`new Audio(blobUrl)`).
- *
- *  Why we don't pipe Gemini's PCM through `AudioContext.createBufferSource`
- *  any more: that path silently fails to reach the system sink on
- *  several Linux WebKit2GTK builds (PipeWire stack, transparent Tauri
- *  windows). The HTMLAudioElement pipeline is what every other audio
- *  surface in the app already uses (preview button, vocab TTS, reader
- *  passages) and it's known to work everywhere. Trade: we batch chunks
- *  per turn instead of sample-streaming, so the user hears the whole
- *  reply at once with ~0.5–1.5s of buffering latency. Acceptable for a
- *  conversational tutor — the visual orb + transcript update live
- *  while the audio buffers, so there's no apparent stall. */
-const PLAYBACK_SAMPLE_RATE = 24000; // Gemini Live's native output rate
-/** Flush partial PCM into a playable WAV chunk once we've buffered
- *  this many samples. ~1s @ 24kHz keeps the per-chunk transition gap
- *  on `<audio>` element swap (≈30–80ms on most browsers) under 10% of
- *  the chunk duration, which is below the noticeable threshold for
- *  speech continuity. */
-const FLUSH_THRESHOLD_SAMPLES = PLAYBACK_SAMPLE_RATE; // 1.0s
-
-function concatInt16(parts: Int16Array[]): Int16Array {
-  let total = 0;
-  for (const p of parts) total += p.length;
-  const out = new Int16Array(total);
-  let off = 0;
-  for (const p of parts) {
-    out.set(p, off);
-    off += p.length;
-  }
-  return out;
-}
-
-function pcmToWav(samples: Int16Array, sampleRate: number): Blob {
-  const dataBytes = samples.length * 2;
-  const buf = new ArrayBuffer(44 + dataBytes);
-  const view = new DataView(buf);
-  const writeStr = (offset: number, s: string) => {
-    for (let i = 0; i < s.length; i++) view.setUint8(offset + i, s.charCodeAt(i));
-  };
-  writeStr(0, "RIFF");
-  view.setUint32(4, 36 + dataBytes, true);
-  writeStr(8, "WAVE");
-  writeStr(12, "fmt ");
-  view.setUint32(16, 16, true); // fmt chunk size
-  view.setUint16(20, 1, true);  // PCM
-  view.setUint16(22, 1, true);  // mono
-  view.setUint32(24, sampleRate, true);
-  view.setUint32(28, sampleRate * 2, true); // byte rate
-  view.setUint16(32, 2, true);  // block align
-  view.setUint16(34, 16, true); // bits/sample
-  writeStr(36, "data");
-  view.setUint32(40, dataBytes, true);
-  // PCM payload (Int16 little-endian — same byte order JS uses
-  // natively, so a typed-array `.set()` is correct).
-  new Int16Array(buf, 44, samples.length).set(samples);
-  return new Blob([buf], { type: "audio/wav" });
-}
+/** Gemini Live's native output rate. Playback goes through the shared
+ *  gapless PCM player (pcm-stream-player.ts), which schedules chunks
+ *  on one AudioContext clock and auto-falls back to WAV/HTMLAudio
+ *  batching on the WebKitGTK builds where Web Audio doesn't render. */
+const PLAYBACK_SAMPLE_RATE = 24000;
 
 export function useLiveVoice() {
   const [state, setState] = useState<LiveState>("idle");
@@ -128,22 +79,13 @@ export function useLiveVoice() {
   const [liveAssistant, setLiveAssistant] = useState("");
 
   const wsRef = useRef<WebSocket | null>(null);
-  // Capture-only context (16kHz mic → AudioWorklet → WebSocket). Output
-  // playback no longer uses an AudioContext; see `pcmToWav` comment.
+  // Capture-only context (16kHz mic → AudioWorklet → WebSocket).
   const audioCtxRef = useRef<AudioContext | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const workletRef = useRef<AudioWorkletNode | null>(null);
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
-  // Output playback queue. Pending PCM chunks accumulate in
-  // `pendingPcmRef`; once they reach FLUSH_THRESHOLD_SAMPLES (or the
-  // turn ends / is interrupted) the whole batch is wrapped into a WAV
-  // blob URL and pushed onto `wavQueueRef` for sequential `<audio>`
-  // playback.
-  const pendingPcmRef = useRef<Int16Array[]>([]);
-  const pendingSamplesRef = useRef(0);
-  const wavQueueRef = useRef<string[]>([]);
-  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
-  const playingRef = useRef(false);
+  // Output playback — gapless scheduled PCM (see pcm-stream-player.ts).
+  const playerRef = useRef<PcmStreamPlayer | null>(null);
   const userBufRef = useRef("");
   const asstBufRef = useRef("");
   const stateRef = useRef<LiveState>("idle");
@@ -151,72 +93,6 @@ export function useLiveVoice() {
   useEffect(() => {
     stateRef.current = state;
   }, [state]);
-
-  const playNext = useCallback(() => {
-    if (playingRef.current) return;
-    const url = wavQueueRef.current.shift();
-    if (!url) {
-      // Queue drained AND no pending PCM in the buffer → the turn is
-      // fully spoken. Commit the assistant transcript and drop back to
-      // listening. (If pending PCM still exists, a flush is about to
-      // refill the queue, so we leave the state alone.)
-      if (
-        stateRef.current === "speaking" &&
-        pendingPcmRef.current.length === 0
-      ) {
-        if (asstBufRef.current.trim()) {
-          const text = asstBufRef.current.trim();
-          setTurns((prev) => [...prev, { role: "assistant", content: text }]);
-          asstBufRef.current = "";
-        }
-        setLiveAssistant("");
-        setState("listening");
-      }
-      return;
-    }
-    playingRef.current = true;
-    const audio = new Audio(url);
-    // User-adjustable speed (live settings row). preservesPitch keeps
-    // the voice natural; older WebKit ignores the property harmlessly.
-    audio.playbackRate = liveVoiceRate.current;
-    (audio as HTMLAudioElement & { preservesPitch?: boolean }).preservesPitch =
-      true;
-    currentAudioRef.current = audio;
-    audio.onended = () => {
-      URL.revokeObjectURL(url);
-      if (currentAudioRef.current === audio) currentAudioRef.current = null;
-      playingRef.current = false;
-      playNext();
-    };
-    audio.onerror = () => {
-      console.warn("[live] audio chunk failed to play", audio.error);
-      URL.revokeObjectURL(url);
-      if (currentAudioRef.current === audio) currentAudioRef.current = null;
-      playingRef.current = false;
-      playNext();
-    };
-    void audio.play().catch((err) => {
-      console.warn("[live] audio.play() rejected", err);
-      URL.revokeObjectURL(url);
-      if (currentAudioRef.current === audio) currentAudioRef.current = null;
-      playingRef.current = false;
-      playNext();
-    });
-  }, []);
-
-  /** Flush whatever PCM is currently buffered into a WAV blob URL on
-   *  the playback queue. Called whenever the buffer crosses the size
-   *  threshold mid-turn AND once on `turnComplete` to drain the tail. */
-  const flushPending = useCallback(() => {
-    if (pendingPcmRef.current.length === 0) return;
-    const samples = concatInt16(pendingPcmRef.current);
-    pendingPcmRef.current = [];
-    pendingSamplesRef.current = 0;
-    const blob = pcmToWav(samples, PLAYBACK_SAMPLE_RATE);
-    const url = URL.createObjectURL(blob);
-    wavQueueRef.current.push(url);
-    if (!playingRef.current) playNext();
-  }, [playNext]);
 
   const cleanup = useCallback(() => {
     try {
@@ -233,20 +109,8 @@ export function useLiveVoice() {
       void audioCtxRef.current.close();
     }
     audioCtxRef.current = null;
-    // Stop any in-flight playback and revoke pending blob URLs so we
-    // don't leak Object URLs across sessions.
-    if (currentAudioRef.current) {
-      try {
-        currentAudioRef.current.pause();
-      } catch {}
-      currentAudioRef.current.src = "";
-      currentAudioRef.current = null;
-    }
-    for (const url of wavQueueRef.current) URL.revokeObjectURL(url);
-    wavQueueRef.current = [];
-    pendingPcmRef.current = [];
-    pendingSamplesRef.current = 0;
-    playingRef.current = false;
+    playerRef.current?.destroy();
+    playerRef.current = null;
     if (
       wsRef.current &&
       (wsRef.current.readyState === WebSocket.OPEN ||
@@ -283,12 +147,28 @@ export function useLiveVoice() {
       // called start(). After getUserMedia user activation has expired
       // and a freshly-created context can be stuck in "suspended" with
       // no way to resume it.
-      //
-      // (Output playback no longer uses an AudioContext at all — see
-      // the comment on `pcmToWav`. We play through HTMLAudioElement
-      // for parity with every other audio surface in the app.)
       const audioCtx = new AudioContext({ sampleRate: 16000 });
       audioCtxRef.current = audioCtx;
+
+      // Playback player — created synchronously too, same activation
+      // invariant. onDrain is the "assistant turn fully spoken"
+      // signal: commit the transcript and drop back to listening.
+      playerRef.current?.destroy();
+      const player = createPcmStreamPlayer({
+        sampleRate: PLAYBACK_SAMPLE_RATE,
+        rate: () => liveVoiceRate.current,
+      });
+      player.onDrain = () => {
+        if (stateRef.current !== "speaking") return;
+        if (asstBufRef.current.trim()) {
+          const text = asstBufRef.current.trim();
+          setTurns((prev) => [...prev, { role: "assistant", content: text }]);
+          asstBufRef.current = "";
+        }
+        setLiveAssistant("");
+        setState("listening");
+      };
+      playerRef.current = player;
 
       try {
         // 1. Mic permission
@@ -402,26 +282,16 @@ export function useLiveVoice() {
           const sc = msg.serverContent;
           if (!sc) return;
 
-          // Audio → pending PCM buffer. Once we've buffered roughly
-          // FLUSH_THRESHOLD_SAMPLES worth (~1s @ 24kHz) we wrap the
-          // batch into a WAV blob and queue it for `<audio>` playback.
-          // The threshold trades latency for continuity: smaller →
-          // start hearing sooner but more inter-chunk gaps; larger →
-          // smoother but more upfront delay.
+          // Audio → the gapless player. Chunks are scheduled back to
+          // back on the audio clock as they arrive, so playback is
+          // continuous regardless of network pacing.
           if (sc.modelTurn?.parts) {
             for (const part of sc.modelTurn.parts) {
               if (part.inlineData?.data) {
                 if (stateRef.current !== "speaking") setState("speaking");
                 try {
                   const ab = base64ToArrayBuffer(part.inlineData.data);
-                  const i16 = new Int16Array(ab);
-                  pendingPcmRef.current.push(i16);
-                  pendingSamplesRef.current += i16.length;
-                  if (
-                    pendingSamplesRef.current >= FLUSH_THRESHOLD_SAMPLES
-                  ) {
-                    flushPending();
-                  }
+                  player.enqueue(new Int16Array(ab));
                 } catch {}
               }
             }
@@ -443,28 +313,16 @@ export function useLiveVoice() {
               userBufRef.current = "";
               setLiveUser("");
             }
-            // Drain any partial PCM that didn't reach the flush
-            // threshold so the tail of the assistant's reply isn't
-            // dropped. Assistant text is committed by playNext() once
-            // the audio queue empties.
-            flushPending();
+            // Make sure any tail below the fallback path's batching
+            // threshold becomes audible. Assistant text is committed
+            // by the player's onDrain once playback finishes.
+            player.flush();
           }
 
           if (sc.interrupted) {
             // Drop everything queued — the model is starting over /
-            // got cut off. Stop the in-flight audio element too.
-            for (const url of wavQueueRef.current) URL.revokeObjectURL(url);
-            wavQueueRef.current = [];
-            pendingPcmRef.current = [];
-            pendingSamplesRef.current = 0;
-            if (currentAudioRef.current) {
-              try {
-                currentAudioRef.current.pause();
-              } catch {}
-              currentAudioRef.current.src = "";
-              currentAudioRef.current = null;
-            }
-            playingRef.current = false;
+            // got cut off.
+            player.clear();
             if (asstBufRef.current.trim()) {
               setTurns((prev) => [
                 ...prev,
@@ -525,7 +383,7 @@ export function useLiveVoice() {
         setState("error");
       }
     },
-    [cleanup, flushPending],
+    [cleanup],
   );
 
   // Cleanup on unmount.

@@ -25,6 +25,11 @@ function ws(overrides: Partial<Workspace> = {}): Workspace {
 }
 
 function vocab(count: number, status: "mastered" | "review" | "learning" | "new" = "mastered"): VocabEntry[] {
+  // The journey counts "words known" via the growth-chart replay engine.
+  // With an empty review log the engine synthesises one event per studied
+  // row anchored on `lastReview`, so studied fixtures need a timestamp
+  // (and a plausible stability) to register as known.
+  const studied = status === "mastered" || status === "review";
   return Array.from({ length: count }, (_, i) => ({
     id: i + 1,
     workspaceId: 1,
@@ -34,12 +39,12 @@ function vocab(count: number, status: "mastered" | "review" | "learning" | "new"
     source: "test",
     status,
     kind: "vocab" as const,
-    stability: 0,
+    stability: studied ? 30 : 0,
     difficulty: 5,
     learningStep: 0,
     dueAt: null,
-    lastReview: null,
-    reviewCount: 0,
+    lastReview: studied ? 1_000_000 : null,
+    reviewCount: studied ? 1 : 0,
     createdAt: 0,
     imageData: null,
     hasImage: false,
@@ -73,6 +78,7 @@ function input(overrides: Partial<ComputeJourneyInput> = {}): ComputeJourneyInpu
   return {
     workspace: ws(),
     vocab: vocab(0),
+    reviews: [],
     sessions: [],
     scale: "hsk",
     targetLevelId: "HSK 3",

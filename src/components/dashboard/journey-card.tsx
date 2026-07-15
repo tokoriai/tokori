@@ -100,6 +100,7 @@ export function JourneyCard({ ctx }: { ctx: WidgetContext }) {
     return computeLearningJourney({
       workspace: ctx.workspace,
       vocab: ctx.vocab,
+      reviews: ctx.reviews,
       sessions: ctx.sessions,
       scale,
       targetLevelId,
@@ -116,6 +117,7 @@ export function JourneyCard({ ctx }: { ctx: WidgetContext }) {
     scale,
     ctx.workspace,
     ctx.vocab,
+    ctx.reviews,
     ctx.sessions,
   ]);
 

@@ -69,6 +69,44 @@ export function splitOnTranslations(
   return out;
 }
 
+/** Click-to-reveal blur, generic over WHAT it hides. `show` is the
+ *  caller's global override (the composer's EN / pinyin toggles) —
+ *  when true, content is always visible and clicks are a no-op
+ *  (toggling local state under a global override would be confusing);
+ *  when false, the content blurs and each instance reveals on click.
+ *  Used for `((…))` translations, and by the vocab table for its
+ *  reading + meaning columns so a word list drills recall the same
+ *  way running text does. */
+export function BlurToggle({
+  show,
+  revealTitle,
+  children,
+}: {
+  show: boolean;
+  /** Tooltip while hidden, e.g. "Click to reveal translation". */
+  revealTitle: string;
+  children: React.ReactNode;
+}) {
+  const [locallyRevealed, setLocallyRevealed] = useState(false);
+  const revealed = show || locallyRevealed;
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        if (!show) setLocallyRevealed((v) => !v);
+      }}
+      className={cn(
+        "rounded-sm border-b border-dotted border-foreground/40 px-0.5 text-left transition-all",
+        !revealed && "blur-[3px] hover:blur-[1.5px] cursor-pointer select-none",
+      )}
+      title={show ? undefined : revealed ? "Click to blur" : revealTitle}
+    >
+      {children}
+    </button>
+  );
+}
+
 /** Click-to-reveal blurred span. Mirrors the live-mode "blur EN" behaviour
  *  so the student gets to read the target text first and only consults the
  *  translation when they actually need to. The global EN toggle in the
@@ -76,33 +114,10 @@ export function splitOnTranslations(
  *  every span is unblurred regardless of its local revealed state. */
 export function BlurredTranslation({ text }: { text: string }) {
   const { showTranslations } = useDisplay();
-  const [locallyRevealed, setLocallyRevealed] = useState(false);
-  const revealed = showTranslations || locallyRevealed;
   return (
-    <button
-      type="button"
-      onClick={(e) => {
-        e.stopPropagation();
-        // When the global toggle is on, clicking individual spans is
-        // a no-op — they're already shown. (Toggling here would flip
-        // local state but the global override would keep it visible
-        // anyway, which is just confusing.)
-        if (!showTranslations) setLocallyRevealed((v) => !v);
-      }}
-      className={cn(
-        "rounded-sm border-b border-dotted border-foreground/40 px-0.5 transition-all",
-        !revealed && "blur-[3px] hover:blur-[1.5px] cursor-pointer select-none",
-      )}
-      title={
-        showTranslations
-          ? "Translations shown — click EN to blur all"
-          : revealed
-            ? "Click to blur"
-            : "Click to reveal translation"
-      }
-    >
+    <BlurToggle show={showTranslations} revealTitle="Click to reveal translation">
       {text}
-    </button>
+    </BlurToggle>
   );
 }
 
