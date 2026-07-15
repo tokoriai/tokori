@@ -57,6 +57,9 @@
       "assets/hanzi-writer-data/*.json",
       "assets/hanzi-writer-data/ARPHICPL.TXT"
     ],
+    "macOS": {
+      "minimumSystemVersion": "10.15"
+    },
     "android": {
       "debugApplicationIdSuffix": ".debug"
     }

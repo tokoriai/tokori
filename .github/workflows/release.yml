@@ -196,6 +196,17 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
+          # ── macOS deployment target ─────────────────────────────────
+          # whisper-rs-sys bundles whisper.cpp / ggml, whose C++ uses
+          # std::filesystem (path, u8string) — introduced in macOS 10.15.
+          # Tauri's default target is 10.13, so clang rejects those as
+          # "unavailable" and the build script dies. cmake-rs / cc read
+          # this env directly, so it reaches BOTH slices of the universal
+          # build; it mirrors bundle.macOS.minimumSystemVersion in
+          # tauri.conf.json (which sets the Info.plist floor). Harmless on
+          # the Linux / Windows legs — non-Apple toolchains ignore it.
+          MACOSX_DEPLOYMENT_TARGET: "10.15"
+
           # ── macOS code-signing + notarisation (NOT yet enabled) ─────
           # The .dmg ships unsigned (users do the right-click → Open
           # dance documented in docs/guides/install.md). IMPORTANT: the
